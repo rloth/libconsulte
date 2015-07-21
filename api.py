@@ -12,10 +12,10 @@ __status__    = "Dev"
 from json            import loads
 from urllib.parse    import quote
 from urllib.request  import urlopen
-import urllib.error
-# from urllib.error    import URLError # TODO utiliser !
+from urllib.error    import URLError
 
 from sys import stderr
+from os import path
 
 # globals
 DEFAULT_API_CONF = {
@@ -33,7 +33,7 @@ def _get(my_url):
 	try:
 		remote_file = urlopen(my_url)
 		
-	except urllib.error.URLError as url_e:
+	except URLError as url_e:
 		# signale 401 Unauthorized ou 404 etc
 		print("api: HTTP ERR no %i (%s) sur '%s'" % 
 			(url_e.getcode(),url_e.msg, my_url), file=stderr)
@@ -50,6 +50,28 @@ def _get(my_url):
 	result_str = response.decode('UTF-8')
 	json_values = loads(result_str)
 	return json_values
+
+def _xget(my_url):
+	"""Get remote url *that contains a file* and pass it"""
+	
+	try:
+		remote_file = urlopen(my_url)
+		
+	except URLError as url_e:
+		# signale 401 Unauthorized ou 404 etc
+		print("api: HTTP ERR no %i (%s) sur '%s'" % 
+			(url_e.getcode(),url_e.msg, my_url), file=stderr)
+		# Plus d'infos: serveur, Content-Type, WWW-Authenticate..
+		# print ("ERR.info(): \n %s" % url_e.info(), file=stderr)
+		exit(1)
+	try:
+		response = remote_file.read()
+	except httplib.IncompleteRead as ir_e:
+		response = ir_e.partial
+		print("WARN: IncompleteRead '%s' but 'partial' content has page" 
+				% my_url, file=stderr)
+	remote_file.close()
+	return response
 
 
 # public functions
@@ -137,6 +159,21 @@ def count(q, api_conf=DEFAULT_API_CONF):
 	
 	return int(json_values['total'])
 	
+	
+def write_fulltexts(api_did, api_conf=DEFAULT_API_CONF, tgt_dir='.'):
+	"""
+	Get TEI, PDF and ZIP fulltexts for a given ISTEX document.
+	"""
+	# préparation requête
+	fulltext_url = 'https:' + '//' + api_conf['host']  + '/' + api_conf['route'] + '/' + api_did + '/fulltext/'
+	
+	for filetype in ['pdf', 'tei', 'zip']:
+		response = _xget(fulltext_url + filetype)
+		tgt_path = path.join(tgt_dir, api_did+'.'+filetype)
+		fh = open(tgt_path, 'wb')
+		fh.write(response)
+		fh.close()
+	return None
 
 def terms_facet(facet_name, q="*", api_conf=DEFAULT_API_CONF):
 	"""
@@ -180,3 +217,4 @@ if __name__ == '__main__':
 	
 	print(search(q, limit=10))
 	
+	write_fulltexts('5286C468C888B8857D1F8971080594B788D54013')

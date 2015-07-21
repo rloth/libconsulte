@@ -30,15 +30,22 @@ __status__    = "Dev"
 
 # imports standard
 from sys       import argv, stderr
-from argparse  import ArgumentParser, RawDescriptionHelpFormatter
+from argparse  import ArgumentParser, RawTextHelpFormatter
 
 from re        import sub, search, escape
 from random    import shuffle
 from itertools import product
+from datetime  import datetime
+from os        import path, mkdir, getcwd
 
 # imports locaux
-import api
-import field_value_lists
+try:
+	import api
+	import field_value_lists
+except ImportError:
+	print("""ERR: Les modules 'api.py' et 'field_value_lists.py' doivent être
+     placés à côté du script sampler.py pour sa bonne execution...""", file=stderr)
+	exit(1)
 # =<< target_language_values, target_scat_values, target_genre_values, target_date_ranges
 
 
@@ -75,128 +82,6 @@ RANGEFACET_FIELDS = [
 	]
 
 # -------------------------
-
-
-def my_parse_args():
-	"""Preparation du hash des arguments ligne de commande pour main()"""
-	
-	parser = ArgumentParser(
-		formatter_class=RawDescriptionHelpFormatter,
-		description="A sampler to get a reprentative subset of ISTEX API.",
-		usage="sampler.py -n 10000 [-c corpusName publicationDate] [-q 'constraint query']",
-		epilog="""
-Default -c criteria are: "corpusName" "publicationDate" and "qualityIndicators.pdfVersion"
-
-/!\\ known bug: until API provides random ranking function, we are going
-               to produce identical samples for 2 same runs (instead of
-               creating 2 different, randomized ones...)
-
-- © 2014-15 Inist-CNRS (ISTEX) romain.loth at inist.fr -
-"""
-		)
-	
-	parser.add_argument('-n',
-		dest="sample_size",
-		metavar='10000',
-		help="the target sample size (mandatory integer)",
-		type=int,
-		required=True,
-		action='store')
-	
-	parser.add_argument('-c', '--crit',
-		dest="criteria_list",
-		#~ metavar=('"corpusName"', '"publicationDate"'),
-		metavar="",
-		help="list of API fields (representativity criteria, simply space-separated) ==> each field's values will become quotas %% in the representativity estimate",
-		nargs='+',
-		default=('corpusName',
-		         'publicationDate',
-		         #~ 'qualityIndicators.pdfVersion',
-		         ),
-		required=False,
-		action='store')
-	
-	parser.add_argument('-w', "--with",
-		dest="with_constraint_query",
-		metavar="",
-		help="lucene query to express constraints on all the sample (example: \"qualityIndicators.refBibsNative:true\")",
-		type=str,
-		required=False,
-		action='store')
-	
-	parser.add_argument('-x', "--exclude-list",
-		dest="exclude_list_path",
-		metavar="",
-		help="optional list of IDs to exclude from sampling (path)",
-		type=str,
-		required=False,
-		action='store')
-	
-	parser.add_argument('-s', '--smoothing',
-		dest="smoothing_init",
-		metavar='0.75',
-		help="a uniform bonus of documents for all classes. Default is 0.25. A higher smoothing will favour small quota groups",
-		type=float,
-		required=False,
-		action='store')
-	
-	parser.add_argument('-v', '--verbose',
-		help="verbose switch",
-		default=False,
-		required=False,
-		action='store_true')
-	
-	args = parser.parse_args(argv[1:])
-	
-	# --- checks and pre-propagation --------
-	#  if known criteria ?
-	known_fields_list = TERMFACET_FIELDS_auto + TERMFACET_FIELDS_local + RANGEFACET_FIELDS
-	flag_ok = True
-	for field_name in args.criteria_list:
-		if field_name not in known_fields_list:
-			flag_ok = False
-			print("Unknown field in -c args: '%s'" % field_name, 
-			      file=stderr)
-		# TODO vérifier si ça a évolué
-		elif field_name == "genre":
-			print("/!\ Experimental field: 'genre' (inventory not yet harmonized)", file=stderr)
-
-	# do we need to get an ID list ?
-	if args.exclude_list_path:
-		fh = open(args.exclude_list_path, 'r')
-		i = 0
-		for line in fh:
-			i += 1
-			if search("^[0-9A-F]{40}$", line):
-				FORBIDDEN_IDS.append(line)
-			else:
-				raise TypeError("line %i is not a valid ISTEX ID" % i)
-	
-	if not flag_ok:
-		exit(1)
-	# ----------------------------------------
-	
-	return(args)
-
-
-#~ def facet_count_value(criteria_dict):
-	#~ """
-	#~ Get counts for a combination of facets
-	#~ """
-	#~ 
-	#~ # elements of the query we're building
-	#~ temp_str_list = []
-	#~ 
-	#~ for facet in criteria_dict:
-		#~ attr_val_str = "%s:%s" % (facet, criteria_dict[facet])
-		#~ temp_str_list.append(attr_val_str)
-	#~ 
-	#~ my_query = " AND ".join(temp_str_list)
-	#~ 
-	#~ # run query => get the total
-	#~ n_hits = api.count(my_query)
-	#~ 
-	#~ return(n_hits)
 
 
 def facet_list_values(field_name):
@@ -236,9 +121,13 @@ def facet_list_values(field_name):
 # get all sample_size in the 1st run (previous runs => index=got_id_idx)
 
 def sample(size, crit_fields, constraint_query=None, index={}):
+	global args
+	global LOG
+	global LISSAGE
+	global FORBIDDEN_IDS
 	
 	# (1) PARTITIONING THE SEARCH SPACE IN POSSIBLE OUTCOMES -----------
-	print("Sending count queries for each criteria pools...")
+	print("Sending count queries for criteria pools...", file=stderr)
 	## build all "field:values" pairs per criterion field
 	## (list of list of strings: future lucene query chunks)
 	all_possibilities = []
@@ -343,7 +232,8 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 			#     duplicates, like with random result ranking)
 			n_already_retrieved = len(
 				# lookup retrieved
-				[idi for idi,src_q in index.items() if search(escape(combi_query), src_q)]
+				[idi for idi,src_q in index.items() 
+					if search(escape(combi_query), src_q)]
 				)
 			n_needed = my_quota + n_already_retrieved
 		
@@ -369,7 +259,7 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 		
 		# check unicity
 		for idi in my_ids:
-			if idi not in index:
+			if idi not in index and idi not in FORBIDDEN_IDS:
 				my_n_got += 1
 				index[idi] = combi_query
 			
@@ -396,6 +286,144 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 		
 	return(index)
 
+
+class UnindentHelp(RawTextHelpFormatter):
+	# indents help args, 
+	# doesn't do anything to 'usage' or 'epilog' descriptions
+	def _split_lines(self, text, width):
+		text = sub(r"\t", "", text)
+		text = sub(r"^\n+", "", text) + "\n\n"
+		return text.splitlines()
+
+def my_parse_args():
+	"""Preparation du hash des arguments ligne de commande pour main()"""
+	
+	parser = ArgumentParser(
+		formatter_class=UnindentHelp,
+		description="""
+	--------------------------------------------------------
+	 A sampler to get a representative subset of ISTEX API.
+	--------------------------------------------------------""",
+		usage="\n------\n  sampler.py -n 10000 [-c luceneField1 luceneField2 ...] [-q 'lucene query']",
+		epilog="""--------------
+/!\\ known bug: until API provides random ranking function, we are going
+               to create *identical* samples for 2 runs with same params
+               (instead of creating 2 different random ones...)
+
+© 2014-2015 :: romain.loth at inist.fr :: Inist-CNRS (ISTEX)
+"""
+		)
+	
+	parser.add_argument('-n',
+		dest="sample_size",
+		metavar='10000',
+		help="the target sample size (mandatory integer)",
+		type=int,
+		required=True,
+		action='store')
+	
+	parser.add_argument('-c', '--crit',
+		dest="criteria_list",
+		#~ metavar=('"corpusName"', '"publicationDate"'),
+		metavar="",
+		help="""API field(s) used as \"representativity quota\" criterion
+				(default: corpusName publicationDate) (space-separated)""",
+		nargs='+',
+		default=('corpusName',
+		         'publicationDate',
+		         #~ 'qualityIndicators.pdfVersion',
+		         ),
+		required=False,
+		action='store')
+	
+	parser.add_argument('-w', "--with",
+		dest="with_constraint_query",
+		metavar="'query'",
+		help="""
+		lucene query to express constraints on all the sample
+		(example: \"qualityIndicators.refBibsNative:true\")""",
+		type=str,
+		required=False,
+		action='store')
+	
+	parser.add_argument('-x', "--exclude-list",
+		dest="exclude_list_path",
+		metavar="",
+		help="optional list of IDs to exclude from sampling",
+		type=str,
+		required=False,
+		action='store')
+	
+	parser.add_argument('-s', '--smooth',
+		dest="smoothing_init",
+		metavar='0.5',
+		help="""
+		a uniform bonus of docs for all classes (default: 0.1)
+		(higher smoothing will favour small quota groups)""",
+		type=float,
+		required=False,
+		action='store')
+	
+	parser.add_argument('-o', '--out',
+		dest="out_type",
+		metavar="ids",
+		help="""
+		choice of the output form: 'ids', 'tab' or 'docs'
+		  ids:  a simple list of API ids
+		        ex: sampler.py -o ids -n 20 > my_ids.txt
+		
+		  tab:  a more detailed tabular output
+		        (2 columns API ids + source query)
+		        ex: sampler.py -o tab -n 20 > my_tab.tsv
+		
+		  docs: downloads all docs (tei + pdf) in a new
+		        directory named 'new_sample_docs'
+		        ex: sampler.py -o docs -n 20""",
+		choices=['ids', 'tab', 'docs'],
+		type=str,
+		default='ids',
+		required=False,
+		action='store')
+	
+	parser.add_argument('-v', '--verbose',
+		help="verbose switch",
+		default=False,
+		required=False,
+		action='store_true')
+	
+	args = parser.parse_args(argv[1:])
+	
+	# --- checks and pre-propagation --------
+	#  if known criteria ?
+	known_fields_list = TERMFACET_FIELDS_auto + TERMFACET_FIELDS_local + RANGEFACET_FIELDS
+	flag_ok = True
+	for field_name in args.criteria_list:
+		if field_name not in known_fields_list:
+			flag_ok = False
+			print("Unknown field in -c args: '%s'" % field_name, 
+			      file=stderr)
+		# TODO vérifier si ça a évolué
+		elif field_name == "genre":
+			print("/!\ Experimental field: 'genre' (inventory not yet harmonized)", file=stderr)
+
+	# do we need to get an ID list ?
+	if args.exclude_list_path:
+		fh = open(args.exclude_list_path, 'r')
+		i = 0
+		for line in fh:
+			i += 1
+			if search("^[0-9A-F]{40}$", line):
+				FORBIDDEN_IDS.append(line)
+			else:
+				raise TypeError("line %i is not a valid ISTEX ID" % i)
+	
+	if not flag_ok:
+		exit(1)
+	# ----------------------------------------
+	
+	return(args)
+
+
 if __name__ == "__main__":
 	
 	# cli arguments
@@ -409,6 +437,9 @@ if __name__ == "__main__":
 	
 	# event log lines
 	LOG = ['INIT: sampling %i' % args.sample_size]
+	LOG.append('CRIT: fields(%s)' % ", ".join(args.criteria_list))
+	if args.with_constraint_query:
+		LOG.append('WITH: constraint query "%s"' % args.with_constraint_query)
 	
 	# initial sampler run
 	got_ids_idx = sample(
@@ -509,10 +540,31 @@ if __name__ == "__main__":
 	n_ids = len(got_ids_idx)
 	print('-'*29 +" final result: %i docs "%n_ids+'-'*29, file=stderr)
 	
-	# OUTPUT:      ID    <TAB>     source_query_combo
-	for did, info in sorted(got_ids_idx.items(), key=lambda x: x[1]):
-		print ("%s\t%s" % (did, info))
-
+	# -------------- OUTPUT --------------------------------------------
+	timestamp = datetime.now().strftime("%Y-%m-%d_%Hh%M")
+	my_name = "echantillon_%s" % timestamp
+	
+	# ***(ids)***
+	if args.out_type == 'ids':
+		for did, info in sorted(got_ids_idx.items(), key=lambda x: x[1]):
+			print ("%s" % did)
+	# ***(tab)***
+	elif args.out_type == 'tab':
+		# ID    <TAB>     source_query_combo
+		for did, info in sorted(got_ids_idx.items(), key=lambda x: x[1]):
+			print ("%s\t%s" % (did, info))
+	# ***(docs)***
+	elif args.out_type == 'docs':
+		my_dir = path.join(getcwd(),my_name)
+		mkdir(my_dir)
+		for i, did in enumerate(got_ids_idx.keys()):
+			print("Retrieving PDF, ZIP and XML for doc no %i" % i)
+			api.write_fulltexts(did, tgt_dir=my_dir)
+			
+		LOG.append("SAVE: saved docs in %s/" % my_dir)
+	
 	# warnings logging
-	# (lists criteria where representativity couldn't be met)
-	print("\n".join(LOG), file=stderr)
+	logfile = open(my_name+'.log', 'w')
+	for line in LOG:
+		print(line, file=logfile)
+	logfile.close()
