@@ -12,7 +12,10 @@ __status__    = "Dev"
 from json            import loads
 from urllib.parse    import quote
 from urllib.request  import urlopen
-from urllib.error    import HTTPError
+import urllib.error
+# from urllib.error    import URLError # TODO utiliser !
+
+from sys import stderr
 
 # globals
 DEFAULT_API_CONF = {
@@ -24,9 +27,27 @@ DEFAULT_API_CONF = {
 # ----------------
 def _get(my_url):
 	"""Get remote url *that contains a json* and parse it"""
-	remote_file = urlopen(my_url)
-	result_str = remote_file.read().decode('UTF-8')
+	
+	#~ print("> api._get:%s" % my_url, file=stderr)
+	
+	try:
+		remote_file = urlopen(my_url)
+		
+	except urllib.error.URLError as url_e:
+		# signale 401 Unauthorized ou 404 etc
+		print("api: HTTP ERR no %i (%s) sur '%s'" % 
+			(url_e.getcode(),url_e.msg, my_url), file=stderr)
+		# Plus d'infos: serveur, Content-Type, WWW-Authenticate..
+		# print ("ERR.info(): \n %s" % url_e.info(), file=stderr)
+		exit(1)
+	try:
+		response = remote_file.read()
+	except httplib.IncompleteRead as ir_e:
+		response = ir_e.partial
+		print("WARN: IncompleteRead '%s' but 'partial' content has page" 
+				% my_url, file=stderr)
 	remote_file.close()
+	result_str = response.decode('UTF-8')
 	json_values = loads(result_str)
 	return json_values
 
@@ -34,15 +55,15 @@ def _get(my_url):
 # public functions
 # ----------------
 # £TODO: stockage disque sur fichier tempo si liste grande et champx nbx
-def search(q, api_conf=DEFAULT_API_CONF, limit=None, outfields = ('title','host.issn','fulltext')):
+def search(q, api_conf=DEFAULT_API_CONF, limit=None, outfields=('title','host.issn','fulltext')):
 	"""
 	Query the API and get a (perhaps long) "hits" array of json metadata.
-	
+
 	args:
 	-----
 	   q    -- a lucene query
 	                  ex: "quantum cat AND publicationDate:[1970 TO *]"
-	
+
 	optional kwargs:
 	- - - - - - - - -
 	   outfields   -- fieldNames list for the api to return for each hit 
@@ -50,7 +71,7 @@ def search(q, api_conf=DEFAULT_API_CONF, limit=None, outfields = ('title','host.
 	   api_conf    -- an inherited http config dict with these 2 keys:
 	                    * api_conf['host']   <- default: "api.istex.fr"
 	                    * api_conf['route']  <- default: "document"
-	
+
 	Output format is a parsed json with a total value and a hit list:
 	{ 'hits': [ { 'id': '21B88F4EFBA46DC85E863709CA9824DEED7B7BFC',
 				  'title': 'Recovering information borne by quanta that '
@@ -85,9 +106,9 @@ def search(q, api_conf=DEFAULT_API_CONF, limit=None, outfields = ('title','host.
 	
 	else:
 		# requêtes paginées pour les tailles > 5000
-		print("Collecting result hits... ")
+		print("Collecting result hits... ", file=stderr)
 		for k in range(0, n_docs, 5000):
-			print("%i..." % k)
+			print("%i..." % k, file=stderr)
 			my_url = base_url + '&size=5000' + "&from=%i" % k
 			json_values = _get(my_url)
 			all_hits += json_values['hits']

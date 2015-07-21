@@ -24,7 +24,7 @@ Another independant "attribute:value" group will define a CONSTRAINT on the samp
 __author__    = "Romain Loth"
 __copyright__ = "Copyright 2014-5 INIST-CNRS (ISTEX project)"
 __license__   = "LGPL"
-__version__   = "0.1"
+__version__   = "0.2"
 __email__     = "romain.loth@inist.fr"
 __status__    = "Dev"
 
@@ -32,7 +32,7 @@ __status__    = "Dev"
 from sys       import argv, stderr
 from argparse  import ArgumentParser, RawDescriptionHelpFormatter
 
-from re        import sub, search
+from re        import sub, search, escape
 from random    import shuffle
 from itertools import product
 
@@ -41,7 +41,18 @@ import api
 import field_value_lists
 # =<< target_language_values, target_scat_values, target_genre_values, target_date_ranges
 
-# fields allowed as criteria, grouped according to the method we can use for value listing
+
+# Globals
+# --------
+# limit on maximum runs before returning a potentially undersized sample
+MAX_RUNS = 5
+# paramètre de lissage +k à chaque quota (aka lissage de Laplace)
+LISSAGE = 0.1
+# list of IDs to exclude from the sample result
+FORBIDDEN_IDS = []
+
+# fields allowed as criteria
+# (grouped according to the method we use for value listing)
 
 # auto value-listing via facet query
 TERMFACET_FIELDS_auto = [
@@ -63,12 +74,6 @@ RANGEFACET_FIELDS = [
 	'copyrightDate'
 	]
 
-# limit on maximum runs before returning a potentially undersized sample
-MAX_RUNS = 5
-
-# constante de lissage +k à chaque quota (aka lissage de Laplace)
-LISSAGE = 0.5
-
 # -------------------------
 
 
@@ -78,9 +83,13 @@ def my_parse_args():
 	parser = ArgumentParser(
 		formatter_class=RawDescriptionHelpFormatter,
 		description="A sampler to get a reprentative subset of ISTEX API.",
-		usage="sampler.py -n 10000 [ -c corpusName publicationDate] [-q 'constraint query']",
+		usage="sampler.py -n 10000 [-c corpusName publicationDate] [-q 'constraint query']",
 		epilog="""
 Default -c criteria are: "corpusName" "publicationDate" and "qualityIndicators.pdfVersion"
+
+/!\\ known bug: until API provides random ranking function, we are going
+               to produce identical samples for 2 same runs (instead of
+               creating 2 different, randomized ones...)
 
 - © 2014-15 Inist-CNRS (ISTEX) romain.loth at inist.fr -
 """
@@ -94,10 +103,11 @@ Default -c criteria are: "corpusName" "publicationDate" and "qualityIndicators.p
 		required=True,
 		action='store')
 	
-	parser.add_argument('-c',
+	parser.add_argument('-c', '--crit',
 		dest="criteria_list",
-		metavar=('"corpusName"', '"publicationDate"'),
-		help="list of representativity criteria (space separated) ==> Field(s) values will become quotas %% in the representativity estimate",
+		#~ metavar=('"corpusName"', '"publicationDate"'),
+		metavar="",
+		help="list of API fields (representativity criteria, simply space-separated) ==> each field's values will become quotas %% in the representativity estimate",
 		nargs='+',
 		default=('corpusName',
 		         'publicationDate',
@@ -106,11 +116,27 @@ Default -c criteria are: "corpusName" "publicationDate" and "qualityIndicators.p
 		required=False,
 		action='store')
 	
-	parser.add_argument('-w',
+	parser.add_argument('-w', "--with",
 		dest="with_constraint_query",
-		metavar='"qualityIndicators.refBibsNative:true"',
-		help="optional constraint on all members of the sample (lucene query)",
+		metavar="",
+		help="lucene query to express constraints on all the sample (example: \"qualityIndicators.refBibsNative:true\")",
 		type=str,
+		required=False,
+		action='store')
+	
+	parser.add_argument('-x', "--exclude-list",
+		dest="exclude_list_path",
+		metavar="",
+		help="optional list of IDs to exclude from sampling (path)",
+		type=str,
+		required=False,
+		action='store')
+	
+	parser.add_argument('-s', '--smoothing',
+		dest="smoothing_init",
+		metavar='0.75',
+		help="a uniform bonus of documents for all classes. Default is 0.25. A higher smoothing will favour small quota groups",
+		type=float,
 		required=False,
 		action='store')
 	
@@ -122,7 +148,7 @@ Default -c criteria are: "corpusName" "publicationDate" and "qualityIndicators.p
 	
 	args = parser.parse_args(argv[1:])
 	
-	# --- checks ----------------------------
+	# --- checks and pre-propagation --------
 	#  if known criteria ?
 	known_fields_list = TERMFACET_FIELDS_auto + TERMFACET_FIELDS_local + RANGEFACET_FIELDS
 	flag_ok = True
@@ -134,6 +160,17 @@ Default -c criteria are: "corpusName" "publicationDate" and "qualityIndicators.p
 		# TODO vérifier si ça a évolué
 		elif field_name == "genre":
 			print("/!\ Experimental field: 'genre' (inventory not yet harmonized)", file=stderr)
+
+	# do we need to get an ID list ?
+	if args.exclude_list_path:
+		fh = open(args.exclude_list_path, 'r')
+		i = 0
+		for line in fh:
+			i += 1
+			if search("^[0-9A-F]{40}$", line):
+				FORBIDDEN_IDS.append(line)
+			else:
+				raise TypeError("line %i is not a valid ISTEX ID" % i)
 	
 	if not flag_ok:
 		exit(1)
@@ -201,6 +238,7 @@ def facet_list_values(field_name):
 def sample(size, crit_fields, constraint_query=None, index={}):
 	
 	# (1) PARTITIONING THE SEARCH SPACE IN POSSIBLE OUTCOMES -----------
+	print("Sending count queries for each criteria pools...")
 	## build all "field:values" pairs per criterion field
 	## (list of list of strings: future lucene query chunks)
 	all_possibilities = []
@@ -237,7 +275,7 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 	N_reponses = 0
 	
 	# do the counting for each combo
-	for combi in combinations:
+	for combi in sorted(combinations):
 		query = " AND ".join(combi)
 		
 		# counting request
@@ -280,7 +318,7 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 	# fyi 3 lines to check if rounding surprise
 	rndd_size = sum([quota for combi_query, quota in rel_freqs.items()])
 	if args.verbose:
-		print("Méthode des quotas taille sample:     % 9s" % rndd_size,
+		print("Méthode des quotas taille avec arrondis:     % 9s" % rndd_size,
 		      file=stderr)
 	
 	# récup AVEC CONTRAINTE et vérif total dispo (obtenu + dédoublonné)
@@ -289,9 +327,8 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 	#             valeurs = critères ayant mené au choix
 	
 	flag_has_previous_index = bool(index)
-	my_warnings = []
 	
-	for combi_query in rel_freqs:
+	for combi_query in sorted(rel_freqs.keys()):
 		
 		# how many hits do we need?
 		my_quota = rel_freqs[combi_query]
@@ -305,7 +342,8 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 			# /!\ wouldn't be necessary at all if we had none or rare
 			#     duplicates, like with random result ranking)
 			n_already_retrieved = len(
-				[idi for idi,src_q in index.items() if search(combi_query, src_q)]
+				# lookup retrieved
+				[idi for idi,src_q in index.items() if search(escape(combi_query), src_q)]
 				)
 			n_needed = my_quota + n_already_retrieved
 		
@@ -323,10 +361,6 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 		# cf. elasticsearch guide: "random scoring" (=> puis supprimer
 		# l'option B avec n_needed)
 		
-		# £TODO 2 tant que TODO 1 impossible, si limit = my_quota mais 
-		#       qu'on est à un 2ème run, on risque au final d'avoir bcp
-		#       moins de résultats, car les 1ers hits ont déjà été pris
-		
 		my_ids = [hit['id'] for hit in json_hits]
 		
 		my_n_answers = len(my_ids)
@@ -339,7 +373,7 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 				my_n_got += 1
 				index[idi] = combi_query
 			
-			# needed ass long as n_needed != my_quota 
+			# recheck limit: needed as long as n_needed != my_quota 
 			# (should disappear as consequence of removing option B)
 			if my_n_got == my_quota:
 				break
@@ -351,29 +385,53 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 					my_quota
 				), file=stderr)
 		
-		if my_n_got < .85 * my_quota:
-			my_warnings.append("%s sous-représentée : %i docs obtenus sur %i quota" % (combi_query, my_n_got, my_quota))
+		# if within whole sample_size scope, we may observe unmeatable
+		# representativity criteria (marked 'LESS' and checked for RLAX)
+		if my_n_got < (.85 * (my_quota - LISSAGE)) and size == args.sample_size:
+			my_s = "" if my_n_got == 1 else "s"
+			LOG.append("LESS: catégorie '%s' sous-représentée pour contrainte \"%s\" : %i doc%s obtenu%s sur %i quota" % (combi_query, constraint_query, my_n_got, my_s, my_s, my_quota))
 			
 		#~ print("==========INDEX ITEMS===========")
 		#~ print([kval for kval in index.items()])
 		
-	return(index, my_warnings)
+	return(index)
 
 if __name__ == "__main__":
 	
 	# cli arguments
 	args = my_parse_args()
 	
+	# do we need to change smoothing ?
+	if args.smoothing_init and float(args.smoothing_init) > 0:
+		print("Setting initial smoothing to %.2f" % args.smoothing_init)
+		# global var change in main
+		LISSAGE = args.smoothing_init
+	
+	# event log lines
+	LOG = ['INIT: sampling %i' % args.sample_size]
+	
 	# initial sampler run
-	got_ids_idx, warnings = sample(
-								args.sample_size,
-								args.criteria_list,
-								constraint_query = args.with_constraint_query
-							)
-	# ne kadar?
+	got_ids_idx = sample(
+						args.sample_size,
+						args.criteria_list,
+						constraint_query = args.with_constraint_query
+						)
+	
+	# how much is there?
 	n_ids = len(got_ids_idx)
+	
+	# info
 	print('-'*27 + " initial result : %i docs " % n_ids + '-'*27,
 		  file=stderr)
+	
+	LOG.append("XGOT: picked %i" % n_ids)
+	
+	# check combopools status
+	insufficient_pool_flag = False
+	for sig in LOG:
+		if search("^LESS:", sig):
+			insufficient_pool_flag = True
+			break
 	
 	# --------- a posteriori corrections -------------
 	#
@@ -383,34 +441,58 @@ if __name__ == "__main__":
 	# for that reason at this point in the process we may have more or
 	# less than the requested sample_size
 	
-	# IF not enough => new sample_run with lighter criteria
+	# IF not enough => new sample run with lighter criteria
 	if n_ids < args.sample_size:
 		
 		actual_criteria = args.criteria_list
 		run_counter = 1
 		
-		# re-run
+		# keep trying...
 		while (n_ids < args.sample_size and run_counter < MAX_RUNS):
-			if len(actual_criteria) > 1:
+			
+			# => over "delta" (missing docs)
+			remainder = args.sample_size - n_ids
+			LOG.append("REDO: re-pioche sur %i docs" % remainder)
+			
+			# => with more help to small categories
+			LISSAGE += 0.2
+			LOG.append("SMOO: smoothing up to %.02f" % LISSAGE)
+			
+			# => and with less criteria if necessary
+			# (if criteria pool insufficient under some constraints, we
+			#  do need to relax at least one criterion, but which one?)
+			if len(actual_criteria) > 1 and insufficient_pool_flag:
 				# simplify criteria by removing the last one
 				new_criteria = actual_criteria[0:-1]
+				LOG.append("RLAX: abandon équilibrage champ '%s'" %
+								actual_criteria[-1])
+				
+				# reset flag (£TODO recalculate after run ?)
+				insufficient_pool_flag = False
 			else:
 				new_criteria = actual_criteria
 			
-			remainder = args.sample_size - n_ids
+			# -------- RE-RUN ---------
 			previous_ids = got_ids_idx
-			got_ids_idx, warnings = sample(
-									 remainder,
-									 new_criteria,
-									 constraint_query = args.with_constraint_query,
-									 index = previous_ids
-									)
+			got_ids_idx = sample(
+						remainder,
+						new_criteria,
+						constraint_query = args.with_constraint_query,
+						index = previous_ids
+						)
+			
 			# recount
-			n_ids = len(got_ids_idx)
+			apport = len(got_ids_idx) - n_ids
+			
+			# update
+			n_ids += apport
 			run_counter += 1
-			      #(corpusName:elsevier) AND (qualityIndicators.pdfWordCount:[300 TO *...: 65(2175)/65
+			
+			# warn
+			LOG.append("XGOT: picked %i" % apport)
 			print('-'*22 + " resultat après run %i: %i documents " 
 			    % (run_counter, n_ids) + '-'*22, file=stderr)
+	
 	
 	# IF overflow => random pruning
 	if n_ids > args.sample_size:
@@ -421,13 +503,16 @@ if __name__ == "__main__":
 		sacrificed = deck[0:nd]
 		for did in sacrificed:
 			del got_ids_idx[did]
-		print("...sacrificing %i random docs... ok" % nd ,file=stderr)
+		LOG.append("XDEL: sacrificing %i random docs" % nd)
 	
 	# last recount
 	n_ids = len(got_ids_idx)
 	print('-'*29 +" final result: %i docs "%n_ids+'-'*29, file=stderr)
 	
-	# sortie
-	for did in got_ids_idx:
-		info = got_ids_idx[did]
+	# OUTPUT:      ID    <TAB>     source_query_combo
+	for did, info in sorted(got_ids_idx.items(), key=lambda x: x[1]):
 		print ("%s\t%s" % (did, info))
+
+	# warnings logging
+	# (lists criteria where representativity couldn't be met)
+	print("\n".join(LOG), file=stderr)
