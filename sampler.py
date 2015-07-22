@@ -234,8 +234,8 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 			#     duplicates, like with random result ranking)
 			n_already_retrieved = len(
 				# lookup retrieved
-				[idi for idi,src_q in index.items() 
-					if search(escape(combi_query), src_q)]
+				[idi for idi,metad in index.items()
+					if search(escape(combi_query), metad['_q'])]
 				)
 			n_needed = my_quota + n_already_retrieved
 		
@@ -246,25 +246,55 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 			my_query = combi_query
 		
 		# ----------------- api.search(...) ----------------------------
-		json_hits = api.search(my_query, limit=n_needed, outfields='id')
+		json_hits = api.search(my_query, limit=n_needed, 
+		outfields=('id','author.name','title','publicationDate','corpusName'))
 		# --------------------------------------------------------------
+		
+		# NB: 'id' field would be enough for sampling itself, but we get
+		#     more metadatas to be able to provide an info table or to
+		#     create a human-readable filename
+		
 		# £TODO 1
 		# remplacer api.search() par une future fonction random_search
 		# cf. elasticsearch guide: "random scoring" (=> puis supprimer
 		# l'option B avec n_needed)
 		
-		my_ids = [hit['id'] for hit in json_hits]
-		
-		my_n_answers = len(my_ids)
+		my_n_answers = len(json_hits)
 		
 		my_n_got = 0
 		
+		# for debug
+		# print("HITS:",json_hits, file=stderr)
+		
 		# check unicity
-		for idi in my_ids:
+		for hit in json_hits:
+			idi = hit['id']
 			if idi not in index and idi not in FORBIDDEN_IDS:
 				my_n_got += 1
-				index[idi] = combi_query
-			
+				# main index
+				index[idi] = {
+					'_q': combi_query,
+					'co': hit['corpusName'][0:3]  # trigramme eg 'els'
+					}
+				# store info
+				# £TODO: check conventions for null values
+				if 'publicationDate' in hit and len(hit['publicationDate']):
+					index[idi]['yr'] = hit['publicationDate'][0:4]
+				else:
+					index[idi]['yr'] = 'XXXX'
+				
+				if 'title' in hit and len(hit['title']):
+					index[idi]['ti'] = hit['title']
+				else:
+					index[idi]['ti'] = "UNTITLED"
+				
+				if 'author' in hit and len(hit['author'][0]['name']):
+					first_auth = hit['author'][0]['name']
+					his_lastname = first_auth.split()[-1]
+					index[idi]['au'] = his_lastname
+				else:
+					index[idi]['au'] = "UNKNOWN"
+				
 			# recheck limit: needed as long as n_needed != my_quota 
 			# (should disappear as consequence of removing option B)
 			if my_n_got == my_quota:
@@ -283,8 +313,8 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 			my_s = "" if my_n_got == 1 else "s"
 			LOG.append("LESS: catégorie '%s' sous-représentée pour contrainte \"%s\" : %i doc%s obtenu%s sur %i quota" % (combi_query, constraint_query, my_n_got, my_s, my_s, my_quota))
 			
-		#~ print("==========INDEX ITEMS===========")
-		#~ print([kval for kval in index.items()])
+		# print("==========INDEX ITEMS===========")
+		# print([kval for kval in index.items()])
 		
 	return(index)
 
@@ -379,7 +409,7 @@ def my_parse_args():
 		        ex: sampler.py -o tab -n 20 > my_tab.tsv
 		
 		  docs: downloads all docs (tei + pdf) in a new
-		        directory named 'new_sample_docs'
+		        directory named 'echantillon_<timestamp>'
 		        ex: sampler.py -o docs -n 20""",
 		choices=['ids', 'tab', 'docs'],
 		type=str,
@@ -425,6 +455,26 @@ def my_parse_args():
 	
 	return(args)
 
+
+# todo mettre à part dans une lib
+def std_filename(istex_id, info_dict):
+	'''
+	Creates a human readable file name from work records.
+	Expected dict keys are 'co' (corpus),'au','yr','ti'
+	'''
+	ok = {}
+	for k in info_dict:
+		ok[k] = safe_str(info_dict[k])
+	
+	# shorten title
+	ok['ti'] = ok['ti'][0:30]
+	
+	return '-'.join([istex_id, ok['co'], ok['au'], ok['yr'], ok['ti']])
+
+
+# todo mettre à part dans une lib
+def safe_str(a_string=""):
+	return sub("[^A-Za-z0-9àäçéèïîøöôüùαβγ]+","_",a_string)
 
 if __name__ == "__main__":
 	
@@ -548,13 +598,19 @@ if __name__ == "__main__":
 	
 	# ***(ids)***
 	if args.out_type == 'ids':
-		for did, info in sorted(got_ids_idx.items(), key=lambda x: x[1]):
+		for did, info in sorted(got_ids_idx.items(), key=lambda x: x[1]['_q']):
 			print ("%s" % did)
+	
 	# ***(tab)***
 	elif args.out_type == 'tab':
-		# ID    <TAB>     source_query_combo
-		for did, info in sorted(got_ids_idx.items(), key=lambda x: x[1]):
-			print ("%s\t%s" % (did, info))
+		# header line
+		print("\t".join(['istex_id', 'corpus', 'pub_year',
+						 'author_1', 'title', 'src_query']))
+		# contents
+		for did, info in sorted(got_ids_idx.items(), key=lambda x: x[1]['_q']):
+			print ("\t".join([did, info['co'], info['yr'],
+							  info['au'],info['ti'],info['_q']]))
+	
 	# ***(docs)***
 	elif args.out_type == 'docs':
 		my_dir = path.join(getcwd(),my_name)
@@ -565,7 +621,8 @@ if __name__ == "__main__":
 		# test si authentification nécessaire
 		need_auth = False
 		try:
-			api.write_fulltexts(ids[0], tgt_dir=my_dir)
+			bname = std_filename(ids[0], got_ids_idx[ids[0]])
+			api.write_fulltexts(ids[0], tgt_dir=my_dir, base_name=bname)
 		except api.AuthWarning as e:
 			print("NB: le système veut une authentification SVP",
 					file=stderr)
@@ -576,20 +633,26 @@ if __name__ == "__main__":
 			my_login = input(' => Nom d\'utilisateur "ia": ')
 			my_passw = getpass(prompt=' => Mot de passe: ')
 			for i, did in enumerate(ids):
+				my_bname = std_filename(did, got_ids_idx[did])
 				print("retrieving PDF and TEI-XML for doc no " + str(i+1))
 				try:
 					api.write_fulltexts(did,
 										tgt_dir=my_dir,
 										login=my_login,
-										passw=my_passw)
+										passw=my_passw,
+										base_name = my_bname)
 				except api.AuthWarning as e:
 					print("authentification refusée :(")
 					my_login = input(' => Nom d\'utilisateur "ia": ')
 					my_passw = getpass(prompt=' => Mot de passe: ')
+		
 		else:
 			for i, did in enumerate(ids[1:]):
+				my_bname = std_filename(did, got_ids_idx[did])
 				print("retrieving PDF and TEI-XML for doc no " + str(i+1))
-				api.write_fulltexts(did, tgt_dir=my_dir)
+				api.write_fulltexts(did,
+									tgt_dir=my_dir,
+									base_name=my_bname)
 		
 		LOG.append("SAVE: saved docs in %s/" % my_dir)
 	

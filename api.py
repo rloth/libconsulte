@@ -127,7 +127,7 @@ def search(q, api_conf=DEFAULT_API_CONF, limit=None, outfields=('title','host.is
 	url_encoded_lucene_query = quote(q)
 	
 	# construction de l'URL
-	base_url = 'https:' + '//' + api_conf['host']  + '/' + api_conf['route'] + '/' + '?' + 'q=' + url_encoded_lucene_query + '&output=' + "fulltext,title"
+	base_url = 'https:' + '//' + api_conf['host']  + '/' + api_conf['route'] + '/' + '?' + 'q=' + url_encoded_lucene_query + '&output=' + ",".join(outfields)
 	
 	n_docs = count(q)
 	# print('%s documents trouvés' % n_docs)
@@ -180,7 +180,7 @@ def count(q, api_conf=DEFAULT_API_CONF):
 	return int(json_values['total'])
 	
 	
-def write_fulltexts(api_did, api_conf=DEFAULT_API_CONF, tgt_dir='.', login=None, passw=None):
+def write_fulltexts(api_did, api_conf=DEFAULT_API_CONF, tgt_dir='.', login=None, passw=None, base_name=None):
 	"""
 	Get TEI, PDF and ZIP fulltexts for a given ISTEX document.
 	"""
@@ -190,10 +190,14 @@ def write_fulltexts(api_did, api_conf=DEFAULT_API_CONF, tgt_dir='.', login=None,
 	# available_filetypes = ['pdf', 'tei', 'zip']
 	available_filetypes = ['pdf', 'tei']
 	
+	# default name is just the ID
+	if not base_name:
+		base_name = api_did
+	
 	for filetype in available_filetypes:
 		response = _sget(fulltext_url + filetype, 
 							mon_user=login, mon_pass=passw)
-		tgt_path = path.join(tgt_dir, api_did+'.'+filetype)
+		tgt_path = path.join(tgt_dir, base_name+'.'+filetype)
 		fh = open(tgt_path, 'wb')
 		fh.write(response)
 		fh.close()
