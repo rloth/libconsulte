@@ -11,17 +11,23 @@ __status__    = "Dev"
 
 from json            import loads
 from urllib.parse    import quote
-from urllib.request  import urlopen
+from urllib.request  import urlopen, HTTPBasicAuthHandler, build_opener, install_opener
 from urllib.error    import URLError
 
-from sys import stderr
 from os import path
+from sys import stderr
 
 # globals
 DEFAULT_API_CONF = {
 	'host'  : 'api.istex.fr',
 	'route' : 'document'
 }
+
+class AuthWarning(Exception):
+	def __init__(self, msg):
+		self.msg = msg
+	def __str__(self):
+		return repr(self.msg)
 
 # private function
 # ----------------
@@ -51,27 +57,41 @@ def _get(my_url):
 	json_values = loads(result_str)
 	return json_values
 
-def _xget(my_url):
-	"""Get remote url *that contains a file* and pass it"""
+def _sget(my_url, mon_user=None, mon_pass=None):
+	"""
+	Get remote auth-protected url *that contains a file* and pass it
+	For instance when retrieving fulltext from ISTEX API
+	"""
 	
+	# print ("REGARD:", mon_user, mon_pass)
+	
+	auth_handler = HTTPBasicAuthHandler()
+	auth_handler.add_password(
+			realm  = 'Authentification sur api.istex.fr',
+			uri    = 'https://api.istex.fr',
+			user   = mon_user,
+			passwd = mon_pass)
+	install_opener(build_opener(auth_handler))
+	
+	# contact
 	try:
 		remote_file = urlopen(my_url)
 		
 	except URLError as url_e:
-		# signale 401 Unauthorized ou 404 etc
-		print("api: HTTP ERR no %i (%s) sur '%s'" % 
-			(url_e.getcode(),url_e.msg, my_url), file=stderr)
-		# Plus d'infos: serveur, Content-Type, WWW-Authenticate..
-		# print ("ERR.info(): \n %s" % url_e.info(), file=stderr)
-		exit(1)
-	try:
-		response = remote_file.read()
-	except httplib.IncompleteRead as ir_e:
-		response = ir_e.partial
-		print("WARN: IncompleteRead '%s' but 'partial' content has page" 
-				% my_url, file=stderr)
+		if url_e.getcode() == 401:
+			raise AuthWarning("need_auth")
+		else:
+			# 404 à gérer sans quitter pour les fulltexts
+			print("api: HTTP ERR no %i (%s) sur '%s'" % 
+				(url_e.getcode(),url_e.msg, my_url), file=stderr)
+			print ("ERR.info(): \n %s" % url_e.info(), file=stderr)
+			# exit(1)
+	
+	# lecture
+	contents = remote_file.read()
 	remote_file.close()
-	return response
+	
+	return contents
 
 
 # public functions
@@ -160,15 +180,19 @@ def count(q, api_conf=DEFAULT_API_CONF):
 	return int(json_values['total'])
 	
 	
-def write_fulltexts(api_did, api_conf=DEFAULT_API_CONF, tgt_dir='.'):
+def write_fulltexts(api_did, api_conf=DEFAULT_API_CONF, tgt_dir='.', login=None, passw=None):
 	"""
 	Get TEI, PDF and ZIP fulltexts for a given ISTEX document.
 	"""
 	# préparation requête
 	fulltext_url = 'https:' + '//' + api_conf['host']  + '/' + api_conf['route'] + '/' + api_did + '/fulltext/'
 	
-	for filetype in ['pdf', 'tei', 'zip']:
-		response = _xget(fulltext_url + filetype)
+	# available_filetypes = ['pdf', 'tei', 'zip']
+	available_filetypes = ['pdf', 'tei']
+	
+	for filetype in available_filetypes:
+		response = _sget(fulltext_url + filetype, 
+							mon_user=login, mon_pass=passw)
 		tgt_path = path.join(tgt_dir, api_did+'.'+filetype)
 		fh = open(tgt_path, 'wb')
 		fh.write(response)
@@ -217,4 +241,5 @@ if __name__ == '__main__':
 	
 	print(search(q, limit=10))
 	
+	# test de récupération PDF (avec Auth si nécessaire) puis écriture
 	write_fulltexts('5286C468C888B8857D1F8971080594B788D54013')

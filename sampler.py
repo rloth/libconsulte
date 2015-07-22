@@ -31,22 +31,24 @@ __status__    = "Dev"
 # imports standard
 from sys       import argv, stderr
 from argparse  import ArgumentParser, RawTextHelpFormatter
-
+from getpass   import getpass
 from re        import sub, search, escape
 from random    import shuffle
 from itertools import product
 from datetime  import datetime
 from os        import path, mkdir, getcwd
 
+
 # imports locaux
 try:
 	import api
 	import field_value_lists
+	# =<< target_language_values, target_scat_values, 
+	#     target_genre_values, target_date_ranges
 except ImportError:
 	print("""ERR: Les modules 'api.py' et 'field_value_lists.py' doivent être
      placés à côté du script sampler.py pour sa bonne execution...""", file=stderr)
 	exit(1)
-# =<< target_language_values, target_scat_values, target_genre_values, target_date_ranges
 
 
 # Globals
@@ -557,10 +559,38 @@ if __name__ == "__main__":
 	elif args.out_type == 'docs':
 		my_dir = path.join(getcwd(),my_name)
 		mkdir(my_dir)
-		for i, did in enumerate(got_ids_idx.keys()):
-			print("Retrieving PDF, ZIP and XML for doc no %i" % i)
-			api.write_fulltexts(did, tgt_dir=my_dir)
-			
+		
+		ids = list(got_ids_idx.keys())
+		
+		# test si authentification nécessaire
+		need_auth = False
+		try:
+			api.write_fulltexts(ids[0], tgt_dir=my_dir)
+		except api.AuthWarning as e:
+			print("NB: le système veut une authentification SVP",
+					file=stderr)
+			need_auth = True
+		
+		# récupération avec ou sans authentification
+		if need_auth:
+			my_login = input(' => Nom d\'utilisateur "ia": ')
+			my_passw = getpass(prompt=' => Mot de passe: ')
+			for i, did in enumerate(ids):
+				print("retrieving PDF and TEI-XML for doc no " + str(i+1))
+				try:
+					api.write_fulltexts(did,
+										tgt_dir=my_dir,
+										login=my_login,
+										passw=my_passw)
+				except api.AuthWarning as e:
+					print("authentification refusée :(")
+					my_login = input(' => Nom d\'utilisateur "ia": ')
+					my_passw = getpass(prompt=' => Mot de passe: ')
+		else:
+			for i, did in enumerate(ids[1:]):
+				print("retrieving PDF and TEI-XML for doc no " + str(i+1))
+				api.write_fulltexts(did, tgt_dir=my_dir)
+		
 		LOG.append("SAVE: saved docs in %s/" % my_dir)
 	
 	# warnings logging
