@@ -38,6 +38,8 @@ from itertools import product
 from datetime  import datetime
 from os        import path, mkdir, getcwd
 
+from json          import dumps                 # pour option tree
+from collections   import defaultdict           # idem
 
 # imports locaux
 try:
@@ -319,6 +321,62 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 	return(index)
 
 
+def index_to_jsontree(my_index):
+	'''
+	Converts an info hash to a recursive count hash then to a jsontree
+	
+	/!\ specific to 2-level infos with 'co' and 'yr' keys
+	
+	£TODO make more generic and put it in a lib ?
+	'''
+	# hierarchical counts structure to carry over "info" observations
+	# £perhaps could be generated while sampling ?
+	sizes = defaultdict(lambda: defaultdict(int))
+	
+	# the first limit is always implicitly the year "-Inf" is is ignored
+	date_limits = [yr[0] for yr in field_value_lists.DATE[1:]]
+	
+	for did, info in my_index.items():
+		print(info)
+		
+		# nonterminal key1: corpusName 'co'
+		val_corpus = info['co']
+		annee = info['yr']
+		val_date = ""
+		
+		# date bins
+		prev = "*"
+		n_lims = len(date_limits)
+		for i,lim in enumerate(date_limits):
+			if i < n_lims - 1:
+				if int(annee) < lim:
+					val_date = prev + "-" + str(lim-1)
+					break
+			else:
+				val_date = str(lim) + "-*"
+			prev = str(lim)
+		
+		# count
+		sizes[val_corpus][val_date] += 1
+	
+	# step 2: convert sizecounts to json-like structure (ex: flare.json)
+	jsonmap = []
+	
+	# £todo do this recursively for (nestedlevel > 2) support
+	for k in sizes:
+		submap = []
+		for child in sizes[k]:
+			new_json_leaf = {'name':child, 'size':sizes[k][child]}
+			submap.append(new_json_leaf)
+		
+		new_json_nonterm = {'name':k, 'children':submap}
+		jsonmap.append(new_json_nonterm)
+	
+	print(dumps(jsonmap, indent=True))
+	jsontree = {'name': 'ech_res', 'children': jsonmap}
+	return jsontree
+
+
 class UnindentHelp(RawTextHelpFormatter):
 	# indents help args, 
 	# doesn't do anything to 'usage' or 'epilog' descriptions
@@ -336,7 +394,7 @@ def my_parse_args():
 	--------------------------------------------------------
 	 A sampler to get a representative subset of ISTEX API.
 	--------------------------------------------------------""",
-		usage="\n------\n  sampler.py -n 10000 [-c luceneField1 luceneField2 ...] [-q 'lucene query']",
+		usage="\n------\n  sampler.py -n 10000 [--with 'lucene query'] [--crit luceneField1 luceneField2 ...]",
 		epilog="""--------------
 /!\\ known bug: until API provides random ranking function, we are going
                to create *identical* samples for 2 runs with same params
@@ -416,6 +474,12 @@ def my_parse_args():
 		default='ids',
 		required=False,
 		action='store')
+	
+	parser.add_argument('-t', '--tree',
+		help="also write complementary quota.tree.json output",
+		default=False,
+		required=False,
+		action='store_true')
 	
 	parser.add_argument('-v', '--verbose',
 		help="verbose switch",
@@ -655,6 +719,14 @@ if __name__ == "__main__":
 									base_name=my_bname)
 		
 		LOG.append("SAVE: saved docs in %s/" % my_dir)
+	
+	# optional json treemap output
+	if args.tree:
+		jstree index_to_jsontree(got_ids_idx)
+		jsonfile = open(my_name+'.tree.json', 'w')
+		# json.dumps()
+		print(dumps(jstree, indent=True), file=jsonfile)
+		jsonfile.close()
 	
 	# warnings logging
 	logfile = open(my_name+'.log', 'w')
