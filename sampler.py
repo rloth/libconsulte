@@ -124,11 +124,14 @@ def facet_list_values(field_name):
 # Can be called several times with simplified criteria if impossible to
 # get all sample_size in the 1st run (previous runs => index=got_id_idx)
 
-def sample(size, crit_fields, constraint_query=None, index={}):
-	global args
+def sample(size, crit_fields, constraint_query=None, index=None, verbose=False):
 	global LOG
 	global LISSAGE
 	global FORBIDDEN_IDS
+	
+	# allows to set default to None instead of tricky-scope mutable {}
+	if not index:
+		index = {}
 	
 	# (1) PARTITIONING THE SEARCH SPACE IN POSSIBLE OUTCOMES -----------
 	print("Sending count queries for criteria pools...", file=stderr)
@@ -174,7 +177,7 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 		# counting request
 		freq = api.count(query)
 		
-		if args.verbose:
+		if verbose:
 			print("pool:'% -30s': % 8i" %(query,freq),file=stderr)
 		
 		# storing and agregation
@@ -184,7 +187,7 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 	# number of documents sending answers (hence normalizing constant N)
 	N_workdocs = api.count(" AND ".join([k+":*" for k in crit_fields]))
 	
-	if args.verbose:
+	if verbose:
 		print("--------- pool totals -----------", file=stderr)
 		print("#answered hits :   % 12s" % N_reponses, file=stderr)
 		print("#workdocs (N) :    % 12s" % N_workdocs, file=stderr)
@@ -194,7 +197,6 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 		print("---------------------------------", file=stderr)
 	
 	# (3) quota computation and availability checking ------------------
-	#     
 	# quota computation
 	rel_freqs = {}
 	for combi_query in abs_freqs:
@@ -210,7 +212,7 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 	
 	# fyi 3 lines to check if rounding surprise
 	rndd_size = sum([quota for combi_query, quota in rel_freqs.items()])
-	if args.verbose:
+	if verbose:
 		print("Méthode des quotas taille avec arrondis:     % 9s" % rndd_size,
 		      file=stderr)
 	
@@ -221,11 +223,13 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 	
 	flag_has_previous_index = bool(index)
 	
+	print("Retrieving new sample chunks per pool quota...", file=stderr)
+	
 	for combi_query in sorted(rel_freqs.keys()):
 		
 		# how many hits do we need?
 		my_quota = rel_freqs[combi_query]
-		if not flag_has_previous_index:
+		if not flag_has_previous_index and not FORBIDDEN_IDS:
 			# option A: direct quota allocation to search limit
 			n_needed = my_quota
 		else:
@@ -234,11 +238,17 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 			#
 			# /!\ wouldn't be necessary at all if we had none or rare
 			#     duplicates, like with random result ranking)
+			
+			# supplément 1: items to skip
 			n_already_retrieved = len(
 				# lookup retrieved
 				[idi for idi,metad in index.items()
 					if search(escape(combi_query), metad['_q'])]
 				)
+			
+			# supplément 2: prorata de FORBIDDEN_IDS
+			suppl = round(len(FORBIDDEN_IDS) * my_quota / size)
+			n_already_retrieved += suppl
 			n_needed = my_quota + n_already_retrieved
 		
 		# adding constraints
@@ -268,9 +278,12 @@ def sample(size, crit_fields, constraint_query=None, index={}):
 		# for debug
 		# print("HITS:",json_hits, file=stderr)
 		
+		
+		
 		# check unicity
 		for hit in json_hits:
 			idi = hit['id']
+			
 			if idi not in index and idi not in FORBIDDEN_IDS:
 				my_n_got += 1
 				# main index
@@ -502,16 +515,17 @@ def my_parse_args():
 		elif field_name == "genre":
 			print("/!\ Experimental field: 'genre' (inventory not yet harmonized)", file=stderr)
 
-	# do we need to get an ID list ?
+	# do we need to forbid an ID list ?
 	if args.exclude_list_path:
 		fh = open(args.exclude_list_path, 'r')
 		i = 0
 		for line in fh:
 			i += 1
 			if search("^[0-9A-F]{40}$", line):
-				FORBIDDEN_IDS.append(line)
+				FORBIDDEN_IDS.append(line.rstrip())
 			else:
 				raise TypeError("line %i is not a valid ISTEX ID" % i)
+	
 	
 	if not flag_ok:
 		exit(1)
@@ -561,7 +575,8 @@ if __name__ == "__main__":
 	got_ids_idx = sample(
 						args.sample_size,
 						args.criteria_list,
-						constraint_query = args.with_constraint_query
+						constraint_query = args.with_constraint_query,
+						verbose = args.verbose
 						)
 	
 	# how much is there?
@@ -625,7 +640,8 @@ if __name__ == "__main__":
 						remainder,
 						new_criteria,
 						constraint_query = args.with_constraint_query,
-						index = previous_ids
+						index = previous_ids,
+						verbose = args.verbose
 						)
 			
 			# recount
@@ -722,7 +738,7 @@ if __name__ == "__main__":
 	
 	# optional json treemap output
 	if args.tree:
-		jstree index_to_jsontree(got_ids_idx)
+		jstree = index_to_jsontree(got_ids_idx)
 		jsonfile = open(my_name+'.tree.json', 'w')
 		# json.dumps()
 		print(dumps(jstree, indent=True), file=jsonfile)

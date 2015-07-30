@@ -41,8 +41,8 @@ def _get(my_url):
 		
 	except URLError as url_e:
 		# signale 401 Unauthorized ou 404 etc
-		print("api: HTTP ERR no %i (%s) sur '%s'" % 
-			(url_e.getcode(),url_e.msg, my_url), file=stderr)
+		print("api: HTTP ERR (%s) sur '%s'" % 
+			(url_e.reason, my_url), file=stderr)
 		# Plus d'infos: serveur, Content-Type, WWW-Authenticate..
 		# print ("ERR.info(): \n %s" % url_e.info(), file=stderr)
 		exit(1)
