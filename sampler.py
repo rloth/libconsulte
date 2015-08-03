@@ -38,17 +38,17 @@ from itertools import product
 from datetime  import datetime
 from os        import path, mkdir, getcwd
 
-from json          import dumps                 # pour option tree
-from collections   import defaultdict           # idem
+
 
 # imports locaux
 try:
+	import corpus
 	import api
 	import field_value_lists
 	# =<< target_language_values, target_scat_values, 
 	#     target_genre_values, target_date_ranges
 except ImportError:
-	print("""ERR: Les modules 'api.py' et 'field_value_lists.py' doivent être
+	print("""ERR: Les modules 'corpus.py', 'api.py' et 'field_value_lists.py' doivent être
      placés à côté du script sampler.py pour sa bonne execution...""", file=stderr)
 	exit(1)
 
@@ -124,14 +124,16 @@ def facet_list_values(field_name):
 # Can be called several times with simplified criteria if impossible to
 # get all sample_size in the 1st run (previous runs => index=got_id_idx)
 
-def sample(size, crit_fields, constraint_query=None, index=None, verbose=False):
+def sample(size, crit_fields, constraint_query=None, my_corpus=None, verbose=False):
 	global LOG
 	global LISSAGE
 	global FORBIDDEN_IDS
 	
-	# allows to set default to None instead of tricky-scope mutable {}
-	if not index:
-		index = {}
+	# allows to set default to None instead of tricky-scope mutable
+	flag_previous_corpus = True
+	if not my_corpus:
+		flag_previous_corpus = False
+		my_corpus = corpus.Corpus("sampler_run")
 	
 	# (1) PARTITIONING THE SEARCH SPACE IN POSSIBLE OUTCOMES -----------
 	print("Sending count queries for criteria pools...", file=stderr)
@@ -221,15 +223,13 @@ def sample(size, crit_fields, constraint_query=None, index=None, verbose=False):
 	# got_ids_idx clés = ensemble d'ids , 
 	#             valeurs = critères ayant mené au choix
 	
-	flag_has_previous_index = bool(index)
-	
 	print("Retrieving new sample chunks per pool quota...", file=stderr)
 	
 	for combi_query in sorted(rel_freqs.keys()):
 		
 		# how many hits do we need?
 		my_quota = rel_freqs[combi_query]
-		if not flag_has_previous_index and not FORBIDDEN_IDS:
+		if not flag_previous_corpus and not FORBIDDEN_IDS:
 			# option A: direct quota allocation to search limit
 			n_needed = my_quota
 		else:
@@ -242,7 +242,7 @@ def sample(size, crit_fields, constraint_query=None, index=None, verbose=False):
 			# supplément 1: items to skip
 			n_already_retrieved = len(
 				# lookup retrieved
-				[idi for idi,metad in index.items()
+				[idi for idi,metad in my_corpus.items()
 					if search(escape(combi_query), metad['_q'])]
 				)
 			
@@ -258,8 +258,9 @@ def sample(size, crit_fields, constraint_query=None, index=None, verbose=False):
 			my_query = combi_query
 		
 		# ----------------- api.search(...) ----------------------------
-		json_hits = api.search(my_query, limit=n_needed, 
-		outfields=('id','author.name','title','publicationDate','corpusName'))
+		json_hits = api.search(my_query, 
+		                       limit=n_needed,
+		                       outfields=corpus.STD_MAP.keys())
 		# --------------------------------------------------------------
 		
 		# NB: 'id' field would be enough for sampling itself, but we get
@@ -279,37 +280,19 @@ def sample(size, crit_fields, constraint_query=None, index=None, verbose=False):
 		# print("HITS:",json_hits, file=stderr)
 		
 		
-		
 		# check unicity
 		for hit in json_hits:
 			idi = hit['id']
 			
-			if idi not in index and idi not in FORBIDDEN_IDS:
+			if idi not in my_corpus and idi not in FORBIDDEN_IDS:
 				my_n_got += 1
-				# main index
-				index[idi] = {
-					'_q': combi_query,
-					'co': hit['corpusName'][0:3]  # trigramme eg 'els'
-					}
-				# store info
-				# £TODO: check conventions for null values
-				if 'publicationDate' in hit and len(hit['publicationDate']):
-					index[idi]['yr'] = hit['publicationDate'][0:4]
-				else:
-					index[idi]['yr'] = 'XXXX'
 				
-				if 'title' in hit and len(hit['title']):
-					index[idi]['ti'] = hit['title']
-				else:
-					index[idi]['ti'] = "UNTITLED"
+				# write standard info fields to main corpus
+				my_corpus[idi] = corpus.Docinfo(hit)
 				
-				if 'author' in hit and len(hit['author'][0]['name']):
-					first_auth = hit['author'][0]['name']
-					his_lastname = first_auth.split()[-1]
-					index[idi]['au'] = his_lastname
-				else:
-					index[idi]['au'] = "UNKNOWN"
-				
+				# add our custom info fields to standard ones
+				my_corpus[idi]['_q'] = combi_query
+			
 			# recheck limit: needed as long as n_needed != my_quota 
 			# (should disappear as consequence of removing option B)
 			if my_n_got == my_quota:
@@ -328,66 +311,10 @@ def sample(size, crit_fields, constraint_query=None, index=None, verbose=False):
 			my_s = "" if my_n_got == 1 else "s"
 			LOG.append("LESS: catégorie '%s' sous-représentée pour contrainte \"%s\" : %i doc%s obtenu%s sur %i quota" % (combi_query, constraint_query, my_n_got, my_s, my_s, my_quota))
 			
-		# print("==========INDEX ITEMS===========")
-		# print([kval for kval in index.items()])
+		# print("==========my_corpus ITEMS===========")
+		# print([kval for kval in my_corpus.items()])
 		
-	return(index)
-
-
-def index_to_jsontree(my_index):
-	'''
-	Converts an info hash to a recursive count hash then to a jsontree
-	
-	/!\ specific to 2-level infos with 'co' and 'yr' keys
-	
-	£TODO make more generic and put it in a lib ?
-	'''
-	# hierarchical counts structure to carry over "info" observations
-	# £perhaps could be generated while sampling ?
-	sizes = defaultdict(lambda: defaultdict(int))
-	
-	# the first limit is always implicitly the year "-Inf" is is ignored
-	date_limits = [yr[0] for yr in field_value_lists.DATE[1:]]
-	
-	for did, info in my_index.items():
-		print(info)
-		
-		# nonterminal key1: corpusName 'co'
-		val_corpus = info['co']
-		annee = info['yr']
-		val_date = ""
-		
-		# date bins
-		prev = "*"
-		n_lims = len(date_limits)
-		for i,lim in enumerate(date_limits):
-			if i < n_lims - 1:
-				if int(annee) < lim:
-					val_date = prev + "-" + str(lim-1)
-					break
-			else:
-				val_date = str(lim) + "-*"
-			prev = str(lim)
-		
-		# count
-		sizes[val_corpus][val_date] += 1
-	
-	# step 2: convert sizecounts to json-like structure (ex: flare.json)
-	jsonmap = []
-	
-	# £todo do this recursively for (nestedlevel > 2) support
-	for k in sizes:
-		submap = []
-		for child in sizes[k]:
-			new_json_leaf = {'name':child, 'size':sizes[k][child]}
-			submap.append(new_json_leaf)
-		
-		new_json_nonterm = {'name':k, 'children':submap}
-		jsonmap.append(new_json_nonterm)
-	
-	print(dumps(jsonmap, indent=True))
-	jsontree = {'name': 'ech_res', 'children': jsonmap}
-	return jsontree
+	return(my_corpus)
 
 
 class UnindentHelp(RawTextHelpFormatter):
@@ -533,26 +460,7 @@ def my_parse_args():
 	
 	return(args)
 
-
-# todo mettre à part dans une lib
-def std_filename(istex_id, info_dict):
-	'''
-	Creates a human readable file name from work records.
-	Expected dict keys are 'co' (corpus),'au','yr','ti'
-	'''
-	ok = {}
-	for k in info_dict:
-		ok[k] = safe_str(info_dict[k])
-	
-	# shorten title
-	ok['ti'] = ok['ti'][0:30]
-	
-	return '-'.join([istex_id, ok['co'], ok['au'], ok['yr'], ok['ti']])
-
-
-# todo mettre à part dans une lib
-def safe_str(a_string=""):
-	return sub("[^A-Za-z0-9àäçéèïîøöôüùαβγ]+","_",a_string)
+########################################################################
 
 if __name__ == "__main__":
 	
@@ -640,7 +548,7 @@ if __name__ == "__main__":
 						remainder,
 						new_criteria,
 						constraint_query = args.with_constraint_query,
-						index = previous_ids,
+						my_corpus = previous_ids,
 						verbose = args.verbose
 						)
 			
@@ -683,13 +591,9 @@ if __name__ == "__main__":
 	
 	# ***(tab)***
 	elif args.out_type == 'tab':
-		# header line
-		print("\t".join(['istex_id', 'corpus', 'pub_year',
-						 'author_1', 'title', 'src_query']))
 		# contents
 		for did, info in sorted(got_ids_idx.items(), key=lambda x: x[1]['_q']):
-			print ("\t".join([did, info['co'], info['yr'],
-							  info['au'],info['ti'],info['_q']]))
+			print (info.to_tab()+"\t"+info['_q'])
 	
 	# ***(docs)***
 	elif args.out_type == 'docs':
@@ -701,7 +605,7 @@ if __name__ == "__main__":
 		# test si authentification nécessaire
 		need_auth = False
 		try:
-			bname = std_filename(ids[0], got_ids_idx[ids[0]])
+			bname = got_ids_idx[ids[0]].to_filename()
 			api.write_fulltexts(ids[0], tgt_dir=my_dir, base_name=bname)
 		except api.AuthWarning as e:
 			print("NB: le système veut une authentification SVP",
@@ -713,7 +617,7 @@ if __name__ == "__main__":
 			my_login = input(' => Nom d\'utilisateur "ia": ')
 			my_passw = getpass(prompt=' => Mot de passe: ')
 			for i, did in enumerate(ids):
-				my_bname = std_filename(did, got_ids_idx[did])
+				my_bname = got_ids_idx[did].to_filename()
 				print("retrieving PDF and TEI-XML for doc no " + str(i+1))
 				try:
 					api.write_fulltexts(did,
@@ -728,7 +632,7 @@ if __name__ == "__main__":
 		
 		else:
 			for i, did in enumerate(ids[1:]):
-				my_bname = std_filename(did, got_ids_idx[did])
+				my_bname = got_ids_idx[did].to_filename()
 				print("retrieving PDF and TEI-XML for doc no " + str(i+1))
 				api.write_fulltexts(did,
 									tgt_dir=my_dir,

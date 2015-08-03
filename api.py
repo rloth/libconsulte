@@ -187,8 +187,8 @@ def write_fulltexts(api_did, api_conf=DEFAULT_API_CONF, tgt_dir='.', login=None,
 	# préparation requête
 	fulltext_url = 'https:' + '//' + api_conf['host']  + '/' + api_conf['route'] + '/' + api_did + '/fulltext/'
 	
-	# available_filetypes = ['pdf', 'tei', 'zip']
-	available_filetypes = ['pdf', 'tei']
+	available_filetypes = ['pdf', 'tei', 'zip']
+	#~ available_filetypes = ['pdf', 'tei']
 	
 	# default name is just the ID
 	if not base_name:
