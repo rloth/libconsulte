@@ -20,47 +20,51 @@ Another independant "attribute:value" group will define a CONSTRAINT on the samp
 	Exemple *constraints*:
 		"qualityIndicators.refBibsNative:true"
 		"qualityIndicators.pdfCharCount:[500 TO *]"
+
+Assumes LC_ALL (aka sys.stdout.encoding) is 'UTF-8'
 """
 __author__    = "Romain Loth"
 __copyright__ = "Copyright 2014-5 INIST-CNRS (ISTEX project)"
 __license__   = "LGPL"
-__version__   = "0.2"
+__version__   = "0.3"
 __email__     = "romain.loth@inist.fr"
 __status__    = "Dev"
 
 # imports standard
 from sys       import argv, stderr
-from argparse  import ArgumentParser, RawTextHelpFormatter
 from getpass   import getpass
 from re        import sub, search, escape
 from random    import shuffle
 from itertools import product
 from datetime  import datetime
 from os        import path, mkdir, getcwd
-
+from json      import dump, load
+from argparse  import ArgumentParser, RawTextHelpFormatter
 
 
 # imports locaux
 try:
-	import corpus
 	import api
 	import field_value_lists
-	# =<< target_language_values, target_scat_values, 
+	# =<< target_language_values, target_scat_values,
 	#     target_genre_values, target_date_ranges
 except ImportError:
-	print("""ERR: Les modules 'corpus.py', 'api.py' et 'field_value_lists.py' doivent être
-     placés à côté du script sampler.py pour sa bonne execution...""", file=stderr)
+	print("""ERR: Les modules 'api.py' et 'field_value_lists.py' doivent être
+     placés à côté du script sampler.py ou dans un dossier du PYTHONPATH, pour sa bonne execution...""", file=stderr)
 	exit(1)
 
+# utile pour le cache
+HOME=path.dirname(path.realpath(__file__))
 
 # Globals
 # --------
 # limit on maximum runs before returning a potentially undersized sample
 MAX_RUNS = 5
 # paramètre de lissage +k à chaque quota (aka lissage de Laplace)
-LISSAGE = 0.1
+LISSAGE = 0.2
 # list of IDs to exclude from the sample result
 FORBIDDEN_IDS = []
+
 
 # fields allowed as criteria
 # (grouped according to the method we use for value listing)
@@ -85,255 +89,47 @@ RANGEFACET_FIELDS = [
 	'copyrightDate'
 	]
 
-# -------------------------
+# ----------------------------------------------------------------------
+# CONSTANT mapping standard fields
+# (key: API Name, val: local name <= the value is actually not used
+# 
+# the keys are used in the API queries
+# the vals are used in the 'tab' output mode as column names
+STD_MAP = {
+	'id'              : 'istex_id',  # 40 caractères [0-9A-F]
+	'doi'             : 'doi',
+	'corpusName'      : 'istex_lot', # que les trois premières lettres
+	'publicationDate' : 'pub_year',  # le premier match à /(1\d|20)\d\d/
+	'author.name'     : 'authors_',
+	'genre'           : 'genres_',   # avec recodage ?
+	'title'           : 'title',
+	'language'        : 'lang',      # avec recodage
+	'categories.wos'  : 'cats_',     # à étendre
+	'serie.issn'      : 'in_issn',   # en distri. compl. avec host.issn
+	'host.issn'       : 'in_issn',
+	#'volume'          : 'in_vol',   # todo
+	#'firstPage'       : 'in_fpg'    # todo
+	'qualityIndicators.pdfVersion' : 'pdfver',
+}
+
+# [+ colonnes calculées]
+# ----------------------
+#> src_query
+#X pages_3bins    # todo
+#X periode        # todo
 
 
-def facet_list_values(field_name):
-	
-	if field_name in TERMFACET_FIELDS_auto:
-		# deuxième partie si un "sous.type"
-		facet_name = sub('^[^.]+\.', '', field_name)
-		return(api.terms_facet(facet_name))
-	
-	elif field_name in TERMFACET_FIELDS_local:
-		# 3 listes ad hoc
-		if field_name == 'language':
-			return(field_value_lists.LANG)
-		elif field_name == 'genre':
-			return(field_value_lists.GENRE)
-		elif field_name == 'categories.wos':
-			return(field_value_lists.SCAT)
-		else:
-			raise UnimplementedError()
-	
-	elif field_name in RANGEFACET_FIELDS:
-		luc_ranges = []
-		for interval in field_value_lists.DATE:
-			a = str(interval[0])
-			b = str(interval[1])
-			luc_ranges.append('[' + a + ' TO ' + b + ']')
-		return(luc_ranges)
-	
-	else:
-		print ("The API doesn't allow 'terms' facet queries on field '%s'" % field_name, file=stderr)
-		exit(1)
-
-
-# sample() takes the same arguments as the module 
-
-# Can be called several times with simplified criteria if impossible to
-# get all sample_size in the 1st run (previous runs => index=got_id_idx)
-
-def sample(size, crit_fields, constraint_query=None, my_corpus=None, verbose=False):
-	global LOG
-	global LISSAGE
-	global FORBIDDEN_IDS
-	
-	# allows to set default to None instead of tricky-scope mutable
-	flag_previous_corpus = True
-	if not my_corpus:
-		flag_previous_corpus = False
-		my_corpus = corpus.Corpus("sampler_run")
-	
-	# (1) PARTITIONING THE SEARCH SPACE IN POSSIBLE OUTCOMES -----------
-	print("Sending count queries for criteria pools...", file=stderr)
-	## build all "field:values" pairs per criterion field
-	## (list of list of strings: future lucene query chunks)
-	all_possibilities = []
-	for my_criterion in crit_fields:
-		field_outcomes = facet_list_values(my_criterion)
-		all_possibilities.append(
-			[my_criterion + ':' + val for val in field_outcomes]
-		)
-	
-	## list combined possibilities (cartesian product of field_outcomes)
-	# we're directly unpacking *args into itertool.product()
-	# (and we get an iterator over tuples of combinable query chunks)
-	combinations = product(*all_possibilities)
-	
-	# example for -c corpusName, publicationDate
-	#	[
-	#	('corpusName:ecco', 'publicationDate:[* TO 1959]'),
-	#	('corpusName:ecco', 'publicationDate:[1960 TO 1999]'),
-	#	('corpusName:ecco', 'publicationDate:[2000 TO *]'),
-	#	('corpusName:elsevier', 'publicationDate:[* TO 1959]'),
-	#	('corpusName:elsevier', 'publicationDate:[1960 TO 1999]'),
-	#	('corpusName:elsevier', 'publicationDate:[2000 TO *]'),
-	#	(...)
-	#	]
-	
-	
-	# (2) getting total counts for each criteria -----------------------
-	#
-	# dict of counts for each combo
-	abs_freqs = {}
-	
-	# number of counted answers
-	# (/!\ one doc can give several hits if a criterion was multivalued)
-	N_reponses = 0
-	
-	# do the counting for each combo
-	for combi in sorted(combinations):
-		query = " AND ".join(combi)
-		
-		# counting request
-		freq = api.count(query)
-		
-		if verbose:
-			print("pool:'% -30s': % 8i" %(query,freq),file=stderr)
-		
-		# storing and agregation
-		N_reponses += freq
-		abs_freqs[query] = freq
-	
-	# number of documents sending answers (hence normalizing constant N)
-	N_workdocs = api.count(" AND ".join([k+":*" for k in crit_fields]))
-	
-	if verbose:
-		print("--------- pool totals -----------", file=stderr)
-		print("#answered hits :   % 12s" % N_reponses, file=stderr)
-		print("#workdocs (N) :    % 12s" % N_workdocs, file=stderr)
-		# for comparison: all_docs = N + api.count(q="NOT(criterion:*)")
-		doc_grand_total = api.count(q='*')
-		print("#all API docs fyi: % 12s" % doc_grand_total,file=stderr)
-		print("---------------------------------", file=stderr)
-	
-	# (3) quota computation and availability checking ------------------
-	# quota computation
-	rel_freqs = {}
-	for combi_query in abs_freqs:
-		
-		# CALCUL DU QUOTA INITIAL
-		# expérimenter avec N_reponses au dénominateur ?
-		quota = round(
-		  size * abs_freqs[combi_query] / N_workdocs + LISSAGE
-		)
-		
-		if quota != 0:
-			rel_freqs[combi_query] = quota
-	
-	# fyi 3 lines to check if rounding surprise
-	rndd_size = sum([quota for combi_query, quota in rel_freqs.items()])
-	if verbose:
-		print("Méthode des quotas taille avec arrondis:     % 9s" % rndd_size,
-		      file=stderr)
-	
-	# récup AVEC CONTRAINTE et vérif total dispo (obtenu + dédoublonné)
-	
-	# got_ids_idx clés = ensemble d'ids , 
-	#             valeurs = critères ayant mené au choix
-	
-	print("Retrieving new sample chunks per pool quota...", file=stderr)
-	
-	for combi_query in sorted(rel_freqs.keys()):
-		
-		# how many hits do we need?
-		my_quota = rel_freqs[combi_query]
-		if not flag_previous_corpus and not FORBIDDEN_IDS:
-			# option A: direct quota allocation to search limit
-			n_needed = my_quota
-		else:
-			# option B: limit larger than quota by retrieved amount
-			#           (provides deduplication margin if 2nd run)
-			#
-			# /!\ wouldn't be necessary at all if we had none or rare
-			#     duplicates, like with random result ranking)
-			
-			# supplément 1: items to skip
-			n_already_retrieved = len(
-				# lookup retrieved
-				[idi for idi,metad in my_corpus.items()
-					if search(escape(combi_query), metad['_q'])]
-				)
-			
-			# supplément 2: prorata de FORBIDDEN_IDS
-			suppl = round(len(FORBIDDEN_IDS) * my_quota / size)
-			n_already_retrieved += suppl
-			n_needed = my_quota + n_already_retrieved
-		
-		# adding constraints
-		if constraint_query:
-			my_query = '('+combi_query+') AND ('+constraint_query+')'
-		else:
-			my_query = combi_query
-		
-		# ----------------- api.search(...) ----------------------------
-		json_hits = api.search(my_query, 
-		                       limit=n_needed,
-		                       outfields=corpus.STD_MAP.keys())
-		# --------------------------------------------------------------
-		
-		# NB: 'id' field would be enough for sampling itself, but we get
-		#     more metadatas to be able to provide an info table or to
-		#     create a human-readable filename
-		
-		# £TODO 1
-		# remplacer api.search() par une future fonction random_search
-		# cf. elasticsearch guide: "random scoring" (=> puis supprimer
-		# l'option B avec n_needed)
-		
-		my_n_answers = len(json_hits)
-		
-		my_n_got = 0
-		
-		# for debug
-		# print("HITS:",json_hits, file=stderr)
-		
-		
-		# check unicity
-		for hit in json_hits:
-			idi = hit['id']
-			
-			if idi not in my_corpus and idi not in FORBIDDEN_IDS:
-				my_n_got += 1
-				
-				# write standard info fields to main corpus
-				my_corpus[idi] = corpus.Docinfo(hit)
-				
-				# add our custom info fields to standard ones
-				my_corpus[idi]['_q'] = combi_query
-			
-			# recheck limit: needed as long as n_needed != my_quota 
-			# (should disappear as consequence of removing option B)
-			if my_n_got == my_quota:
-				break
-		
-		print ("%-70s: %i(%i)/%i" % (
-					my_query[0:67]+"...", 
-					my_n_got, 
-					my_n_answers, 
-					my_quota
-				), file=stderr)
-		
-		# if within whole sample_size scope, we may observe unmeatable
-		# representativity criteria (marked 'LESS' and checked for RLAX)
-		if my_n_got < (.85 * (my_quota - LISSAGE)) and size == args.sample_size:
-			my_s = "" if my_n_got == 1 else "s"
-			LOG.append("LESS: catégorie '%s' sous-représentée pour contrainte \"%s\" : %i doc%s obtenu%s sur %i quota" % (combi_query, constraint_query, my_n_got, my_s, my_s, my_quota))
-			
-		# print("==========my_corpus ITEMS===========")
-		# print([kval for kval in my_corpus.items()])
-		
-	return(my_corpus)
-
-
-class UnindentHelp(RawTextHelpFormatter):
-	# indents help args, 
-	# doesn't do anything to 'usage' or 'epilog' descriptions
-	def _split_lines(self, text, width):
-		text = sub(r"\t", "", text)
-		text = sub(r"^\n+", "", text) + "\n\n"
-		return text.splitlines()
-
-def my_parse_args():
+# ----------------------------------------------------------------------
+def my_parse_args(arglist=None):
 	"""Preparation du hash des arguments ligne de commande pour main()"""
+	global FORBIDDEN_IDS
 	
 	parser = ArgumentParser(
 		formatter_class=UnindentHelp,
 		description="""
-	--------------------------------------------------------
-	 A sampler to get a representative subset of ISTEX API.
-	--------------------------------------------------------""",
+	------------------------------------------------------------
+	 A sampler to get a representative subset of ISTEX API docs
+	------------------------------------------------------------""",
 		usage="\n------\n  sampler.py -n 10000 [--with 'lucene query'] [--crit luceneField1 luceneField2 ...]",
 		epilog="""--------------
 /!\\ known bug: until API provides random ranking function, we are going
@@ -394,7 +190,7 @@ def my_parse_args():
 		required=False,
 		action='store')
 	
-	parser.add_argument('-o', '--out',
+	parser.add_argument('-o', '--outmode',
 		dest="out_type",
 		metavar="ids",
 		help="""
@@ -403,7 +199,7 @@ def my_parse_args():
 		        ex: sampler.py -o ids -n 20 > my_ids.txt
 		
 		  tab:  a more detailed tabular output
-		        (2 columns API ids + source query)
+		        (info columns starting with API ids + source query)
 		        ex: sampler.py -o tab -n 20 > my_tab.tsv
 		
 		  docs: downloads all docs (tei + pdf) in a new
@@ -415,11 +211,6 @@ def my_parse_args():
 		required=False,
 		action='store')
 	
-	parser.add_argument('-t', '--tree',
-		help="also write complementary quota.tree.json output",
-		default=False,
-		required=False,
-		action='store_true')
 	
 	parser.add_argument('-v', '--verbose',
 		help="verbose switch",
@@ -427,7 +218,7 @@ def my_parse_args():
 		required=False,
 		action='store_true')
 	
-	args = parser.parse_args(argv[1:])
+	args = parser.parse_args(arglist)
 	
 	# --- checks and pre-propagation --------
 	#  if known criteria ?
@@ -460,12 +251,354 @@ def my_parse_args():
 	
 	return(args)
 
+
+def facet_vals(field_name):
+	"""
+	For each field, returns the list of possible outcomes
+	
+	ex: > facet_vals('corpusName')
+	    > ['elsevier','wiley', 'nature', 'sage', ...]
+	"""
+	
+	if field_name in TERMFACET_FIELDS_auto:
+		# deuxième partie si un "sous.type"
+		facet_name = sub('^[^.]+\.', '', field_name)
+		return(api.terms_facet(facet_name))
+	
+	elif field_name in TERMFACET_FIELDS_local:
+		# on a en stock 3 listes ad hoc
+		if field_name == 'language':
+			return(field_value_lists.LANG)
+		elif field_name == 'genre':
+			return(field_value_lists.GENRE)
+		elif field_name == 'categories.wos':
+			return(field_value_lists.SCAT)
+		else:
+			raise UnimplementedError()
+	
+	elif field_name in RANGEFACET_FIELDS:
+		luc_ranges = []
+		for interval in field_value_lists.DATE:
+			a = str(interval[0])
+			b = str(interval[1])
+			luc_ranges.append('[' + a + ' TO ' + b + ']')
+		return(luc_ranges)
+	
+	else:
+		print ("ERROR: ?? the API doesn't allow a facet query on field '%s' (and I don't have a field_value_lists for this field either :-/ )" % field_name, file=stderr)
+		exit(1)
+
+
+# sample() takes the same arguments as the module 
+
+# Can be called several times with simplified criteria if impossible to
+# get all sample_size in the 1st run (previous runs => index=got_id_idx)
+
+def sample(size, crit_fields, constraint_query=None, index=None, 
+           verbose=False, run_count = 0):
+	global LOG
+	global LISSAGE
+	global FORBIDDEN_IDS
+	
+	# allows to set default to None instead of tricky-scope mutable {}
+	if not index:
+		index = {}
+		flag_previous_index = False
+	else:
+		flag_previous_index = True
+	
+	
+	####### POOLING ########
+	#
+	N_reponses = 0
+	N_workdocs = 0
+	doc_grand_total = 0
+	# dict of counts for each combo ((crit1:val_1a),(crit2:val_2a)...)
+	abs_freqs = {}
+	
+	
+	# instead do steps (1) (2) maybe we have cached the pools ?
+	# (always same counts for given criteria) => cache to json
+	cache_filename = pool_cache_path(crit_fields)
+	print('...checking cache for %s' % cache_filename,file=stderr)
+	
+	if path.exists(cache_filename):
+		cache = open(cache_filename, 'r')
+		pool_info = load(cache)
+		abs_freqs       = pool_info['f']
+		N_reponses      = pool_info['nr']
+		N_workdocs      = pool_info['nd']
+		doc_grand_total = pool_info['totd']
+		print('...ok cache (%i workdocs)' % N_workdocs,file=stderr)
+	else:
+		print('...no cache found',file=stderr)
+		
+		# (1) PARTITIONING THE SEARCH SPACE IN POSSIBLE OUTCOMES --------
+		print("Sending count queries for criteria pools...",file=stderr)
+		## build all "field:values" pairs per criterion field
+		## (list of list of strings: future lucene query chunks)
+		all_possibilities = []
+		n_combos = 1
+		for my_criterion in crit_fields:
+			field_outcomes = facet_vals(my_criterion)
+			n_combos = n_combos * len(field_outcomes)
+			# lucene query chunks
+			all_possibilities.append(
+				[my_criterion + ':' + val for val in field_outcomes]
+			)
+		
+		
+		## list combos (cartesian product of field_outcomes)
+		# we're directly unpacking *args into itertool.product()
+		# (=> we get an iterator over tuples of combinable query chunks)
+		combinations = product(*all_possibilities)
+		
+		
+		# example for -c corpusName, publicationDate
+		#	[
+		#	('corpusName:ecco', 'publicationDate:[* TO 1959]'),
+		#	('corpusName:ecco', 'publicationDate:[1960 TO 1999]'),
+		#	('corpusName:ecco', 'publicationDate:[2000 TO *]'),
+		#	('corpusName:elsevier', 'publicationDate:[* TO 1959]'),
+		#	('corpusName:elsevier', 'publicationDate:[1960 TO 1999]'),
+		#	('corpusName:elsevier', 'publicationDate:[2000 TO *]'),
+		#	(...)
+		#	]
+		
+		# (2) getting total counts for each criteria --------------------
+		
+		# number of counted answers
+		#  (1 doc can give several hits if a criterion was multivalued)
+		N_reponses = 0
+		
+		# do the counting for each combo
+		for i, combi in enumerate(sorted(combinations)):
+			if i % 100 == 0:
+				print("pool %i/%i" % (i,n_combos))
+			
+			query = " AND ".join(combi)
+			
+			# counting requests ++++
+			freq = api.count(query)
+			
+			if verbose:
+				print("pool:'% -30s': % 8i" %(query,freq),file=stderr)
+			
+			# storing and agregation
+			N_reponses += freq
+			abs_freqs[query] = freq
+		
+		# number of documents sending answers (hence normalizing constant N)
+		N_workdocs = api.count(" AND ".join([k+":*" for k in crit_fields]))
+		
+		if verbose:
+			print("--------- pool totals -----------", file=stderr)
+			print("#answered hits :   % 12s" % N_reponses, file=stderr)
+			print("#workdocs (N) :    % 12s" % N_workdocs, file=stderr)
+			# for comparison: all_docs = N + api.count(q="NOT(criterion:*)")
+			doc_grand_total = api.count(q='*')
+			print("#all API docs fyi: % 12s" % doc_grand_total,file=stderr)
+			print("---------------------------------", file=stderr)
+		
+		
+		# cache write
+		cache = open(cache_filename, 'w')
+		pool_info = {'f':abs_freqs, 'nr':N_reponses, 
+		            'nd':N_workdocs, 'totd':doc_grand_total}
+		# json.dump
+		dump(pool_info, cache)
+		cache.close()
+	
+	
+	######### QUOTA ########
+	#
+	# (3) quota computation and availability checking ------------------
+	# quota computation
+	rel_freqs = {}
+	for combi_query in abs_freqs:
+		
+		# expérimenter avec N_reponses au dénominateur ?
+		quota = round(
+		  size * abs_freqs[combi_query] / N_workdocs + LISSAGE
+		)
+		
+		if quota != 0:
+			rel_freqs[combi_query] = quota
+	
+	# fyi 3 lines to check if rounding surprise
+	rndd_size = sum([quota for combi_query, quota in rel_freqs.items()])
+	if verbose:
+		print("Méthode des quotas taille avec arrondis:     % 9s" % rndd_size,
+		      file=stderr)
+	
+	# récup AVEC CONTRAINTE et vérif total dispo (obtenu + dédoublonné)
+	
+	# got_ids_idx clés = ensemble d'ids , 
+	#             valeurs = critères ayant mené au choix
+	
+	print("Retrieving new sample chunks per pool quota...", file=stderr)
+	
+	for combi_query in sorted(rel_freqs.keys()):
+		
+		# how many hits do we need?
+		my_quota = rel_freqs[combi_query]
+		if not flag_previous_index and not FORBIDDEN_IDS:
+			# option A: direct quota allocation to search limit
+			n_needed = my_quota
+		else:
+			# option B: limit larger than quota by retrieved amount
+			#           (provides deduplication margin if 2nd run)
+			#
+			# /!\ wouldn't be necessary at all if we had none or rare
+			#     duplicates, like with random result ranking)
+			
+			# supplément 1: items to skip
+			n_already_retrieved = len(
+				# lookup retrieved
+				[idi for idi,metad in index.items()
+					if search(escape(combi_query), metad['_q'])]
+				)
+			
+			# supplément 2: prorata de FORBIDDEN_IDS
+			suppl = round(len(FORBIDDEN_IDS) * my_quota / size)
+			n_already_retrieved += suppl
+			n_needed = my_quota + n_already_retrieved
+		
+		# adding constraints
+		if constraint_query:
+			my_query = '('+combi_query+') AND ('+constraint_query+')'
+		else:
+			my_query = combi_query
+		
+		# ----------------- api.search(...) ----------------------------
+		json_hits = api.search(my_query, 
+		                       limit=n_needed,
+		                       outfields=STD_MAP.keys())
+	        # outfields=('id','author.name','title','publicationDate','corpusName')
+
+		# --------------------------------------------------------------
+		
+		# NB: 'id' field would be enough for sampling itself, but we get
+		#     more metadatas to be able to provide an info table or to
+		#     create a human-readable filename
+		
+		# £TODO 1
+		# remplacer api.search() par une future fonction random_search
+		# cf. elasticsearch guide: "random scoring" (=> puis supprimer
+		# l'option B avec n_needed)
+		
+		my_n_answers = len(json_hits)
+		
+		my_n_got = 0
+		
+		# for debug
+		# print("HITS:",json_hits, file=stderr)
+		
+		
+		# check unicity
+		for hit in json_hits:
+			idi = hit['id']
+			
+			if idi not in index and idi not in FORBIDDEN_IDS:
+				my_n_got += 1
+				# main index
+				index[idi] = {
+					'_q': combi_query,
+					'co': hit['corpusName'][0:3]  # trigramme eg 'els'
+					}
+				# store info
+				# £TODO: check conventions for null values
+				if 'publicationDate' in hit and len(hit['publicationDate']):
+					index[idi]['yr'] = hit['publicationDate'][0:4]
+				else:
+					index[idi]['yr'] = 'XXXX'
+				
+				if 'title' in hit and len(hit['title']):
+					index[idi]['ti'] = hit['title']
+				else:
+					index[idi]['ti'] = "UNTITLED"
+				
+				if 'author' in hit and len(hit['author'][0]['name']):
+					first_auth = hit['author'][0]['name']
+					his_lastname = first_auth.split()[-1]
+					index[idi]['au'] = his_lastname
+				else:
+					index[idi]['au'] = "UNKNOWN"
+				
+			# recheck limit: needed as long as n_needed != my_quota 
+			# (should disappear as consequence of removing option B)
+			if my_n_got == my_quota:
+				break
+		
+		print ("%-70s: %i(%i)/%i" % (
+					my_query[0:67]+"...", 
+					my_n_got, 
+					my_n_answers, 
+					my_quota
+				), file=stderr)
+		
+		# if within whole sample_size scope, we may observe unmeatable
+		# representativity criteria (marked 'LESS' and checked for RLAX)
+		if run_count == 0 and my_n_got < (.85 * (my_quota - LISSAGE)):
+			my_s = "" if my_n_got == 1 else "s"
+			LOG.append("LESS: catégorie '%s' sous-représentée pour contrainte \"%s\" : %i doc%s obtenu%s sur %i quota" % (combi_query, constraint_query, my_n_got, my_s, my_s, my_quota))
+			
+		# print("==========my_corpus ITEMS===========")
+		# print([kval for kval in my_corpus.items()])
+		
+	return(index)
+
+
+def pool_cache_path(criteria_list):
+	"""pool_cache filename: sorted-criteria-of-the-set.pool.json"""
+	global HOME
+	cset_pool_path = path.join(HOME, 'pool_cache',
+			'-'.join(sorted(criteria_list, reverse=True))+'.pool.json')
+	
+	# relative path ./pool_cache/.
+	return cset_pool_path
+
+
+class UnindentHelp(RawTextHelpFormatter):
+	# indents help args, 
+	# doesn't do anything to 'usage' or 'epilog' descriptions
+	def _split_lines(self, text, width):
+		text = sub(r"\t", "", text)
+		text = sub(r"^\n+", "", text) + "\n\n"
+		return text.splitlines()
+
+
+########################################################################
+# todo mettre à part dans une lib
+def std_filename(istex_id, info_dict):
+	'''
+	Creates a human readable file name from work records.
+	Expected dict keys are 'co' (corpus),'au','yr','ti'
+	'''
+	ok = {}
+	for k in info_dict:
+		ok[k] = safe_str(info_dict[k])
+	
+	# shorten title
+	ok['ti'] = ok['ti'][0:30]
+	
+	return '-'.join([istex_id, ok['co'], ok['au'], ok['yr'], ok['ti']])
+
+
+# todo mettre à part dans une lib
+def safe_str(a_string=""):
+	return sub("[^A-Za-z0-9àäçéèïîøöôüùαβγ]+","_",a_string)
+
 ########################################################################
 
-if __name__ == "__main__":
+def full_run(arglist=None):
+	global LOG
+	global LISSAGE
+	# output lines for direct use or print to STDOUT if __main__
+	output_array = []
 	
 	# cli arguments
-	args = my_parse_args()
+	args = my_parse_args(arglist)
 	
 	# do we need to change smoothing ?
 	if args.smoothing_init and float(args.smoothing_init) > 0:
@@ -479,13 +612,17 @@ if __name__ == "__main__":
 	if args.with_constraint_query:
 		LOG.append('WITH: constraint query "%s"' % args.with_constraint_query)
 	
+	run_counter = 0
+	
 	# initial sampler run
 	got_ids_idx = sample(
 						args.sample_size,
 						args.criteria_list,
 						constraint_query = args.with_constraint_query,
-						verbose = args.verbose
+						verbose = args.verbose,
+						run_count = run_counter
 						)
+	run_counter += 1
 	
 	# how much is there?
 	n_ids = len(got_ids_idx)
@@ -515,7 +652,6 @@ if __name__ == "__main__":
 	if n_ids < args.sample_size:
 		
 		actual_criteria = args.criteria_list
-		run_counter = 1
 		
 		# keep trying...
 		while (n_ids < args.sample_size and run_counter < MAX_RUNS):
@@ -548,7 +684,7 @@ if __name__ == "__main__":
 						remainder,
 						new_criteria,
 						constraint_query = args.with_constraint_query,
-						my_corpus = previous_ids,
+						index = previous_ids,
 						verbose = args.verbose
 						)
 			
@@ -581,34 +717,51 @@ if __name__ == "__main__":
 	print('-'*29 +" final result: %i docs "%n_ids+'-'*29, file=stderr)
 	
 	# -------------- OUTPUT --------------------------------------------
-	timestamp = datetime.now().strftime("%Y-%m-%d_%Hh%M")
-	my_name = "echantillon_%s" % timestamp
 	
 	# ***(ids)***
 	if args.out_type == 'ids':
 		for did, info in sorted(got_ids_idx.items(), key=lambda x: x[1]['_q']):
-			print ("%s" % did)
+			output_array.append("%s" % did)
 	
 	# ***(tab)***
 	elif args.out_type == 'tab':
+		# header line
+		# £TODO STD_MAP
+		output_array.append("\t".join(['istex_id', 'corpus', 'pub_year',
+						 'author_1', 'title', 'src_query']))
 		# contents
 		for did, info in sorted(got_ids_idx.items(), key=lambda x: x[1]['_q']):
-			print (info.to_tab()+"\t"+info['_q'])
+			#~ print("INFO----------",info)
+			#~ exit()
+			output_array.append("\t".join([ did,
+			                                info['co'],
+			                                info['yr'],
+			                                info['au'],
+			                                info['ti'],
+			                                info['_q']]
+			                              )
+			             )
 	
 	# ***(docs)***
+	# no output lines but writes a dir
 	elif args.out_type == 'docs':
 		my_dir = path.join(getcwd(),my_name)
 		mkdir(my_dir)
 		
 		ids = list(got_ids_idx.keys())
 		
-		# test si authentification nécessaire
+		# test sur le premier fichier: authentification nécessaire ?
 		need_auth = False
 		try:
-			bname = got_ids_idx[ids[0]].to_filename()
-			api.write_fulltexts(ids[0], tgt_dir=my_dir, base_name=bname)
+			bname = std_filename(ids[0], got_ids_idx[ids[0]])
+			api.write_fulltexts(ids[0], tgt_dir=my_dir, 
+										base_name=bname,
+										api_types=['metadata/xml',
+										           'fulltext/pdf']
+										)
+			print("retrieving PDF and XML-N for doc no 1")
 		except api.AuthWarning as e:
-			print("NB: le système veut une authentification SVP",
+			print("NB: le système veut une authentification SVP...",
 					file=stderr)
 			need_auth = True
 		
@@ -617,39 +770,58 @@ if __name__ == "__main__":
 			my_login = input(' => Nom d\'utilisateur "ia": ')
 			my_passw = getpass(prompt=' => Mot de passe: ')
 			for i, did in enumerate(ids):
-				my_bname = got_ids_idx[did].to_filename()
-				print("retrieving PDF and TEI-XML for doc no " + str(i+1))
+				my_bname = std_filename(did, got_ids_idx[did])
+				#          got_ids_idx[did].to_filename()    <-- todo from STD_MAP
+				print("retrieving PDF and XML-N for doc no " + str(i+1))
 				try:
 					api.write_fulltexts(did,
 										tgt_dir=my_dir,
 										login=my_login,
 										passw=my_passw,
-										base_name = my_bname)
+										base_name = my_bname,
+										api_types=['metadata/xml',
+										           'fulltext/pdf']
+										)
 				except api.AuthWarning as e:
 					print("authentification refusée :(")
 					my_login = input(' => Nom d\'utilisateur "ia": ')
 					my_passw = getpass(prompt=' => Mot de passe: ')
 		
 		else:
-			for i, did in enumerate(ids[1:]):
-				my_bname = got_ids_idx[did].to_filename()
-				print("retrieving PDF and TEI-XML for doc no " + str(i+1))
+			for i, did in enumerate(ids):
+				# on ne refait pas le 1er car il a marché
+				if i == 0:
+					continue
+				my_bname = std_filename(did, got_ids_idx[did])
+				print("retrieving PDF and XML-N for doc no " + str(i+1))
 				api.write_fulltexts(did,
 									tgt_dir=my_dir,
-									base_name=my_bname)
+									base_name=my_bname,
+									api_types=['metadata/xml',
+									           'fulltext/pdf']
+									)
 		
 		LOG.append("SAVE: saved docs in %s/" % my_dir)
 	
-	# optional json treemap output
-	if args.tree:
-		jstree = index_to_jsontree(got_ids_idx)
-		jsonfile = open(my_name+'.tree.json', 'w')
-		# json.dumps()
-		print(dumps(jstree, indent=True), file=jsonfile)
-		jsonfile.close()
 	
-	# warnings logging
+	return (output_array, LOG)
+
+########################################################################
+
+if __name__ == "__main__":
+	# stamp
+	timestamp = datetime.now().strftime("%Y-%m-%d_%Hh%M")
+	my_name = "echantillon_%s" % timestamp
+	
+	# run
+	(stdoutput, LOG) = full_run(arglist = argv[1:])
+	
+	# output lines
+	for line in stdoutput:
+		print(line)
+	
+	# separate logging lines
 	logfile = open(my_name+'.log', 'w')
-	for line in LOG:
-		print(line, file=logfile)
+	for lline in LOG:
+		print(lline, file=logfile)
 	logfile.close()
