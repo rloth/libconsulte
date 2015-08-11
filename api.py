@@ -32,9 +32,12 @@ class AuthWarning(Exception):
 # private function
 # ----------------
 def _get(my_url):
-	"""Get remote url *that contains a json* and parse it"""
+	"""
+	Get remote url *that contains a ~json~* 
+	and parse it
+	"""
 	
-	#~ print("> api._get:%s" % my_url, file=stderr)
+	# print("> api._get:%s" % my_url, file=stderr)
 	
 	try:
 		remote_file = urlopen(my_url)
@@ -57,21 +60,28 @@ def _get(my_url):
 	json_values = loads(result_str)
 	return json_values
 
-def _sget(my_url, mon_user=None, mon_pass=None):
+
+def _bget(my_url, user=None, passw=None):
 	"""
-	Get remote auth-protected url *that contains a file* and pass it
-	For instance when retrieving fulltext from ISTEX API
+	Get remote auth-protected url *that contains a ~file~* 
+	and pass its binary data straight from remote response
+	(for instance when retrieving fulltext from ISTEX API)
 	"""
 	
-	# print ("REGARD:", mon_user, mon_pass)
+	# /!\ attention le password est en clair ici /!\
+	# print ("REGARD:", user, passw,     file=stderr)
+	
+	no_contents = False
 	
 	auth_handler = HTTPBasicAuthHandler()
 	auth_handler.add_password(
 			realm  = 'Authentification sur api.istex.fr',
 			uri    = 'https://api.istex.fr',
-			user   = mon_user,
-			passwd = mon_pass)
+			user   = user,
+			passwd = passw)
 	install_opener(build_opener(auth_handler))
+	
+	print("GET bin (user:%s)" % user, file=stderr)
 	
 	# contact
 	try:
@@ -81,17 +91,20 @@ def _sget(my_url, mon_user=None, mon_pass=None):
 		if url_e.getcode() == 401:
 			raise AuthWarning("need_auth")
 		else:
-			# 404 à gérer sans quitter pour les fulltexts
+			# 404 à gérer *sans quitter* pour les fulltexts en nombre...
+			no_contents = True
 			print("api: HTTP ERR no %i (%s) sur '%s'" % 
 				(url_e.getcode(),url_e.msg, my_url), file=stderr)
-			print ("ERR.info(): \n %s" % url_e.info(), file=stderr)
-			# exit(1)
+				# pour + de détail
+				# print ("ERR.info(): \n %s" % url_e.info(),file=stderr)
 	
-	# lecture
-	contents = remote_file.read()
-	remote_file.close()
-	
-	return contents
+	if no_contents:
+		return None
+	else:
+		# lecture
+		contents = remote_file.read()
+		remote_file.close()
+		return contents
 
 
 # public functions
@@ -180,28 +193,45 @@ def count(q, api_conf=DEFAULT_API_CONF):
 	return int(json_values['total'])
 	
 	
-def write_fulltexts(api_did, api_conf=DEFAULT_API_CONF, tgt_dir='.', login=None, passw=None, base_name=None):
+def write_fulltexts(DID, api_conf=DEFAULT_API_CONF, tgt_dir='.', login=None, passw=None, base_name=None, api_types=['fulltext/pdf', 'metadata/xml']):
 	"""
-	Get TEI, PDF and ZIP fulltexts for a given ISTEX document.
+	Get XML metas, TEI, PDF, ZIP fulltexts etc. for a given ISTEX-API document.
+	
 	"""
-	# préparation requête
-	fulltext_url = 'https:' + '//' + api_conf['host']  + '/' + api_conf['route'] + '/' + api_did + '/fulltext/'
+	# vérification
+	for at in api_types:
+		if at not in ['fulltext/pdf', 
+						'fulltext/tei',
+						'fulltext/txt',
+						'fulltext/zip',
+						'metadata/xml',
+						'metadata/mods',
+						]:
+			raise KeyError("Unknown filetype %s" % at)
 	
-	available_filetypes = ['pdf', 'tei', 'zip']
-	#~ available_filetypes = ['pdf', 'tei']
-	
-	# default name is just the ID
+	# default name is just the ID and the fileextension
 	if not base_name:
-		base_name = api_did
+		base_name = DID
 	
-	for filetype in available_filetypes:
-		response = _sget(fulltext_url + filetype, 
-							mon_user=login, mon_pass=passw)
-		tgt_path = path.join(tgt_dir, base_name+'.'+filetype)
-		fh = open(tgt_path, 'wb')
-		fh.write(response)
-		fh.close()
-	return None
+	# préparation requête
+	da_url = 'https://'+api_conf['host']+'/'+api_conf['route']+'/'+DID
+	
+	for at in api_types:
+			response = _bget(da_url+'/'+at, user=login, passw=passw)
+			
+			# _bget renvoie None pour les (rares) 404 
+			#      (ex: demande tei a ecco)
+			if response is not None:
+				
+				# ext par défaut: partie droite de la route de l'api
+				ext = at.split('/')[1]
+				
+				tgt_path = path.join(tgt_dir, base_name+'.'+ext)
+				
+				fh = open(tgt_path, 'wb')
+				fh.write(response)
+				fh.close()
+
 
 def terms_facet(facet_name, q="*", api_conf=DEFAULT_API_CONF):
 	"""
