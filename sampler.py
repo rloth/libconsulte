@@ -84,6 +84,7 @@ TERMFACET_FIELDS_local = [
 	]
 
 # binned listing via date ranges (also in field_value_lists.py)
+# £todo ajouter ici pdfCharCount
 RANGEFACET_FIELDS = [
 	'publicationDate',
 	'copyrightDate'
@@ -329,6 +330,8 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 		N_reponses      = pool_info['nr']
 		N_workdocs      = pool_info['nd']
 		doc_grand_total = pool_info['totd']
+		cache.close()
+
 		print('...ok cache (%i workdocs)' % N_workdocs,file=stderr)
 	else:
 		print('...no cache found',file=stderr)
@@ -374,7 +377,7 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 		# do the counting for each combo
 		for i, combi in enumerate(sorted(combinations)):
 			if i % 100 == 0:
-				print("pool %i/%i" % (i,n_combos))
+				print("pool %i/%i" % (i,n_combos), file=stderr)
 			
 			query = " AND ".join(combi)
 			
@@ -602,7 +605,7 @@ def full_run(arglist=None):
 	
 	# do we need to change smoothing ?
 	if args.smoothing_init and float(args.smoothing_init) > 0:
-		print("Setting initial smoothing to %.2f" % args.smoothing_init)
+		print("Setting initial smoothing to %.2f" % args.smoothing_init, file=stderr)
 		# global var change in main
 		LISSAGE = args.smoothing_init
 	
