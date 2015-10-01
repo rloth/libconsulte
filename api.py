@@ -13,7 +13,7 @@ from json            import loads
 from urllib.parse    import quote
 from urllib.request  import urlopen, HTTPBasicAuthHandler, build_opener, install_opener
 from urllib.error    import URLError
-
+from getpass   import getpass
 from os import path
 from sys import stderr
 
@@ -193,7 +193,7 @@ def count(q, api_conf=DEFAULT_API_CONF):
 	return int(json_values['total'])
 	
 	
-def write_fulltexts(DID, api_conf=DEFAULT_API_CONF, tgt_dir='.', login=None, passw=None, base_name=None, api_types=['fulltext/pdf', 'metadata/xml']):
+def write_fulltexts(DID, base_name=None, api_conf=DEFAULT_API_CONF, tgt_dir='.', login=None, passw=None, api_types=['fulltext/pdf', 'metadata/xml']):
 	"""
 	Get XML metas, TEI, PDF, ZIP fulltexts etc. for a given ISTEX-API document.
 	
@@ -231,6 +231,80 @@ def write_fulltexts(DID, api_conf=DEFAULT_API_CONF, tgt_dir='.', login=None, pas
 				fh = open(tgt_path, 'wb')
 				fh.write(response)
 				fh.close()
+
+
+def write_fulltexts_loop_interact(list_of_ids, list_of_basenames=None, api_conf=DEFAULT_API_CONF, tgt_dir='.', api_types=['fulltext/pdf', 'metadata/xml']):
+	"""
+	Calls the preceding function in a loop for an entire list,
+	
+	With optional interactive authentification step:
+	  - IF (login and passw are None AND _bget raises AuthWarning)
+	    THEN ask user
+	
+	"""
+	# test sur le premier fichier: authentification est-elle nécessaire ?
+	need_auth = False
+	
+	first_doc_id = list_of_ids[0]
+	if list_of_basenames:
+		first_base_name = list_of_basenames[0]
+	else:
+		first_base_name = None
+	
+	try:
+		# test with no auth credentials
+		write_fulltexts(
+			first_doc_id, first_base_name, 
+			tgt_dir=tgt_dir,
+			api_types=api_types
+			)
+		print("API:retrieving doc no 1 from %s" % api_types)
+	except AuthWarning as e:
+		print("NB: l'API veut une authentification pour les fulltexts SVP...",
+				file=stderr)
+		need_auth = True
+	
+	# récupération avec ou sans authentification
+	if need_auth:
+		my_login = input(' => Nom d\'utilisateur "ia": ')
+		my_passw = getpass(prompt=' => Mot de passe: ')
+		for i, did in enumerate(list_of_ids):
+			if list_of_basenames:
+				my_bname = list_of_basenames[i]
+			else:
+				my_bname = None
+			
+			print("API:retrieving doc no %s from %s" % (str(i+1),api_types))
+			try:
+				write_fulltexts(
+					did,
+					base_name = my_bname,
+					tgt_dir=tgt_dir,
+					login=my_login,
+					passw=my_passw,
+					api_types= api_types
+				)
+			except AuthWarning as e:
+				print("authentification refusée :(")
+				my_login = input(' => Nom d\'utilisateur "ia": ')
+				my_passw = getpass(prompt=' => Mot de passe: ')
+	
+	else:
+		for i, did in enumerate(ids):
+			# on ne refait pas le 1er car il a marché
+			if i == 0:
+				continue
+			if list_of_basenames:
+				my_bname = list_of_basenames[i]
+			else:
+				my_bname = None
+			print("API:retrieving doc no %s from %s" % (str(i+1),api_types))
+			write_fulltexts(
+				did,
+				base_name=my_bname,
+				tgt_dir=tgt_dir,
+				api_types=api_types
+			)
 
 
 def terms_facet(facet_name, q="*", api_conf=DEFAULT_API_CONF):
