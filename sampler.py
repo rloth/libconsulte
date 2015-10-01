@@ -415,7 +415,7 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 		pool_info = {'f':abs_freqs, 'nr':N_reponses, 
 		            'nd':N_workdocs, 'totd':doc_grand_total}
 		# json.dump
-		dump(pool_info, cache)
+		dump(pool_info, cache, indent=1)
 		cache.close()
 	
 	

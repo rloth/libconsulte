@@ -21,6 +21,34 @@ from collections     import defaultdict
 from subprocess      import call
 from json            import dump, load
 
+# pour utilisation autonome
+# corpusdirs.py new_corpus_name -t info_table.tsv
+from argparse        import ArgumentParser, RawDescriptionHelpFormatter
+from sys             import argv
+
+
+# imports locaux
+try:
+	# CHEMIN 1 cas de figure du dossier utilisé comme librairie
+	#          au sein d'un package plus grand (exemple: bib-adapt-corpus)
+	from libconsulte import api
+	from libconsulte import field_value_lists
+	# =<< target_language_values, target_scat_values,
+	#     target_genre_values, target_date_ranges
+except ImportError:
+	try:
+		# CHEMIN 2: cas de figure d'un appel depuis le dossier courant
+		#           exemple: on veut juste lancer le sampler tout seul
+		import api
+		import field_value_lists
+		
+	# cas de figure où il n'y a vraiment rien
+	except ImportError:
+		print("ERR: Les modules 'api.py' et 'field_value_lists.py' doivent être placés à côté du script corpusdirs.py ou dans un dossier du PYTHONPATH, pour sa bonne execution...")
+		exit(1)
+
+
+
 # Infos structurelles de corpus par défaut
 BSHELVES = {
   # basic set ----------------------------------------------------------
@@ -53,17 +81,18 @@ class Corpus(object):
 	# ------------------------------------------------------------
 
 	# £TODO absolument une dir extraite de s1 sous la forme read_dir
-	def __init__(self, ko_name, new_infos=None, 
+	def __init__(self, ko_name, new_infos=None, new_home=None,
 					read_dir=False, corpus_type='gold',
-						verbose=False, new_home=None,
-							shelves_struct=None):
+						verbose=False, shelves_struct=None):
 		"""
 		2 INPUT modes
 		  -IN: *new_infos* : a metadata table (eg sampler output)
 		                  (no fulltexts yet, no workdir needed)
+		      + *new_home* : the container dir (ex: '.')
 		
 		  -IN: *read_dir* : path to an existing Corpus dir
 		                  (with data/ and meta/ subdirs, etc.)
+		      + *new_home* : the container dir (ex: '.')
 		
 		In both modes: *new_home* is THE_CONTAINER DIR (private _home)
 		               + *shtruct* is A_SHELVES_STRUCTURE (private _shtruct)
@@ -87,15 +116,15 @@ class Corpus(object):
 			and also: self.meta    self.cols     self.name     self.cdir
 			          ---------    ---------     ---------     ---------
 		"""
-		if not path.exists(new_home):
-			# suggérer bako assistant_installation à l'utilisateur ?
+		if not new_home or not path.exists(new_home):
+			print("Please provide an existing container directory to save the corpus directory into (current:%s)" % new_home)
 			raise FileNotFoundError(new_home)
 		
 		# VAR 1: **home** our absolute container address ----------
 		# (version absolue du chemin de base indiqué à l'initialisation)
 		self._home = path.abspath(new_home)
 		
-		# VAR 2: **shtruct** our absolute container address ----------
+		# VAR 2: **shtruct** the structure of "shelves" (subdirs) -
 		# (structure for each possible shelf of this instance)
 		
 		# 4 possibilités ici :(
@@ -163,14 +192,15 @@ ERROR -- Corpus(__init__ from dir):
 			else:
 				self.cdir = read_dir
 				
-				# read corresponding infos
+				# find corresponding infos
 				infos_path = path.join(self.cdir,'meta','infos.tab')
 				try:
 					fi = open(infos_path,'r')    # todo idem pour triggers
 				except FileNotFoundError as fnf_err:
 					fnf_err.pi_mon_rel_path = path.join(ko_name, 'meta','infos.tab')
 					raise fnf_err
-				new_infos = fi.readlines()
+				# read in from meta/infos.tab to RAM
+				new_infos = [l.rstrip() for l in fi.readlines()]
 				fi.close()
 			
 			if verbose:
@@ -220,6 +250,10 @@ ERROR -- Corpus(__init__ from dir):
 
 		# VARS 6 and 7: >> meta << and >> cols << lookup tables --------
 		if new_infos:
+			# as source in usual INIT mode: directly with new_infos lines
+			# + also go here in READ mode with info lines retrieved from fs
+			# (only exception is empty inits)
+			
 			# a simple csv reader (headers as in sampler.STD_MAP)
 			records_obj = DictReader(new_infos, delimiter='\t')
 			
@@ -265,7 +299,7 @@ ERROR -- Corpus(__init__ from dir):
 				bn_fh.close()
 				# SAVE META: shelfs (flags if some fulltexts already present)
 				triggrs = open(trig_path,'w')
-				dump(self.shelfs, triggrs)     # json.dump
+				dump(self.shelfs, triggrs, indent=2)     # json.dump
 				triggrs.close()
 		
 				# £TODO ici tree.json DATE x PUB
@@ -287,23 +321,12 @@ ERROR -- Corpus(__init__ from dir):
 		print(self.ctype+'\n', file=touch_type)
 		touch_type.close()
 		
-		# print triggers
+		# print triggers (active/passive shelves)
 		if verbose:
-			print("\n.shelfs:")
-			triggers_dirs = []
-			for shelf, bol in self.shelfs.items():
-				on_off = ' ON' if bol else 'off'
-				ppdir = self._shtruct[shelf]['d']
-				triggers_dirs.append([ppdir,on_off])
-			for td in sorted(triggers_dirs):
-				print("  > %-3s  --- %s" % (td[1], td[0]))
-		
-		
+			self.print_corpus_info()
 		# si on a eu un extension
 		# (sera différente si et seulement si init objet fille)
 		self._save_shelves_map()
-		
-		print("\n===( CORPUS SIZE: %i docs )===\n" % self.size)
 
 	# ------------------------------------------------------------
 	#             C O R P U S    A C C E S S O R S
@@ -412,7 +435,7 @@ ERROR -- Corpus(__init__ from dir):
 		"""
 		trig_path = path.join(self.cdir,'meta','shelf_triggers.json')
 		triggrs = open(trig_path,'w')
-		dump(self.shelfs, triggrs)     # json.dump
+		dump(self.shelfs, triggrs, indent=2)     # json.dump
 		triggrs.close()
 	
 	def _save_shelves_map(self):
@@ -422,7 +445,7 @@ ERROR -- Corpus(__init__ from dir):
 		map_path = path.join(self.cdir,'meta','shelves_map.json')
 		# write shtruct to meta/shelves_map.json
 		shmap = open(map_path,'w')
-		dump(self._shtruct, shmap)      # json.dump
+		dump(self._shtruct, shmap, indent=2)      # json.dump
 		shmap.close()
 	
 	
@@ -434,6 +457,20 @@ ERROR -- Corpus(__init__ from dir):
 		got_shelves = [sh for sh in all_sorted if self.shelfs[sh]]
 		return got_shelves
 	
+	def print_corpus_info(self):
+		"""
+		Prints a short list of possible shelves with ON/off status
+		       and basic info: corpus_name and size
+		"""
+		print("======= CORPUSDIRS  [%s]  =======" % corpus_name)
+		triggers_dirs = []
+		for shelf, bol in self.shelfs.items():
+			on_off = ' ON' if bol else 'off'
+			ppdir = self._shtruct[shelf]['d']
+			triggers_dirs.append([ppdir,on_off])
+		for td in sorted(triggers_dirs):
+			print("  > %-3s  --- %s" % (td[1], td[0]))
+		print("\n=====( SIZE: %i docs x %i shelfs )=====\n" % (self.size, len(self.shelfs)))
 	
 	# ------------------------------------------------------------
 	#         C O R P U S   B A S E   C O N V E R T E R S
@@ -451,7 +488,7 @@ ERROR -- Corpus(__init__ from dir):
 		if not dtd_prefix:
 			dtd_prefix = path.abspath(path.join(THIS_SCRIPT_DIR,'etc','dtd_mashup'))
 			if debug_lvl >= 1:
-				print("DTD REPAIR: new dtd_prefix: '%s'" % dtd_prefix)
+				print("DTD_REPAIR: new dtd_prefix: '%s'" % dtd_prefix)
 		
 		# corpus home
 		if not our_home:
@@ -461,13 +498,33 @@ ERROR -- Corpus(__init__ from dir):
 		if self.shelfs['XMLN']:
 			todofiles = self.fileids(my_shelf="XMLN")
 			
+			nb_missing = 0
+			nb_uerrors = 0
+			nb_no_dtd_wiley = 0
+			nb_no_dtd_other = 0
+			
 			# temporary repaired_dir
 			repaired_dir = path.join(self.cdir, 'data', 'with_dtd_repaired')
-			mkdir(repaired_dir)
+			if path.exists(repaired_dir):
+				print ('DTD_REPAIR: overwriting previous aborted reparation')
+			else:
+				mkdir(repaired_dir)
 			
 			for fi in todofiles:
-				fh = open(fi, 'r')
-				long_str = fh.read()
+				try:
+					fh = open(fi, 'r')
+				except FileNotFoundError as fnfe:
+					nb_missing += 1
+					print("DTD_REPAIR (skip) missing source file %s" % fi)
+				try:
+					long_str = fh.read()
+				except UnicodeDecodeError as ue:
+					nb_uerrors += 1
+					print("DTD_REPAIR (skip) UTF-8 decode error in input file %s" % fi)
+					# moving the file as it is and skipping reparation
+					move(fi, path.join(repaired_dir,path.basename(fi)))
+					continue
+					# £TODO alternative: add to error/ignore list with the object
 				fh.close()
 				
 				# splits a doctype declaration in 3 elements
@@ -497,26 +554,36 @@ ERROR -- Corpus(__init__ from dir):
 					new_str = sub(escape(original_declaration), new_declaration, long_str)
 					
 					# save
-					filename = path.basename(fi)
-					outfile = open(repaired_dir+'/'+filename, 'w')
+					outfile = open(path.join(repaired_dir,path.basename(fi)), 'w')
 					outfile.write(new_str)
 					outfile.close()
 				else:
 					if not search(r'wiley', long_str):
 						# wiley often has no DTD declaration, just ns
-						print('dtd_repair (skip) no match on %s' % fi)
+						nb_no_dtd_other += 1
+						print('DTD_REPAIR (skip) no match on %s' % fi)
+					else:
+						nb_no_dtd_wiley += 1
 					# save as is
 					filename = path.basename(fi)
-					outfile = open(repaired_dir+'/'+filename, 'w')
+					outfile = open(path.join(repaired_dir,path.basename(fi)), 'w')
 					outfile.write(long_str)
 					outfile.close()
 			
 			# rename to std dir
 			orig_dir = self.shelf_path("XMLN")
 			if debug_lvl >= 2:
-				print ("dtd_repair: replacing native XMLs in %s by temporary contents from %s" %(orig_dir, repaired_dir))
+				print ("DTD_REPAIR: replacing native XMLs in %s by temporary contents from %s" %(orig_dir, repaired_dir))
 			rmtree(orig_dir)
 			rename(repaired_dir, orig_dir)
+			
+			# report
+			print("----------")
+			print("DTD_REPAIR:errors: %i missing source files" % nb_missing)
+			print("DTD_REPAIR:errors: %i unicode error files" % nb_uerrors)
+			print("DTD_REPAIR:warn: %i wiley files with no dtd (normal)" % nb_no_dtd_wiley)
+			print("DTD_REPAIR:warn: %i other files with no dtd (unknown)" % nb_no_dtd_other)
+			print("----------")
 	
 	
 	# GOLDTEI
@@ -533,7 +600,7 @@ ERROR -- Corpus(__init__ from dir):
 		if not our_home:
 			our_home = self._home
 		
-		print("*** XSL: CONVERSION PUB2TEI (NATIF VERS GOLD) ***")
+		print("XSL: PUB2TEI CONVERSION (NATIVE XML TO GOLD)")
 		if not pub2tei_dir:
 			# chemin relatif au point de lancement
 			p2t_path = path.join(THIS_SCRIPT_DIR, 'etc', 'Pub2TEI', 'Stylesheets','Publishers.xsl')
@@ -543,6 +610,8 @@ ERROR -- Corpus(__init__ from dir):
 			if not path.exists(p2t_path):
 				print("%s doit au moins contenir Stylesheets/Publishers.xsl" % pub2tei_dir)
 				
+		# vérification (est-ce que le fichier de sortie apparaît)
+		nb_errors = 0
 		
 		# si dossier d'entrée
 		if self.shelfs['XMLN']:
@@ -552,8 +621,8 @@ ERROR -- Corpus(__init__ from dir):
 			gtei_dirpath = self.shelf_path("GTEI")
 			
 			if debug_lvl > 0:
-				print("XSL src dir: %s" % xml_dirpath)
-				print("XSL tgt dir: %s" % gtei_dirpath)
+				print("XSL: src dir=%s" % xml_dirpath)
+				print("XSL: tgt dir=%s" % gtei_dirpath)
 			
 			# mdkir dossier de sortie
 			if not path.exists(gtei_dirpath):
@@ -570,7 +639,7 @@ ERROR -- Corpus(__init__ from dir):
 			]
 			
 			if debug_lvl > 0:
-				print("XSL:dbg: appel=%s" % call_args)
+				print("XSL: (debug) appel=%s" % call_args)
 			
 			try:
 				# subprocess.call -----
@@ -582,13 +651,174 @@ ERROR -- Corpus(__init__ from dir):
 				else:
 					raise
 			
-			# renommage en .tei.xml comme attendu par fileids()
+			# verification si les docs sont bien passés
+			# et renommage en .tei.xml comme attendu par fileids()
 			for fid in self.bnames:
-				rename(path.join(gtei_dirpath, fid+'.xml'),
-						path.join(gtei_dirpath, fid+'.tei.xml'))
+				try:
+					rename(path.join(gtei_dirpath, fid+'.xml'),
+					        path.join(gtei_dirpath, fid+'.tei.xml'))
+				except FileNotFoundError as fnfe:
+					# £TODO alternative: keeping an error/ignore list with the object
+					("XSL (skip) doc %s failed transformation" % fid)
+					nb_errors += 1
 			
 			# on ne renvoie pas de valeur de retour, on signale juste le succès ou non
 			if retval == 0:
-				print("*** XSL: CONVERSIONS RÉUSSIES ***")
+				print("----------")
+				print("XSL: %i successful transformations (all)" % self.size)
+				print("----------")
 			else:
-				print("*** XSL: echec (partiel?) des conversions ***" % len(self.bnames))
+				nb_ok = self.size - nb_errors
+				print("----------")
+				print("XSL: %i successful transformations" % nb_ok)
+				print("XSL: %i failed transformations" % nb_errors)
+				print("----------")
+
+
+# utilisation autonome pour créer les dossiers basiques depuis une table
+if __name__ == "__main__":
+	"""
+	Initialisation d'un corpus basique et remplissage de ses fulltexts
+	  - on fournit une table de métadonnées infos.tab (chemin fs)
+	
+	Métadonnées, rangées dans <corpus_name>/meta/
+	  - basenames.ls
+	  - infos.tab
+	
+	Données: 3 formats, rangés dans <corpus_name>/data/
+	  - .pdf, 
+	  - .xml (natif) 
+	  - et .tei.xml (pub2tei)
+	
+	Position dans le système de fichier:
+		sous ./corpus_name
+	"""
+	
+	parser = ArgumentParser(
+		formatter_class=RawDescriptionHelpFormatter,
+		description="""
+    ---------------------------------------------
+     ISTEX-RD corpus operator (tool and library)
+    ---------------------------------------------
+
+""",
+		usage="""
+------
+  corpusdirs.py un_nom_de_corpus --from mes_docs.tsv""",
+		epilog="""
+Actions:
+--------
+   1) décharge PDF+XML natifs depuis l'API
+   2) répare les DTD des XML natifs
+   3) lance une conversion Pub2TEI
+
+  => le tout dans des dossiers 
+     bien rangés sous ./un_nom_de_corpus/
+
+  --- © 2015 Inist-CNRS (ISTEX) romain.loth at inist.fr ---"""
+		)
+	
+	# argument positionnel (obligatoire) : le nom du corpus
+	parser.add_argument(
+		'un_nom_de_corpus',
+		type=str,
+		help="nom du nouveau dossier corpus à créer"
+	)
+	
+	#
+	parser.add_argument('--from',
+		metavar='mes_docs.tsv',
+		help="""tableau en entrée (tout tsv avec en COL1 istex_id et en COL2 le nom du lot... (par ex: la sortie détaillée de l'échantilloneur sampler.py)""",
+		type=str,
+		default=None ,
+		required=True,
+		action='store')
+	
+	parser.add_argument('--debug',
+		metavar='1',
+		help="level of verbose/debug infos [default:0]",
+		type=int,
+		default=0 ,
+		action='store')
+	
+	args = parser.parse_args(argv[1:])
+	
+	from_table = args.from_table
+	debug = args.debuglvl
+	future_dir = corpus_name
+	# =============================================
+	
+	if path.exists(corpus_name):
+		print("ERR: le nom '%s' est déjà pris dans ce dossier" % corpus_name)
+		exit(1)
+	
+	# (1/4) echantillon initial (juste la table) -------------------------
+	if path.exists(from_table):
+		fic = open(from_table)
+		my_tab = [l.rstrip() for l in fic.readlines()]
+		fic.close()
+	else:
+		print("ERR bako.make_set: je ne trouve pas la table '%s' pour initialiser le corpus" % from_table)
+		exit(1)
+	
+	# (2/4) notre classe corpus ------------------------------------------
+	
+	# Corpus
+	# initialisation
+	#  - mode tab seul => fera un dossier meta/ et un data/ vide,
+	#  - le corpus_type est mis en dur à 'gold' ce qui signale
+	#    simplement qu'on ne change pas les étagères par défaut)
+	cobj = Corpus(corpus_name, new_infos = my_tab, new_home  = '.', verbose = (debug>0))
+	
+	# (3/4) téléchargement des fulltexts ---------------------------------
+	
+	my_ids = cobj.cols['istex_id']
+	my_basenames = cobj.bnames
+	
+	for the_shelf in ['PDF0', 'XMLN']:
+		the_api_type = cobj.origin(the_shelf)
+		the_ext      = cobj.filext(the_shelf)
+		tgt_dir      = cobj.shelf_path(the_shelf)
+		
+		print("mkdir -p: %s" % tgt_dir)
+		mkdir(tgt_dir)
+		
+		api.write_fulltexts_loop_interact(
+			my_ids, my_basenames,
+			tgt_dir   = tgt_dir,
+			api_types = [the_api_type]
+			)
+		print("MAKE_SET: saved docs into CORPUS_HOME:%s" % cobj.name)
+		if debug > 0:
+			print("  (=> target dir:%s)" % tgt_dir)
+		
+		# NB: il doit y avoir la même extension dans cobj.filext(the_shelf) que chez l'API
+		#  ou alors api.write_fulltexts doit autoriser à changer (renommer) les extensions
+	
+	cobj.assert_docs('PDF0')
+	cobj.assert_docs('XMLN')
+	
+	# persistance du statut des 2 dossiers créés
+	cobj.save_shelves_status()
+
+	
+	# (4/4) conversion tei (type gold biblStruct) ------------------------
+	
+	# copie en changeant les pointeurs dtd
+	print("***DTD LINKING***")
+	cobj.dtd_repair(debug_lvl = debug)
+	
+	print("***XML => TEI.XML CONVERSION***")
+	
+	# créera le dossier C-goldxmltei
+	cobj.pub2goldtei(debug_lvl = debug)      # conversion
+	
+	cobj.assert_docs('GTEI')
+	
+	# persistence du statut du dossier créé
+	cobj.save_shelves_status()
+	
+	# voilà !
+	cobj.print_corpus_info()
+	print("Corpus dirs successfully created in %s" % cobj.cdir)
+

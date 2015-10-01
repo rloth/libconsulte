@@ -290,7 +290,7 @@ def write_fulltexts_loop_interact(list_of_ids, list_of_basenames=None, api_conf=
 				my_passw = getpass(prompt=' => Mot de passe: ')
 	
 	else:
-		for i, did in enumerate(ids):
+		for i, did in enumerate(list_of_ids):
 			# on ne refait pas le 1er car il a marché
 			if i == 0:
 				continue
