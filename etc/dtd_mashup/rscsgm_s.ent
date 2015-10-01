@@ -1,0 +1,282 @@
+<!-- RSC special characters, SGML version.  -->
+
+<!-- Mods:
+
+     Added z.phgrda    18-05-2000
+     Added z.phvgrda   18-05-2000
+     Added z.rgrda     18-05-2000
+     Added z.thgrda    18-05-2000
+     Added z.Rdot      18-05-2000
+     Added z.rdot      18-05-2000
+     Added z.qdot      18-05-2000
+     Added z.gDa       26-05-2000
+     Added z.gDda      26-05-2000
+     added z.cirdot    27-07-2000
+     added z.egrda     09-08-2000
+     Added z.Lgrm      11-08-2000
+     Added z.phvgrm    14-08-2000
+     Added z.dgcir     14-08-2000
+     Added z.eegvec    23-08-2000
+     Added z.ggcir     29-08-2000
+     Added z.PHgrm     01-09-2000
+     Added z.pdbdbd    05-09-2000
+     Added z.ldang     08-09-2000
+     Added z.psgrt     04-10-2000
+     Added z.egrt      04-10-2000
+     Added z.utlhb     13-10-2000
+     Added z.rgrt      31-10-2000
+     Added z.ggrda     31-10-2000
+     Added z.qbd       06-11-2000
+     Added z.wvstarr   20-11-2000
+     Added z.hbdda     15-12-2000
+     Added z.OHgrm     21-12-2000
+     Added z.ohgcir    06-02-2001
+     Added z.phgcir    12-02-2001
+     Added z.xgcir     12-02-2001
+     Added z.dshfnc    22-02-2001
+     Added z.agcir     09-04-2001
+     Added z.zgcir     09-04-2001
+     Added z.spstarf   18-04-2001
+
+	Removed z.Alhb              04-09-2000
+	Removed z.Rdot              04-09-2000
+	Removed z.cirdot            04-09-2000
+	Removed z.clhb              04-09-2000
+	Removed z.dfnc              04-09-2000
+	Removed z.ogrm              04-09-2000
+	Removed z.qdot              04-09-2000
+	Removed z.rdot              04-09-2000
+	Removed z.rharue            04-09-2000
+	Removed z.sbd               04-09-2000
+	Removed z.sqush             04-09-2000
+	Removed z.Alhb              04-09-2000
+
+-->
+
+<!-- chemistry: -->
+
+<!ENTITY z.dbd     SDATA "[z.dbd    ]"--=double bond; length as m-dash -->
+<!ENTITY z.tbd     SDATA "[z.tbd    ]"--=triple bond; length as m-dash -->
+<!ENTITY z.qbd     SDATA "[z.qbd    ]"--=quadruple bond; length as m-dash -->
+<!ENTITY z.dbd6    SDATA "[z.dbd6   ]"--=double bond; length half m-dash -->
+<!ENTITY z.tbd6    SDATA "[z.tbd6   ]"--=triple bond; length half m-dash -->
+<!ENTITY z.dbdsl   SDATA "[z.dbdsl  ]"--=double bond splayed left -->
+<!ENTITY z.dbdsr   SDATA "[z.dbdsr  ]"--=double bond splayed right -->
+<!ENTITY z.tbdsr   SDATA "[z.tbdsr  ]"--=triple bond splayed right -->
+<!ENTITY z.tbdsl   SDATA "[z.tbdsl  ]"--=triple bond splayed left -->
+
+<!ENTITY z.pdbdbd  SDATA "[z.pdbdbd ]"--=partial double bond, bottom dashed -->
+
+
+<!-- chemistry, bonds: -->
+
+<!ENTITY z.ub1s    SDATA "[z.ub1s   ]"--=upper bond 1 start-->
+<!ENTITY z.ub1e    SDATA "[z.ub1e   ]"--=upper bond 1 end  -->
+<!ENTITY z.lb1s    SDATA "[z.lb1s   ]"--=lower bond 1 start-->
+<!ENTITY z.lb1e    SDATA "[z.lb1e   ]"--=lower bond 1 end  -->
+
+<!ENTITY z.ub2s    SDATA "[z.ub2s   ]"--=upper bond 2 start-->
+<!ENTITY z.ub2e    SDATA "[z.ub2e   ]"--=upper bond 2 end  -->
+<!ENTITY z.lb2s    SDATA "[z.lb2s   ]"--=lower bond 2 start-->
+<!ENTITY z.lb2e    SDATA "[z.lb2e   ]"--=lower bond 2 end  -->
+
+<!ENTITY z.ub3s    SDATA "[z.ub3s   ]"--=upper bond 3 start-->
+<!ENTITY z.ub3e    SDATA "[z.ub3e   ]"--=upper bond 3 end  -->
+<!ENTITY z.lb3s    SDATA "[z.lb3s   ]"--=lower bond 3 start-->
+<!ENTITY z.lb3e    SDATA "[z.lb3e   ]"--=lower bond 3 end  -->
+
+<!ENTITY z.ub4s    SDATA "[z.ub4s   ]"--=upper bond 4 start-->
+<!ENTITY z.ub4e    SDATA "[z.ub4e   ]"--=upper bond 4 end  -->
+<!ENTITY z.lb4s    SDATA "[z.lb4s   ]"--=lower bond 4 start-->
+<!ENTITY z.lb4e    SDATA "[z.lb4e   ]"--=lower bond 4 end  -->
+
+<!ENTITY z.ub5s    SDATA "[z.ub5s   ]"--=upper bond 5 start-->
+<!ENTITY z.ub5e    SDATA "[z.ub5e   ]"--=upper bond 5 end  -->
+<!ENTITY z.lb5s    SDATA "[z.lb5s   ]"--=lower bond 5 start-->
+<!ENTITY z.lb5e    SDATA "[z.lb5e   ]"--=lower bond 5 end  -->
+
+<!-- Geometrical shapes: -->
+
+<!ENTITY z.hex     SDATA "[z.hex    ]"--=hexagon open -->
+<!ENTITY z.hexf    SDATA "[z.hexf   ]"--=hexagon filled-->
+<!ENTITY z.squt    SDATA "[z.squt   ]"--=square tilted open -->
+<!ENTITY z.squtf   SDATA "[z.squtf  ]"--=square tilted filled -->
+<!ENTITY z.squshr  SDATA "[z.squshr ]"--=square shaded right slant -->
+<!ENTITY z.squshl  SDATA "[z.squshl ]"--=square shaded left slant -->
+<!ENTITY z.squshv  SDATA "[z.squshv ]"--=square shaded vert -->
+<!ENTITY z.squshh  SDATA "[z.squshh ]"--=square shaded horiz -->
+<!ENTITY z.squshlr SDATA "[z.squshlr]"--=square shaded diagonal crosshatch -->
+<!ENTITY z.squshhv SDATA "[z.squshhv]"--=square shaded horizontal/vertical crosshatch -->
+<!ENTITY z.squtinl SDATA "[z.squtinl]"--=square tinted (light) -->
+<!ENTITY z.squtinh SDATA "[z.squtinh]"--=square tinted (heavy) -->
+<!ENTITY z.cirft   SDATA "[z.cirft  ]"--=circle filled top -->
+<!ENTITY z.cirfb   SDATA "[z.cirfb  ]"--=circle filled bottom -->
+<!ENTITY z.cirfr   SDATA "[z.cirfr  ]"--=circle filled right -->
+<!ENTITY z.cirshr  SDATA "[z.cirshr ]"--=circle shaded right slant -->
+<!ENTITY z.cirshl  SDATA "[z.cirshl ]"--=circle shaded left slant -->
+<!ENTITY z.cirshv  SDATA "[z.cirshv ]"--=circle shaded vert -->
+<!ENTITY z.cirshh  SDATA "[z.cirshh ]"--=circle shaded horiz -->
+<!ENTITY z.cirshlr SDATA "[z.cirshlr]"--=circle shaded diagonal crosshatch -->
+<!ENTITY z.cirshhv SDATA "[z.cirshhv]"--=circle shaded horizontal/vertical crosshatch -->
+<!ENTITY z.cirtinl SDATA "[z.cirtinl]"--=circle tinted (light) -->
+<!ENTITY z.cirtinh SDATA "[z.cirtinh]"--=circle tinted (heavy) -->
+<!ENTITY z.olcir   SDATA "[z.olcir  ]"--=bullseye (circle within another circle) -->
+<!ENTITY z.squftr  SDATA "[z.squftr ]"--=square filled top right -->
+<!ENTITY z.squftl  SDATA "[z.squftl ]"--=square filled top left -->
+<!ENTITY z.squfbl  SDATA "[z.squfbl ]"--=square filled bottom left -->
+<!ENTITY z.squfbr  SDATA "[z.squfbr ]"--=square filled bottom right -->
+<!ENTITY z.squfl   SDATA "[z.squfl  ]"--=square filled left -->
+<!ENTITY z.squfr   SDATA "[z.squfr  ]"--=square filled right -->
+<!ENTITY z.squft   SDATA "[z.squft  ]"--=square filled top -->
+<!ENTITY z.squfb   SDATA "[z.squfb  ]"--=square filled bottom -->
+<!ENTITY z.utfl    SDATA "[z.utfl   ]"--=up triangle filled left -->
+<!ENTITY z.utfr    SDATA "[z.utfr   ]"--=up triangle filled right -->
+<!ENTITY z.utlhb   SDATA "[z.utlhb  ]"--=up triangle, long horiz bar -->
+<!ENTITY z.dtfl    SDATA "[z.dtfl   ]"--=down triangle filled left -->
+<!ENTITY z.dtfr    SDATA "[z.dtfr   ]"--=down triangle filled right -->
+<!ENTITY z.diamfl  SDATA "[z.diamfl ]"--=diamond filled left -->
+<!ENTITY z.diamfr  SDATA "[z.diamfr ]"--=diamond filled right -->
+<!ENTITY z.diamft  SDATA "[z.diamft ]"--=diamond filled top -->
+<!ENTITY z.diamfb  SDATA "[z.diamfb ]"--=diamond filled bottom -->
+<!ENTITY z.diadot  SDATA "[z.diadot ]"--=diamond dotted -->
+<!ENTITY z.xtlr    SDATA "[z.xtlr   ]"--=X triangles, left, right -->
+<!ENTITY z.vrecto  SDATA "[z.vrecto ]"--=rectangle open, vertical -->
+
+<!-- Graph captions                                                    -->
+
+<!ENTITY z.dshdot  SDATA "[z.dshdot ]"--=dash dot, graph caption -->
+<!ENTITY z.dshdsh  SDATA "[z.dshdsh ]"--=dash dash, graph caption -->
+
+<!-- Accented Latin Characters: -->
+
+<!ENTITY z.gDa     SDATA "[z.gDa    ]"--= small g, double dot above -->
+<!ENTITY z.gDda    SDATA "[z.gDda   ]"--= small g, triple dot above -->
+
+<!-- Accented Greek Characters: -->
+
+<!ENTITY z.egrda   SDATA "[z.egrda  ]"--= small epsi, Greek, dot above -->
+<!ENTITY z.ggrda   SDATA "[z.ggrda  ]"--= small gamma, Greek, dot above -->
+<!ENTITY z.phgrda  SDATA "[z.phgrda ]"--= small phi, Greek, dot above -->
+<!ENTITY z.phvgrda SDATA "[z.phvgrda]"--= small phi (variant), Greek, dot above -->
+<!ENTITY z.psgrda  SDATA "[z.psgrda ]"--= small psi, Greek, dot above -->
+<!ENTITY z.rgrda   SDATA "[z.rgrda  ]"--= small rho, Greek, dot above -->
+<!ENTITY z.thgrda  SDATA "[z.thgrda ]"--= small theta, Greek, dot above -->
+
+<!ENTITY z.Lgcir   SDATA "[z.Lgcir  ]"--= capital Lambda, Greek, circumflex -->
+<!ENTITY z.PHgcir  SDATA "[z.PHgcir ]"--= capital Phi, Greek, circumflex -->
+<!ENTITY z.PSgcir  SDATA "[z.PSgcir ]"--= capital Psi, Greek, circumflex -->
+
+<!ENTITY z.agcir   SDATA "[z.agcir  ]"--= small alpha, Greek, circumflex -->
+<!ENTITY z.dgcir   SDATA "[z.dgcir  ]"--= small delta, Greek, circumflex -->
+<!ENTITY z.ggcir   SDATA "[z.ggcir  ]"--= small gamma, Greek, circumflex -->
+<!ENTITY z.mgcir   SDATA "[z.mgcir  ]"--= small mu, Greek, circumflex -->
+<!ENTITY z.ohgcir  SDATA "[z.ohgcir ]"--= small omega, Greek, circumflex -->
+<!ENTITY z.phgcir  SDATA "[z.phgcir ]"--= small phi, Greek, circumflex -->
+<!ENTITY z.psgcir  SDATA "[z.psgcir ]"--= small psi, Greek, circumflex -->
+<!ENTITY z.rgcir   SDATA "[z.rgcir  ]"--= small rho, Greek, circumflex -->
+<!ENTITY z.tgcir   SDATA "[z.tgcir  ]"--= small tau, Greek, circumflex -->
+<!ENTITY z.xgcir   SDATA "[z.xgcir  ]"--= small xi, Greek, circumflex -->
+<!ENTITY z.zgcir   SDATA "[z.zgcir  ]"--= small zeta, Greek, circumflex -->
+
+<!ENTITY z.Ggrm    SDATA "[z.Ggrm   ]"--= capital Gamma, Greek, macron -->
+<!ENTITY z.Lgrm    SDATA "[z.Lgrm   ]"--= capital Lambda, Greek, macron -->
+<!ENTITY z.OHgrm   SDATA "[z.OHgrm  ]"--= capital Omega, Greek, macron -->
+<!ENTITY z.PHgrm   SDATA "[z.PHgrm  ]"--= capital Phi, Greek, macron -->
+
+<!ENTITY z.agrm    SDATA "[z.agrm   ]"--= small alpha, Greek, macron -->
+<!ENTITY z.bgrm    SDATA "[z.bgrm   ]"--= small beta, Greek, macron -->
+<!ENTITY z.ggrm    SDATA "[z.ggrm   ]"--= small gamma, Greek, macron -->
+<!ENTITY z.dgrm    SDATA "[z.dgrm   ]"--= small delta, Greek, macron -->
+<!ENTITY z.egrm    SDATA "[z.egrm   ]"--= small epsilon, Greek, macron -->
+<!ENTITY z.zgrm    SDATA "[z.zgrm   ]"--= small zeta, Greek, macron -->
+<!ENTITY z.eegrm   SDATA "[z.eegrm  ]"--= small eta, Greek, macron -->
+<!ENTITY z.thgrm   SDATA "[z.thgrm  ]"--= small theta, Greek, macron -->
+<!ENTITY z.igrm    SDATA "[z.igrm   ]"--= small iota, Greek, macron -->
+<!ENTITY z.kgrm    SDATA "[z.kgrm   ]"--= small kappa, Greek, macron -->
+<!ENTITY z.lgrm    SDATA "[z.lgrm   ]"--= small lambda, Greek, macron -->
+<!ENTITY z.mgrm    SDATA "[z.mgrm   ]"--= small mu, Greek, macron -->
+<!ENTITY z.ngrm    SDATA "[z.ngrm   ]"--= small nu, Greek, macron -->
+<!ENTITY z.xgrm    SDATA "[z.xgrm   ]"--= small xi, Greek, macron -->
+<!ENTITY z.pgrm    SDATA "[z.pgrm   ]"--= small pi, Greek, macron -->
+<!ENTITY z.rgrm    SDATA "[z.rgrm   ]"--= small rho, Greek, macron -->
+<!ENTITY z.sgrm    SDATA "[z.sgrm   ]"--= small sigma, Greek, macron -->
+<!ENTITY z.sfgrm   SDATA "[z.sfgrm  ]"--=final small sigma, Greek, macron -->
+<!ENTITY z.tgrm    SDATA "[z.tgrm   ]"--= small tau, Greek, macron -->
+<!ENTITY z.ugrm    SDATA "[z.ugrm   ]"--= small upsilon, Greek, macron -->
+<!ENTITY z.phgrm   SDATA "[z.phgrm  ]"--= small phi, Greek, macron -->
+<!ENTITY z.phvgrm  SDATA "[z.phvgrm ]"--= small phi variant, Greek, macron -->
+<!ENTITY z.khgrm   SDATA "[z.khgrm  ]"--= small chi, Greek, macron -->
+<!ENTITY z.psgrm   SDATA "[z.psgrm  ]"--= small psi, Greek, macron -->
+<!ENTITY z.ohgrm   SDATA "[z.ohgrm  ]"--= small omega, Greek, macron -->
+
+<!ENTITY z.PHgrt   SDATA "[z.PHgrt  ]"--= capital Lambda, Greek, tilde -->
+
+<!ENTITY z.agrt    SDATA "[z.agrt   ]"--= small alpha, Greek, tilde -->
+<!ENTITY z.ggrt    SDATA "[z.ggrt   ]"--= small gamma, Greek, tilde -->
+<!ENTITY z.egrt    SDATA "[z.egrt   ]"--= small epsilon, Greek, tilde -->
+<!ENTITY z.lgrt    SDATA "[z.lgrt   ]"--= small lambda, Greek, tilde -->
+<!ENTITY z.mgrt    SDATA "[z.mgrt   ]"--= small mu, Greek, tilde -->
+<!ENTITY z.ngrt    SDATA "[z.ngrt   ]"--= small nu, Greek, tilde -->
+<!ENTITY z.phgrt   SDATA "[z.phgrt  ]"--= small phi, Greek, tilde -->
+<!ENTITY z.psgrt   SDATA "[z.psgrt  ]"--= small psi, Greek, tilde -->
+<!ENTITY z.rgrt    SDATA "[z.rgrt   ]"--= small rho, Greek, tilde -->
+<!ENTITY z.tgrt    SDATA "[z.tgrt   ]"--= small tau, Greek, tilde -->
+<!ENTITY z.thgrt   SDATA "[z.thgrt  ]"--= small theta, Greek, tilde -->
+
+<!ENTITY z.PSgvec  SDATA "[z.PSgvec ]"--= capital Psi, Greek, vector -->
+
+<!ENTITY z.egvec   SDATA "[z.egvec  ]"--= small epsilon, Greek, vector -->
+<!ENTITY z.eegvec  SDATA "[z.eegvec ]"--= small eta, Greek, vector -->
+<!ENTITY z.mgvec   SDATA "[z.mgvec  ]"--= small mu, Greek, vector -->
+<!ENTITY z.ngvec   SDATA "[z.ngvec  ]"--= small nu, Greek, vector -->
+
+
+<!-- z.supast: superior asterisk to be done by applying the <sup> tag
+     to an ordinary asterisk -->
+
+<!-- other: -->
+
+<!ENTITY z.ccsh    SDATA "[z.ccsh   ]"--=circle, cut, short horiz bar -->
+<!ENTITY z.dfncl   SDATA "[z.dfncl  ]"--=double-rule fence; left big -->
+<!ENTITY z.dfncr   SDATA "[z.dfncr  ]"--=double-rule fence; right big -->
+<!ENTITY z.dshfnc  SDATA "[z.dshfnc ]"--=dashed fence -->
+<!ENTITY z.frac32  SDATA "[z.frac32 ]"--=fraction three-over-two -->
+<!ENTITY z.Gtc     SDATA "[z.Gtc    ]"--=double greater-than, compressed -->
+<!ENTITY z.Ltc     SDATA "[z.Ltc    ]"--=double less-than, compressed -->
+<!ENTITY z.hbtda   SDATA "[z.hbtda  ]"--=horiz bar, triple dot above -->
+<!ENTITY z.hbdda   SDATA "[z.hbdda  ]"--=horiz bar, double dot above -->
+<!ENTITY z.ldang   SDATA "[z.ldang  ]"--=left double angle bracket -->
+<!ENTITY z.rdang   SDATA "[z.rdang  ]"--=right double angle bracket -->
+<!ENTITY z.italv   SDATA "[z.italv  ]"--=italic v (to differentiate from Times ital nu)-->
+<!ENTITY z.wvstarr SDATA "[z.wvstarr]"--=long arrow, wavy then straight -->
+<!ENTITY z.spstarf SDATA "[z.spstarf]"--=superior filled star -->
+
+<!-- Journal logos: Intended for use within the RSC -->
+
+<!ENTITY z.aclogo  SDATA "[z.aclogo   ]"--=RSC ac Journal Logo -->
+<!ENTITY z.anlogo  SDATA "[z.anlogo   ]"--=RSC an Journal Logo -->
+<!ENTITY z.cclogo  SDATA "[z.cclogo   ]"--=RSC cc Journal Logo -->
+<!ENTITY z.celogo  SDATA "[z.celogo   ]"--=RSC ce Journal Logo -->
+<!ENTITY z.cplogo  SDATA "[z.cplogo   ]"--=RSC cp Journal Logo -->
+<!ENTITY z.cslogo  SDATA "[z.cslogo   ]"--=RSC cs Journal Logo -->
+<!ENTITY z.dtlogo  SDATA "[z.dtlogo   ]"--=RSC dt Journal Logo -->
+<!ENTITY z.emlogo  SDATA "[z.emlogo   ]"--=RSC em Journal Logo -->
+<!ENTITY z.fdlogo  SDATA "[z.fdlogo   ]"--=RSC fd Journal Logo -->
+<!ENTITY z.gclogo  SDATA "[z.gclogo   ]"--=RSC gc Journal Logo -->
+<!ENTITY z.gtlogo  SDATA "[z.gtlogo   ]"--=RSC gt Journal Logo -->
+<!ENTITY z.iclogo  SDATA "[z.iclogo   ]"--=RSC ic Journal Logo -->
+<!ENTITY z.jalogo  SDATA "[z.jalogo   ]"--=RSC ja Journal Logo -->
+<!ENTITY z.jclogo  SDATA "[z.jclogo   ]"--=RSC jc Journal Logo -->
+<!ENTITY z.jmlogo  SDATA "[z.jmlogo   ]"--=RSC jm Journal Logo -->
+<!ENTITY z.mclogo  SDATA "[z.mclogo   ]"--=RSC mc Journal Logo -->
+<!ENTITY z.njlogo  SDATA "[z.njlogo   ]"--=RSC nj Journal Logo -->
+<!ENTITY z.nplogo  SDATA "[z.nplogo   ]"--=RSC np Journal Logo -->
+<!ENTITY z.oclogo  SDATA "[z.oclogo   ]"--=RSC oc Journal Logo -->
+<!ENTITY z.p1logo  SDATA "[z.p1logo   ]"--=RSC p1 Journal Logo -->
+<!ENTITY z.p2logo  SDATA "[z.p2logo   ]"--=RSC p2 Journal Logo -->
+<!ENTITY z.pclogo  SDATA "[z.pclogo   ]"--=RSC pc Journal Logo -->
+
+<!ENTITY z.pologo  SDATA  "[z.pologo   ]"><!--=RSC po Journal Logo -->
+<!ENTITY z.qulogo  SDATA  "[z.qulogo   ]"><!--=RSC qu Journal Logo -->
+<!ENTITY z.rclogo  SDATA  "[z.rclogo   ]"><!--=RSC rc Journal Logo -->
+

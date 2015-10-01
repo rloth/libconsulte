@@ -1,0 +1,49 @@
+
+   <!ELEMENT batch (batchid?, article+) >
+
+   <!-- User defined identifier for the batch (Optional) -->
+   <!ELEMENT batchid (#PCDATA) >
+
+   <!-- Reference data is grouped by primary article containing references -->
+   <!ELEMENT article (articleid?, pissn?, pcoden?, pyear?, reference+) >
+
+   <!-- User defined identifier for primary article (Optional) -->
+   <!ELEMENT articleid (#PCDATA) >
+
+   <!-- Primary article ISSN or CODEN (Optional) -->
+   <!ELEMENT pissn (#PCDATA) >
+   <!ELEMENT pcoden (#PCDATA) >
+
+   <!-- Publication Year of primary article (Optional) -->
+   <!ELEMENT pyear (#PCDATA) >
+
+   <!-- Repeating group for each reference in primary article (Required) -->
+   <!ELEMENT reference (referenceid?, year, volume?, issue?, doi?, firstpage,
+                        author, firstinitial?, coi?) >
+
+   <!-- User defined reference identifier (Optional) -->
+   <!ELEMENT referenceid (#PCDATA) >
+
+   <!-- Year (Required) -->
+   <!ELEMENT year (#PCDATA) >
+
+   <!-- Volume (Optional) -->
+   <!ELEMENT volume (#PCDATA) >
+
+   <!-- ISSN (Optional) -->
+   <!ELEMENT issue (#PCDATA) >
+   
+   <!-- DOI (Optional) -->
+   <!ELEMENT doi (#PCDATA) >
+
+   <!-- First page (Required) -->
+   <!ELEMENT firstpage (#PCDATA) >
+
+   <!-- Last name (surname) of first author (Required) -->
+   <!ELEMENT author (#PCDATA) >
+
+   <!-- First initial of first author's given name(first name) (Optional) -->
+   <!ELEMENT firstinitial (#PCDATA) >
+
+   <!-- COI - Returned by CAS Reference Matcher to identify the CAS record -->
+   <!ELEMENT coi (#PCDATA) >

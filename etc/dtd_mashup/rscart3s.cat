@@ -1,0 +1,9 @@
+SGMLDECL "rscxml33.dcl"
+OVERRIDE YES
+PUBLIC "-//RSC//DTD RSC Primary Article DTD 3.0//EN" "rscart30.dtd"
+PUBLIC "-//RSC//DTD RSC Primary Article DTD 3.2//EN" "rscart32.dtd"
+PUBLIC "-//RSC//DTD RSC Primary Article DTD 3.3//EN" "rscart33.dtd"
+PUBLIC "-//RSC//ISO Entities RSC version 1.0//EN" "entities/isosgm_s.ent"
+PUBLIC "-//RSC//ENTITIES Additional Symbols 2.0//EN" "entities/rscsgm_s.ent"
+PUBLIC "-//OASIS//DTD Exchange Table Model 19960430//EN" "calstab1.dtd"
+CATALOG "rscart.cat"

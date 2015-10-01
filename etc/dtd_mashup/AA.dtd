@@ -1,0 +1,119 @@
+<!-- 							
+
+               AA.DTD XML (RAAPS)
+Copyright(c) Royal Society of Chemistry, 2002
+     Analytical Abstracts On-line  (Weekly Output)
+            Document Type Definition                      
+        26-Feb-2002: Version 1.2 (NHu)
+
+Mods: Added PAD 26-Feb-2002 (NHu)
+
+-->
+
+<!ELEMENT AA ( RSCHead, RECORD+ ) >
+
+<!ENTITY % m.para "(#PCDATA|inf|sup|bo|it|scp)*" >
+
+<!ELEMENT RECORD ( REF, SEC, SSC, IDC, DOC, FJL?, JNL?, CDN?, ISN?, LCD,
+LAN, VOL?, ISS?, ATL, AUT*, PAG?, AVL? , ADS?, DIV?, ORG?, CTR?, CFI?, RPT?, RPN?, PBD, EDN?, IBN?, PBR?, PAD?, ANALYTE?,
+ MATRIX?, CONCEPT?, ABS, XRF* ) >
+
+<!ELEMENT AAT %m.para;  >
+
+<!ELEMENT ABS %m.para;  >
+
+<!ELEMENT ADS ( #PCDATA ) >
+
+<!ELEMENT ANALYTE ( AAT | AYT | REA )* >
+
+<!ELEMENT ATL %m.para;  >
+
+<!ELEMENT AUT ( #PCDATA ) >
+
+<!ELEMENT AYT  %m.para; >
+
+<!ELEMENT AVL ( #PCDATA ) >
+
+<!ELEMENT CDN ( #PCDATA ) >
+
+<!ELEMENT CDT ( #PCDATA ) >
+
+<!ELEMENT CFI ( #PCDATA ) >
+
+<!ELEMENT CMD %m.para;  >
+
+<!ELEMENT CONCEPT ( CMD | CPT )* >
+
+<!ELEMENT COP ( #PCDATA ) >
+
+<!ELEMENT CPT ( #PCDATA ) >
+
+<!ELEMENT CTR ( #PCDATA ) >
+
+<!ELEMENT DIV ( #PCDATA ) >
+
+<!ELEMENT DOC ( #PCDATA ) >
+
+<!ELEMENT EDN ( #PCDATA ) >
+
+<!ELEMENT FJL ( #PCDATA ) >
+
+<!ELEMENT IBN ( #PCDATA ) >
+
+<!ELEMENT IDC ( #PCDATA ) >
+
+<!ELEMENT ISN ( #PCDATA ) >
+
+<!ELEMENT ISS ( #PCDATA ) >
+
+<!ELEMENT JNL ( #PCDATA ) >
+
+<!ELEMENT LAN ( #PCDATA ) >
+
+<!ELEMENT LCD ( #PCDATA ) >
+
+<!ELEMENT MAT %m.para;  >
+
+<!ELEMENT MATRIX ( MTX, MAT?, REM? )* >
+
+<!ELEMENT MTX %m.para;  >
+
+<!ELEMENT ORG ( #PCDATA ) >
+
+<!ELEMENT PAG ( #PCDATA ) >
+
+<!ELEMENT PBD ( #PCDATA ) >
+
+<!ELEMENT PBR ( #PCDATA ) >
+
+<!ELEMENT PAD ( #PCDATA ) >
+
+<!ELEMENT REA ( #PCDATA ) >
+
+<!ELEMENT REF ( #PCDATA ) >
+
+<!ELEMENT REM ( #PCDATA ) >
+
+<!ELEMENT RSCHead ( COP, CDT ) >
+
+<!ELEMENT SEC ( #PCDATA ) >
+
+<!ELEMENT SSC ( #PCDATA ) >
+
+<!ELEMENT VOL ( #PCDATA ) >
+
+<!ELEMENT XRF ( #PCDATA ) >
+
+<!ELEMENT bo %m.para;  >
+
+<!ELEMENT inf %m.para;  >
+
+<!ELEMENT it %m.para;  >
+
+<!ELEMENT scp %m.para;  >
+
+<!ELEMENT sup %m.para;  >
+
+<!ENTITY % aa SYSTEM "entities/aa.ent" >
+%aa;
+

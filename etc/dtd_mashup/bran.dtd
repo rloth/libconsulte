@@ -1,0 +1,48 @@
+<!ELEMENT BATCH ( RECORD+ ) >
+<!ELEMENT ID ( #PCDATA ) >
+<!ENTITY % font-modifiers "roman|it|bo|bi|scp|sansserif" >
+<!ENTITY % emph        "%font-modifiers;|ul|sup|inf" >
+<!ELEMENT roman 	( #PCDATA | %emph; )*>
+<!ELEMENT it		( #PCDATA | %emph; )*>
+<!ELEMENT bo		( #PCDATA | %emph; )*>
+<!ELEMENT bi		( #PCDATA | %emph; )*>
+<!ELEMENT scp		( #PCDATA | %emph; )*>
+<!ELEMENT sansserif	( #PCDATA | %emph; )*>
+<!ELEMENT ul		( #PCDATA | %emph; )*>
+<!ELEMENT sup		( #PCDATA | %emph; )*>
+<!ELEMENT inf		( #PCDATA | %emph; )*>
+<!ELEMENT RECORD ( ID, idc, bat, inj, vol, iss, pbd, cfi, rec, pag, aut*, atp*, div, org, ads, postcode?, email?, doi?, ict, atl, abs, sec, isb, xrf, xsb, iay, aat, imx, mat, icp, cmd ) >
+<!ELEMENT aat ( #PCDATA ) >
+<!ELEMENT abs ( #PCDATA | %emph; )*>
+<!ELEMENT ads ( #PCDATA ) >
+<!ELEMENT atl ( #PCDATA | %emph; )*>
+<!ELEMENT atp ( #PCDATA ) >
+<!ELEMENT aut ( #PCDATA ) >
+<!ELEMENT bat ( #PCDATA ) >
+<!ELEMENT cfi ( #PCDATA ) >
+<!ELEMENT cmd ( #PCDATA ) >
+<!ELEMENT div ( #PCDATA ) >
+<!ELEMENT doi ( #PCDATA ) >
+<!ELEMENT email ( #PCDATA ) >
+<!ELEMENT iay ( #PCDATA ) >
+<!ELEMENT icp ( #PCDATA )>
+<!ELEMENT ict ( #PCDATA ) >
+<!ELEMENT idc ( #PCDATA ) >
+<!ELEMENT imx ( #PCDATA ) >
+<!ELEMENT inj ( #PCDATA ) >
+<!ELEMENT isb ( #PCDATA ) >
+<!ELEMENT iss ( #PCDATA ) >
+<!ELEMENT mat ( #PCDATA )>
+<!ELEMENT org ( #PCDATA ) >
+<!ELEMENT pag ( #PCDATA ) >
+<!ELEMENT pbd ( #PCDATA ) >
+<!ELEMENT postcode ( #PCDATA ) >
+<!ELEMENT rec ( #PCDATA ) >
+<!ELEMENT sec ( #PCDATA ) >
+<!ELEMENT vol ( #PCDATA ) >
+<!ELEMENT xrf ( #PCDATA )>
+<!ELEMENT xsb ( #PCDATA )>
+<!ENTITY % RSCCharacters PUBLIC "-//RSC//RSC characters version 1.0//EN" 
+"http://www.rsc.org/dtds/entities/rsc_x.ent" >
+
+%RSCCharacters;

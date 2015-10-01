@@ -1,0 +1,262 @@
+<!-- ============================================================= -->
+<!--  MODULE:    Issue XML DTD			                   -->
+<!--  VERSION:   3.0                                             -->
+<!--  DATE:      April 2009                                        -->
+<!--                                                               -->
+<!-- ============================================================= -->
+
+<!-- ============================================================= -->
+<!--                    PUBLIC DOCUMENT TYPE DEFINITION            -->
+<!--                        TYPICAL INVOCATION                     -->
+<!--
+"-//Atypon//DTD Atypon Systems Archival NLM DTD Suite Issue XML DTD v3.0.2 20101108//EN"
+     Delivered as file "issuexml.dtd"                              -->
+<!-- ============================================================= -->
+
+<!--
+
+Issue XML DTD, as described and agreed to in bug#12865.
+See com.atypon.publish.backstage.parser.IssueParser for access to contents of these kinds of files.
+nkerr, 2007-05-05
+
+apagliere 2007-05-08 added xmlns:xlink attribute to issue-xml element
+nikos     2007-06-15 merged it with NLM DTD v2.2 as a separate DTD root
+
+-->
+
+<!ENTITY % archivecustom-modules.ent PUBLIC
+"-//Atypon//DTD Atypon Systems Archival NLM DTD-Specific Modules v3.0.2 20101108//EN"
+"atypon-archivecustom-modules3.ent"                                  >
+%archivecustom-modules.ent;
+
+<!ENTITY % modules.ent PUBLIC
+"-//Atypon//DTD Atypon Systems Archival NLM DTD Module of Modules v3.0.2 20101108//EN"
+"modules3.ent"                                                       >
+%modules.ent;
+
+<!-- ============================================================= -->
+<!--                    CUSTOMIZATION MODULES INVOKED              -->
+<!--                    Note: These modules must be called after   -->
+<!--                    all Module of Modules but before any other -->
+<!--                    modules. Unlike any other grouping, order  -->
+<!--                    of these modules matters.                  -->
+<!-- ============================================================= -->
+
+<!--                    DTD-SPECIFIC CLASS CUSTOMIZATIONS MODULE   -->
+<!--                    Names the module that holds the DTD-specific
+                        class definitions for the Journal Archiving
+                        and Interchange DTD that over-rides the Suite 
+                        defaults.                
+                        (Defined in %archivecustom-modules.ent;)   -->
+%archivecustom-classes.ent;
+
+<!--                    DEFAULT ELEMENT CLASSES MODULE             -->
+<!--                    Names the module that holds the standard
+                        class definitions for the Journal Archiving
+                        and Interchange DTD Suite.                 -->
+%default-classes.ent;
+
+<!--                    DTD-SPECIFIC MIX CUSTOMIZATIONS MODULE     -->
+<!--                    Set up the Parameter Entities and element
+                        class definitions that will be used to
+                        over-ride some element mixes in this DTD.
+                        (Defined in %archivecustom-modules.ent;)   -->
+%archivecustom-mixes.ent;
+
+<!--                    DEFAULT MIX CUSTOMIZATIONS MODULE          -->
+<!--                    Names the module that holds the standard
+                        mix definitions for the Journal Archiving
+                        and Interchange DTD Suite.                 -->
+%default-mixes.ent;
+
+<!--                    DTD-SPECIFIC MODELS/ATTRIBUTES CUSTOMIZATIONS 
+                        MODULE                                     -->
+<!--                    Names the module that holds the over-rides
+                        of content models, attribute lists, elements
+                        lists to be used in content models, and
+                        attribute values. These are DTD-specific.
+                        (Defined in %archivecustom-modules.ent;)   -->
+%archivecustom-models.ent;
+
+<!-- ============================================================= -->
+<!--                    COMMON (SHARED) ELEMENTS MODULE INVOKED    -->
+<!-- ============================================================= -->
+
+
+<!--                    COMMON (SHARED) DECLARATIONS               -->
+<!--                    Declarations for elements, attributes, 
+                        entities, and Notations that are shared by
+                        more than one class module. Note: Must be 
+                        called before any of the class modules.    -->
+%common.ent;
+
+<!-- ============================================================= -->
+<!--                    JOURNAL ARTICLE CLASS ELEMENTS (alpha)     -->
+<!-- ============================================================= -->
+
+<!--                    ARTICLE METADATA ELEMENTS                  -->
+%articlemeta.ent;
+
+<!--                    DISPLAY (GRAPHICAL) ELEMENTS               -->
+%display.ent;
+
+<!--                    FORMATTING ELEMENT CLASSES                 -->
+<!--                    Elements that change rendition/display.    -->
+%format.ent;
+
+<!--                    JOURNAL METADATA ELEMENTS                  -->
+%journalmeta.ent;
+
+<!--                    LINK CLASS ELEMENTS                        -->
+%link.ent;
+
+<!--                    LIST CLASS ELEMENTS                        -->
+%list.ent;
+
+<!--                    PARAGRAPH-LEVEL ELEMENTS                   -->
+%para.ent;
+
+<!--                    PHRASE-LEVEL ELEMENTS                      -->
+%phrase.ent;
+
+<!--                    NOTATION ELEMENTS                          -->
+%notat.ent;
+
+<!--                    MATH ELEMENTS                              -->
+%math.ent;
+
+<!--                    SPECIAL CHARACTERS DECLARATIONS            -->
+<!--                    Standard XML special character entities 
+                        used in this DTD                           -->
+%xmlspecchars.ent;
+
+<!--                    CUSTOM SPECIAL CHARACTERS DECLARATIONS     -->
+<!--                    Custom special character entities created 
+                        specifically for use in this DTD Suite     -->
+%chars.ent;
+
+<!ELEMENT issue-xml	(journal-meta, issue-meta, toc*)>
+
+<!ENTITY % issue-xml-atts
+    "order         NMTOKEN            #IMPLIED
+     intended-date CDATA              #IMPLIED" > 
+			  
+<!ATTLIST  issue-xml
+    %issue-xml-atts; >
+
+<!ELEMENT issue-meta (contrib-group*,
+    pub-date*,
+    series-title*,
+    series-text?,
+    volume?,
+    volume-id*,
+    issue?,
+    issue-id*,
+    issue-sequence?,
+    issue-title*,
+    supplement?,
+    ( (fpage?, lpage?, page-range?) )?,
+    copyright-statement?,
+    copyright-year?,
+    permissions?, related-issue*,
+    counts?, pub-count*) >
+
+<!ENTITY  % issue-types
+             "(normal|ahead-of-print|just-accepted|forthcoming|news|part|volume-suppl|special|errata|letters|proofing|virtual|submitted)">
+
+<!ATTLIST  issue-meta
+    issue-type %issue-types; "normal" >
+
+<!ENTITY  % toc-types "(page-order|subject-heading-order|page-latin-numeric-order|page-numeric-latin-order)">
+
+<!ELEMENT toc (cover?, (issue-article-meta | p | issue-subject-group)*) >
+<!--         xml:lang   The language in which the value of the
+                        element is expressed.  Recommended best 
+                        practice is to use values as defined in
+                        RFC 1766, typically 2-letter language
+                        codes such as "FR" (French), "EN" (English),
+                        and "DE" (German). These values are NOT
+                        case sensitive, so "EN" = "en". The values
+                        may include hyphenated differentiations such 
+                        as "EN-AU" (Australian English) and "EN-US"
+                        (United States English).                   
+             toc-type
+                        Identification of the toc, information
+                        class, or type of this particular toc   -->
+<!ENTITY % toc-atts
+    "xml:lang   NMTOKEN                         #IMPLIED 
+     toc-type   %toc-types;                     #IMPLIED" > 
+ 
+<!ATTLIST toc
+    %toc-atts; >
+
+<!ELEMENT cover (graphic* | caption) >
+
+<!ELEMENT issue-subject-group (issue-subject-title, (issue-article-meta | p | issue-subject-group)*)>
+
+<!ELEMENT issue-subject-title (p*, subject, p*) >
+
+<!ENTITY % issue-article-meta-model
+    "(article-id+, title-group?,
+     (contrib-group | aff | %x.class;)*, author-notes?,
+     ( (fpage?, lpage?, page-range?) | elocation-id )?,
+     (%address-link.class; | product | supplementary-material)*,
+     history?, self-uri*, related-article*,
+     abstract*, trans-abstract*, toc-graphic*,
+     counts?)" >
+
+<!ELEMENT  issue-article-meta 
+    %issue-article-meta-model; >
+<!ATTLIST  issue-article-meta
+    format CDATA #IMPLIED >
+
+<!ELEMENT  related-issue
+     (#PCDATA %related-article-elements;)*  >
+
+<!ENTITY % related-issue-atts
+     "id        ID                                #IMPLIED
+      alternate-form-of
+                IDREF                             #IMPLIED
+      related-issue-type
+                CDATA                             #REQUIRED
+      ext-link-type 
+                CDATA                             #IMPLIED
+      vol       CDATA                             #IMPLIED
+      issue     CDATA                             #IMPLIED
+      journal-id
+                CDATA                             #IMPLIED  
+      %journal-id-atts;
+      %might-link-atts;"                                     >
+
+<!ATTLIST  related-issue
+      %related-issue-atts; >
+
+<!ELEMENT  toc-graphic                      %graphic-model;  >
+
+<!ATTLIST toc-graphic                       %graphic-atts;   >
+
+<!--                 PUB-COUNT ELEMENTS                    -->
+<!ENTITY % pub-count-elements
+                        "  "                                 >
+
+<!--                 PUB-COUNT DEFINITION                  -->
+<!ELEMENT pub-count  (#PCDATA %pub-count-elements;)*         >
+
+<!ENTITY % pub-count-atts
+     "count-type     (equation|figure|image|page|ref|citation|table|
+                      word|first-page|last-page|elocation-id|page-range|
+                      seq|available-in-print|length-unit|length|width|
+                      height|weight-unit|weight|cited-by|download|
+		      max-credit-hours|correct-answers-required|
+		      force-doi-display|proof-feedback|results-visibility|
+		      participation-frequency|moderation|print-circ|
+		      impact-factor)              #REQUIRED
+      count-subtype  (none|isi|crossref|crossref-fixed-wall|
+                      crossref-moving-wall|circ-all|circ-physicians|
+                      circ-pct-na|circ-pct-sa|circ-pct-eur|
+                      circ-pct-asia|circ-pct-row) 'none'
+      source         (content|admin|auto|external)
+                                                 #IMPLIED"  >
+
+<!ATTLIST  pub-count
+      %pub-count-atts; >

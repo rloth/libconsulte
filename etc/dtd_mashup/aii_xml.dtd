@@ -1,0 +1,89 @@
+<!-- N. Hunter: 07-Dec-2000
+
+XML DTD for RSC data extracted from TRIP for CAS
+Covers data for journals pre OCT-1997
+
+Used to create XML data to deposit with DOI/CrossRef -->
+
+
+<!-- ELEMENT rschead   ( front | fnoteref | scp | bo | bi | it | inf | sup | citref )*-->
+<!ELEMENT rschead   ( front )*>
+<!ELEMENT front     ( titlegrp, authgrp, pubfront, toc?,  abstract?, keyword*, fulltext, trnscode, cpyright, document, pages, pagelen, pubdate )>
+
+<!ELEMENT bo   ( #PCDATA | overbar | underbar | ul | inf | it  | scp| sup)*>
+<!ELEMENT bi   ( #PCDATA | overbar | underbar | ul | inf | scp| sup)*>
+<!ELEMENT inf   ( #PCDATA | overbar | underbar | ul | inf | bi | bo | it  | scp| sup)* >
+
+<!ELEMENT it   ( #PCDATA | overbar | underbar | ul | bo | inf | scp| sup)* >
+
+<!ELEMENT scp   ( #PCDATA | overbar | underbar | ul | bi | bo | inf | it  | sup)* >
+<!ELEMENT sup   ( #PCDATA | overbar | underbar | ul | bi | sup| bo | inf | it  | scp)* >
+<!ELEMENT subtitle   ( #PCDATA | overbar | underbar | ul | bi | bo | inf | it  | scp | sup | citref )*  >
+<!ELEMENT citref   ( #PCDATA ) >
+<!ELEMENT titlegrp  ( sertitle, title, subtitle? )>
+<!ELEMENT authgrp   ( author+, aff+ )>
+<!ELEMENT pubfront  ( artid?, issn, volumeno, issueno, date, category?, history, artid?, fpage, lpage)>
+<!ELEMENT abstract  ( p+ )>
+<!ELEMENT toc       ( title, list ) >
+<!ELEMENT list      ( item* )>
+<!ELEMENT item      ( #PCDATA | ul | bi | bo | inf | it  | scp | sup )*>
+<!ATTLIST item      level    CDATA  #IMPLIED  >
+<!ELEMENT keyword   ( #PCDATA | ul | bi | bo | inf | it  | scp | sup )*>
+<!ELEMENT fulltext  ( #PCDATA )>
+<!ELEMENT trnscode  ( #PCDATA )>
+<!ELEMENT cpyright  ( #PCDATA )>
+<!ELEMENT category  ( #PCDATA )>
+<!ELEMENT document  ( #PCDATA )>
+<!ELEMENT pages     ( #PCDATA )>
+<!ELEMENT pagelen   ( #PCDATA )>
+<!ELEMENT pubdate   ( #PCDATA )>
+<!ELEMENT sertitle  ( #PCDATA )>
+<!ELEMENT title     ( #PCDATA | overbar | underbar | bo | bi | ul | inf | it  | scp | sup | dformula | fnoteref | citref )*>
+<!ELEMENT fnoteref  EMPTY    >
+<!ATTLIST fnoteref      no    CDATA  #IMPLIED  >
+
+<!ELEMENT dformula  ( #PCDATA )>
+<!ATTLIST dformula      no    CDATA  #IMPLIED  >
+<!ELEMENT uformula  ( #PCDATA )>
+<!ATTLIST uformula      no    CDATA  #IMPLIED  >
+<!ELEMENT author    ( fname, surname, role?, fnoteref? )>
+<!ATTLIST author      affid CDATA  #IMPLIED  >
+<!ELEMENT aff       ( orgname | orgdiv? | street? | city | country | state | postcode | postbox | fax | email )*>
+<!ATTLIST aff           id    CDATA  #IMPLIED  >
+<!ELEMENT p         ( #PCDATA | overbar | underbar | ul | bi | sup| bo | inf | it  | scp | uformula | dformula | citref | fnoteref)*>
+<!ELEMENT fname     ( #PCDATA )>
+<!ELEMENT surname   ( #PCDATA )>
+<!ELEMENT role      ( #PCDATA )>
+<!ELEMENT orgname   ( #PCDATA )>
+<!ELEMENT orgdiv    ( #PCDATA | sup )*>
+<!ELEMENT postcode  ( #PCDATA )>
+<!ELEMENT city      ( #PCDATA )>
+<!ELEMENT country   ( #PCDATA )>
+<!ELEMENT issn      ( #PCDATA )>
+<!ELEMENT email     ( #PCDATA )>
+<!ELEMENT fax       ( #PCDATA )>
+<!ELEMENT volumeno  ( #PCDATA )>
+<!ELEMENT issueno   ( #PCDATA )>
+<!ELEMENT date      ( year, month?, day? )>
+<!ELEMENT history   ( received?, accepted? )>
+<!ELEMENT artid     ( #PCDATA )>
+<!ELEMENT fpage     ( #PCDATA )>
+<!ELEMENT lpage     ( #PCDATA )>
+<!ELEMENT year      ( #PCDATA )>
+<!ELEMENT month     ( #PCDATA )>
+<!ELEMENT day       ( #PCDATA )>
+<!ELEMENT received  ( date )>
+<!ELEMENT accepted  ( date )>
+<!ELEMENT state     ( #PCDATA )>
+<!ELEMENT street    ( #PCDATA )>
+<!ELEMENT postbox   ( #PCDATA )>
+
+<!ENTITY % ISOUnicode SYSTEM "entities/isoxml_s.ent" >
+%ISOUnicode;
+<!ENTITY % RSCSpecific SYSTEM "entities/rschead.ent" >
+%RSCSpecific;
+
+
+
+
+

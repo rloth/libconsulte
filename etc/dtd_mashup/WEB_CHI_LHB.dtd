@@ -1,0 +1,84 @@
+<!-- 
+
+				Copyright Royal Society of Chemistry 2001
+					(XML)DTD for CHI and LHB
+						Version 1.2 NHu 26-Feb-2002
+
+
+-->
+
+<!ELEMENT CSNB ( abstracts )* >
+<!ATTLIST CSNB 
+		  prod       (CHI | LHB) 'CHI' >
+
+<!ELEMENT abstracts (Record+) >
+<!ELEMENT Heading ( #PCDATA | ul | inf | sup | it | sanserif | roman)* >
+<!ENTITY % emph   "ul | inf | it | scp | sup | sanserif | roman|bo" >
+<!ENTITY % m.para "(#PCDATA|%emph;)*" >
+<!ELEMENT bo   				%m.para;>
+<!ELEMENT bi   				%m.para;>
+<!ELEMENT it   				%m.para;>
+<!ELEMENT inf   			%m.para;>
+<!ELEMENT sup   			%m.para;>
+<!ELEMENT scp   			%m.para;>
+<!ELEMENT ul   				%m.para;>
+<!ELEMENT sanserif  		%m.para;>
+<!ELEMENT roman   			%m.para;>
+<!ELEMENT Section ( #PCDATA ) >
+<!ELEMENT AbstractTitle  	%m.para;>
+<!ELEMENT OriginalTitle		%m.para;>
+<!ELEMENT JournalName 			%m.para;>
+<!ELEMENT AppTitleNumber 		%m.para;> 
+<!ELEMENT Division 			%m.para;>
+<!ELEMENT Organisation 		%m.para;>
+<!ELEMENT Authors 			%m.para; >
+<!ELEMENT AuthorCountry 	( #PCDATA ) >
+<!ELEMENT AuthorAddress 	%m.para; >
+<!ELEMENT AuthorPostCode	( #PCDATA ) >
+<!ELEMENT AuthorWebAddress 	( #PCDATA ) >
+<!ELEMENT AuthorEmail 		( #PCDATA ) >
+<!ELEMENT PublisherName 	( #PCDATA ) >
+<!ELEMENT PublisherDivision %m.para; >
+<!ELEMENT PublisherAddress 	%m.para; >
+<!ELEMENT PublisherCountry 	( #PCDATA ) >
+<!ELEMENT PublisherPostCode 	( #PCDATA ) >
+<!ELEMENT PublisherWebAddress 	( #PCDATA ) >
+<!ELEMENT PublisherEmail 	( #PCDATA ) >
+<!ELEMENT AbbreviatedJournalName %m.para;> 
+<!ELEMENT PublicationDate ( #PCDATA ) >
+<!ELEMENT Volume		  ( #PCDATA ) >
+<!ELEMENT Issue		 	  ( #PCDATA ) >
+<!ELEMENT Pages		  	  ( #PCDATA ) >
+<!ELEMENT Availability	    %m.para; >
+<!ELEMENT EditionalDetails	%m.para; >
+<!ELEMENT ISBN			  ( #PCDATA ) >
+<!ELEMENT LanguageCode	  ( #PCDATA ) >
+<!ELEMENT LanguageName	  ( #PCDATA ) >
+<!ELEMENT ConferenceDetails ( #PCDATA ) >
+<!ELEMENT AbstractText  	%m.para;>
+<!ELEMENT Descriptors 	%m.para;>
+<!ELEMENT ChemicalNames 	%m.para;>
+<!ELEMENT CASRegNumbers 	%m.para;>
+<!ELEMENT ISSN			  ( #PCDATA ) >
+<!ELEMENT Coden		  ( #PCDATA ) >
+<!ELEMENT DocumentType	  ( #PCDATA ) >
+<!ELEMENT XRF ( #PCDATA )* >
+<!ELEMENT Record  (	Section, AbstractTitle, OriginalTitle, JournalName, 
+					AppTitleNumber?, Division, Organisation, 
+					Authors?, AuthorCountry?, AuthorAddress?,
+					AuthorPostCode?, AuthorWebAddress?, AuthorEmail?, 
+					PublisherName, PublisherDivision, PublisherAddress, 
+					PublisherCountry?, PublisherPostCode?, PublisherWebAddress?, 
+					PublisherEmail?, AbbreviatedJournalName, PublicationDate, 
+					Volume, Issue, Pages, Availability, EditionalDetails, 
+					ISBN, LanguageCode, LanguageName, ConferenceDetails?, AbstractText, 
+					Descriptors, ChemicalNames, CASRegNumbers, 
+					ISSN, Coden, DocumentType,XRF*) >
+
+
+
+<!ENTITY % aa SYSTEM "entities/web_CHI_LHB.ent">
+%aa;
+
+<!ATTLIST Record ID ID #REQUIRED >
+

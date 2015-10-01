@@ -1,0 +1,834 @@
+<!ENTITY mu SDATA "[small mu]" >
+<!ENTITY lsquo SDATA "'" >
+<!ENTITY ldquo SDATA '"' >
+<!ENTITY rsquo SDATA "'" >
+<!ENTITY rdquo SDATA '"' >
+<!ENTITY rdquor SDATA "[rising dbl quote]" >
+<!ENTITY rsquor SDATA "'" >
+<!ENTITY Gamma SDATA "[Gamma]" >
+<!ENTITY Dagger SDATA "[double dagger]" >
+<!ENTITY Delta SDATA "[capital Delta]" >
+<!ENTITY Gg SDATA "[triple gtr-than]" >
+<!ENTITY Gt SDATA "[dbl greater-than]" >
+<!ENTITY Lambda SDATA "[capital Lambda]" >
+<!ENTITY Ll SDATA "[triple less-than]" >
+<!ENTITY Lt SDATA "[double less-than]" >
+<!ENTITY Omega SDATA "[capital Omega]" >
+<!ENTITY Phi SDATA "[capital Phi]" >
+<!ENTITY Pi SDATA "[capital Pi]" >
+<!ENTITY Prime SDATA "[double prime]" >
+<!ENTITY Psi SDATA "[capital Psi]" >
+<!ENTITY Rarr SDATA "[twoheadrightarrow]" >
+<!ENTITY Sigma SDATA "[capital Sigma]" >
+<!ENTITY Theta SDATA "[capital Theta]" >
+<!ENTITY Upsi SDATA "[capital Upsilon]" >
+<!ENTITY Verbar SDATA "[dbl vertical bar]" >
+<!ENTITY Xi SDATA "[capital Xi]" >
+<!ENTITY YAcy SDATA "[capital YA]" >
+<!ENTITY alpha SDATA "[small alpha]" >
+<!ENTITY and SDATA "[logical and]" >
+<!ENTITY ang SDATA "[angle]" >
+<!ENTITY angsph SDATA "[angle-spherical]" >
+<!ENTITY angst SDATA "[Angstrom]" >
+<!ENTITY ang90 SDATA "[right (90 degree) angle]" >
+<!ENTITY ap SDATA "[approximate]" >
+<!ENTITY ape SDATA "[approximate, equals]" >
+<!ENTITY becaus SDATA "[because]" >
+<!ENTITY bernou SDATA "[Bernoulli function]" >
+<!ENTITY beta SDATA "[small beta]" >
+<!ENTITY bottom SDATA "[bottom]" >
+<!ENTITY dashv SDATA "[left tack]" >
+<!ENTITY boxvl SDATA "[upper and lower left quadrants]" >
+<!ENTITY boxvr SDATA "[upper and lower right quadrants]" >
+<!ENTITY bsim SDATA "[reverse similar]" >
+<!ENTITY bsime SDATA "[reverse similar, eq]" >
+<!ENTITY bull SDATA "[round bullet, filled]" >
+<!ENTITY cap SDATA "[intersection]" >
+<!ENTITY Cap SDATA "[double intersection]" >
+<!ENTITY caret SDATA "[caret]" >
+<!ENTITY check SDATA "[check mark]" >
+<!ENTITY chi SDATA "[small chi]" >
+<!ENTITY cir SDATA "[circle, open]" >
+<!ENTITY compfn SDATA "[small circle]" >
+<!ENTITY cong SDATA "[congruent with]" >
+<!ENTITY conint SDATA "[contour integral operator]" >
+<!ENTITY cross SDATA "[ballot cross]" >
+<!ENTITY ctdot SDATA "[U22ef]" >
+<!ENTITY cup SDATA "[union or logical sum]" >
+<!ENTITY dagger SDATA "[dagger]" >
+<!ENTITY dArr SDATA "[double downward arrow]" >
+<!ENTITY darr SDATA "[downward arrow]" >
+<!ENTITY dash SDATA "-" >
+<!ENTITY dtri SDATA "[down triangle, open]" >
+<!ENTITY dtrif SDATA "[blacktriangledown]" >
+<!ENTITY ecolon SDATA "[equals colon]" >
+<!ENTITY efDot SDATA "[eq, falling dots]" >
+<!ENTITY ell SDATA "[cursive small l]" >
+<!ENTITY empty SDATA "[emptyset]" >
+<!ENTITY emsp SDATA "[U2003]" >
+<!ENTITY emsp13 SDATA "[U2004]" >
+<!ENTITY ensp SDATA "[U2002]" >
+<!ENTITY epsiv SDATA "[varepsilon]" >
+<!ENTITY equiv SDATA "[identical with]" >
+<!ENTITY esdot SDATA "[equals, single dot above]" >
+<!ENTITY eta SDATA "[small eta]" >
+<!ENTITY eth SDATA "[small eth]" >
+<!ENTITY euro SDATA "[euro sign]" >
+<!ENTITY exist SDATA "[exist]" >
+<!ENTITY female SDATA "[female symbol]" >
+<!ENTITY fnof SDATA "[function of]" >
+<!ENTITY forall SDATA "[for all]" >
+<!ENTITY frac13 SDATA "1/3" >
+<!ENTITY frac15 SDATA "1/5" >
+<!ENTITY frac16 SDATA "1/6" >
+<!ENTITY frac18 SDATA "1/8" >
+<!ENTITY frac23 SDATA "2/3" >
+<!ENTITY frac25 SDATA "2/5" >
+<!ENTITY frac35 SDATA "3/5" >
+<!ENTITY frac38 SDATA "3/8" >
+<!ENTITY frac45 SDATA "4/5" >
+<!ENTITY frac56 SDATA "5/6" >
+<!ENTITY frac58 SDATA "5/8" >
+<!ENTITY frac78 SDATA "7/8" >
+<!ENTITY frown SDATA "[down curve]" >
+<!ENTITY gE SDATA "[double equals]" >
+<!ENTITY ge SDATA "[greater-than-or-equal]" >
+<!ENTITY ges SDATA "[gt-or-equal]" >
+<!ENTITY gsim SDATA "[greater, similar]" >
+<!ENTITY hairsp SDATA "[U200a]" >
+<!ENTITY hamilt SDATA "[Hamiltonian]" >
+<!ENTITY harr SDATA "[leftrightarrow]" >
+<!ENTITY hArr SDATA "[Leftrightarrow]" >
+<!ENTITY hellip SDATA "..." >
+<!ENTITY image SDATA "[imaginary number]" >
+<!ENTITY infin SDATA "[infinity]" >
+<!ENTITY inodot SDATA "[i without dot]" >
+<!ENTITY int SDATA "[integral operator]" >
+<!ENTITY iota SDATA "[iota]" >
+<!ENTITY isin SDATA "[set membership]" >
+<!ENTITY kappa SDATA "[small kappa]" >
+<!ENTITY lAarr SDATA "[left triple arrow]" >
+<!ENTITY lArr SDATA "[is implied by]" >
+<!ENTITY lE SDATA "[less, double equals]" >
+<!ENTITY lagran SDATA "[script capital L]" >
+<!ENTITY lambda SDATA "[small lambda]" >
+<!ENTITY lang SDATA "[left angle bracket]" >
+<!ENTITY larr SDATA "[leftward arrow]" >
+<!ENTITY larrhk SDATA "[hook leftward arrow]" >
+<!ENTITY lceil SDATA "[left ceiling]" >
+<!ENTITY ldquor SDATA '"' >
+<!ENTITY le SDATA "[less-than-or-equal]" >
+<!ENTITY les SDATA "[less-than-or-eq]" >
+<!ENTITY lfloor SDATA "[left floor]" >
+<!ENTITY lmidot SDATA "[small l, middle dot]" >
+<!ENTITY loz SDATA "[lozenge or total mark]" >
+<!ENTITY lozf SDATA "[lozenge, filled]" >
+<!ENTITY lrarr SDATA "[leftrightarrows]" >
+<!ENTITY lrhar SDATA "[leftrightharpoons]" >
+<!ENTITY lsim SDATA "[less, similar]" >
+<!ENTITY lsquor SDATA "'" >
+<!ENTITY ltri SDATA "[triangleleft]" >
+<!ENTITY ltrif SDATA "[blacktriangleleft]" >
+<!ENTITY male SDATA "[male symbol]" >
+<!ENTITY malt SDATA "[maltese cross]" >
+<!ENTITY mid SDATA "[mid]" >
+<!ENTITY minusb SDATA "[minus sign in box]" >
+<!ENTITY mldr SDATA "[em leader]" >
+<!ENTITY mnplus SDATA "-/+" >
+<!ENTITY nabla SDATA "[Hamilton operator]" >
+<!ENTITY ne SDATA "[not equal]" >
+<!ENTITY nearr SDATA "[NE pointing arrow]" >
+<!ENTITY nequiv SDATA "[not equivalent]" >
+<!ENTITY ni SDATA "[contains]" >
+<!ENTITY nldr SDATA "[double baseline dot]" >
+<!ENTITY notin SDATA "[negated set membership]" >
+<!ENTITY nrarr SDATA "[not right arrow]" >
+<!ENTITY nu SDATA "[small nu]" >
+<!ENTITY nwarr SDATA "[NW pointing arrow]" >
+<!ENTITY ohm SDATA "[ohm sign]" >
+<!ENTITY ominus SDATA "[minus sign in circle]" >
+<!ENTITY olarr SDATA "[circlearrowleft A: l arr in circle]" >
+<!ENTITY oplus SDATA "[plus sign in circle]" >
+<!ENTITY orarr SDATA "[circlearrowright A: r arr in circle]" >
+<!ENTITY osol SDATA "[solidus in circle]" >
+<!ENTITY otimes SDATA "[multiply sign in circle]" >
+<!ENTITY par SDATA "[parallel]" >
+<!ENTITY part SDATA "[partial differential]" >
+<!ENTITY permil SDATA "[per thousand]" >
+<!ENTITY perp SDATA "[perpendicular]" >
+<!ENTITY phis SDATA "[small phi]" >
+<!ENTITY phiv SDATA "[curly or open phi]" >
+<!ENTITY pi SDATA "[small pi]" >
+<!ENTITY piv SDATA "[varpi]" >
+<!ENTITY plank SDATA "[Planck's over 2pi]" >
+<!ENTITY plusb SDATA "[plus sign in box]" >
+<!ENTITY prime SDATA "[prime or minute]" >
+<!ENTITY prod SDATA "[n ary product]" >
+<!ENTITY prop SDATA "[is proportional to]" >
+<!ENTITY psi SDATA "[small psi]" >
+<!ENTITY qprime SDATA "[quadruple prime]" >
+<!ENTITY rArr SDATA "[implies]" >
+<!ENTITY radic SDATA "[surd radical]" >
+<!ENTITY rang SDATA "[right angle bracket]" >
+<!ENTITY rarr SDATA "[rightward arrow]" >
+<!ENTITY ratio SDATA "[ratio]" >
+<!ENTITY rceil SDATA "[right ceiling]" >
+<!ENTITY real SDATA "[real number]" >
+<!ENTITY rect SDATA "[rectangle, open]" >
+<!ENTITY rfloor SDATA "[right floor]" >
+<!ENTITY rharu SDATA "[right harpoon up]" >
+<!ENTITY rho SDATA "[small rho]" >
+<!ENTITY rhov SDATA "[var rho]" >
+<!ENTITY rlarr SDATA "[right left arrows]" >
+<!ENTITY rlhar SDATA "[right left harpoons]" >
+<!ENTITY rtri SDATA "[triangle right,open]" >
+<!ENTITY rtrif SDATA "[black triangle right]" >
+<!ENTITY sdotb SDATA "[small dot in box]" >
+<!ENTITY searr SDATA "[SE pointing arrow]" >
+<!ENTITY sigma SDATA "[sigma]" >
+<!ENTITY sigmav SDATA "[var sigma]" >
+<!ENTITY sim SDATA "[similar]" >
+<!ENTITY sime SDATA "[similar, equals]" >
+<!ENTITY squ SDATA "[square, open]" >
+<!ENTITY square SDATA "[square]" >
+<!ENTITY squarf SDATA "[black square, filled]" >
+<!ENTITY squf SDATA "[black square, bullet]" >
+<!ENTITY star SDATA "[star, open]" >
+<!ENTITY starf SDATA "[star, filled]" >
+<!ENTITY sub SDATA "[subset or is implied by]" >
+<!ENTITY sube SDATA "[subset, equals]" >
+<!ENTITY sum SDATA "[summation operator]" >
+<!ENTITY sup SDATA "[superset]" >
+<!ENTITY supe SDATA "[superset, equals]" >
+<!ENTITY swarr SDATA "[SW pointing arrow]" >
+<!ENTITY target SDATA "[register mark or target]" >
+<!ENTITY tau SDATA "[small tau]" >
+<!ENTITY varr SDATA "[up-and-down arrow]" >
+<!ENTITY weierp SDATA "[Weierstrass p]" >
+<!ENTITY amp SDATA "&" >
+<!ENTITY apos SDATA "'" >
+<!ENTITY ast SDATA "*" >
+<!ENTITY bsol SDATA "\" >
+<!ENTITY dollar SDATA "$" >
+<!ENTITY excl SDATA "!" >
+<!ENTITY comma SDATA "," >
+<!ENTITY commat SDATA "@" >
+<!ENTITY verbar SDATA "|" >
+<!ENTITY equals SDATA "=" >
+<!ENTITY gt SDATA ">" >
+<!ENTITY hyphen SDATA "-" >
+<!ENTITY lcub SDATA "{" >
+<!ENTITY lpar SDATA "(" >
+<!ENTITY lsqb SDATA "[" >
+<!ENTITY num SDATA "#" >
+<!ENTITY percnt SDATA "%" >
+<!ENTITY period SDATA "." >
+<!ENTITY plus SDATA "+" >
+<!ENTITY quest SDATA "?" >
+<!ENTITY rcub SDATA "}" >
+<!ENTITY rpar SDATA ")" >
+<!ENTITY rsqb SDATA "]" >
+<!ENTITY sol SDATA "/" >
+<!ENTITY lt SDATA "&#60;" >
+<!ENTITY ndash SDATA "-" >
+<!ENTITY mdash SDATA "-" >
+<!ENTITY minus SDATA "-" >
+<!ENTITY copy SDATA "[copyright sign]" >
+<!ENTITY brvbar SDATA "[broken vertical bar]" >
+<!ENTITY cent SDATA "[U00a2]" >
+<!ENTITY times SDATA "[times]" >
+<!ENTITY emsp14 SDATA "[U2005]" >
+<!ENTITY frac12 SDATA "1/2" >
+<!ENTITY frac14 SDATA "1/4" >
+<!ENTITY frac34 SDATA "3/4" >
+<!ENTITY half SDATA "1/2" >
+<!ENTITY iexcl SDATA "[inverted exclamation mark]" >
+<!ENTITY laquo SDATA "'" >
+<!ENTITY micro SDATA "[micro sign]" >
+<!ENTITY middot SDATA "[middle dot]" >
+<!ENTITY nbsp SDATA "[U00a0]" >
+<!ENTITY ordf SDATA "[a]" >
+<!ENTITY ordm SDATA "[o]" >
+<!ENTITY para SDATA "[paragraph sign]" >
+<!ENTITY plusmn SDATA "+/-" >
+<!ENTITY pound SDATA "[pound sign]" >
+<!ENTITY raquo SDATA "'" >
+<!ENTITY reg SDATA "[registered sign]" >
+<!ENTITY sect SDATA "[section sign]" >
+<!ENTITY shy SDATA "-" >
+<!ENTITY Aacute SDATA "A" >
+<!ENTITY Acirc SDATA "A" >
+<!ENTITY Agrave SDATA "A" >
+<!ENTITY Aring SDATA "A" >
+<!ENTITY Atilde SDATA "A" >
+<!ENTITY Auml SDATA "A" >
+<!ENTITY Ccedil SDATA "C" >
+<!ENTITY Eacute SDATA "E" >
+<!ENTITY Ecirc SDATA "E" >
+<!ENTITY Egrave SDATA "E" >
+<!ENTITY Euml SDATA "E" >
+<!ENTITY Iacute SDATA "I" >
+<!ENTITY Icirc SDATA "I" >
+<!ENTITY Igrave SDATA "I" >
+<!ENTITY Iuml SDATA "I" >
+<!ENTITY Ntilde SDATA "N" >
+<!ENTITY Oacute SDATA "O" >
+<!ENTITY Ocirc SDATA "O" >
+<!ENTITY Ograve SDATA "O" >
+<!ENTITY Oslash SDATA "O" >
+<!ENTITY Otilde SDATA "O" >
+<!ENTITY Ouml SDATA "O" >
+<!ENTITY Uacute SDATA "U" >
+<!ENTITY Ucirc SDATA "U" >
+<!ENTITY Ugrave SDATA "U" >
+<!ENTITY Uuml SDATA "U" >
+<!ENTITY Yacute SDATA "Y" >
+<!ENTITY aacute SDATA "a" >
+<!ENTITY acirc SDATA "a" >
+<!ENTITY agrave SDATA "a" >
+<!ENTITY aring SDATA "a" >
+<!ENTITY atilde SDATA "a" >
+<!ENTITY auml SDATA "a" >
+<!ENTITY ccedil SDATA "c" >
+<!ENTITY eacute SDATA "e" >
+<!ENTITY ecirc SDATA "e" >
+<!ENTITY egrave SDATA "e" >
+<!ENTITY euml SDATA "e" >
+<!ENTITY iacute SDATA "i" >
+<!ENTITY icirc SDATA "i" >
+<!ENTITY igrave SDATA "i" >
+<!ENTITY iuml SDATA "i" >
+<!ENTITY ntilde SDATA "n" >
+<!ENTITY oacute SDATA "o" >
+<!ENTITY ocirc SDATA "o" >
+<!ENTITY ograve SDATA "o" >
+<!ENTITY oslash SDATA "o" >
+<!ENTITY otilde SDATA "o" >
+<!ENTITY ouml SDATA "o" >
+<!ENTITY uacute SDATA "u" >
+<!ENTITY ucirc SDATA "u" >
+<!ENTITY ugrave SDATA "u" >
+<!ENTITY uuml SDATA "u" >
+<!ENTITY yacute SDATA "y" >
+<!ENTITY yuml SDATA "y" >
+<!ENTITY iquest SDATA "[inverted question mark]" >
+<!ENTITY deg SDATA "[degree]" >
+<!ENTITY AElig SDATA "AE" >
+<!ENTITY aelig SDATA "ae" >
+<!ENTITY szlig SDATA "[German sz ligature}" >
+<!ENTITY OElig SDATA "OE" >
+<!ENTITY oelig SDATA "oe" >
+<!ENTITY ijlig SDATA "ij" >
+<!ENTITY IJlig SDATA "IJ" >
+<!ENTITY Abreve SDATA "A" >
+<!ENTITY Amacr SDATA "A" >
+<!ENTITY Aogon SDATA "A" >
+<!ENTITY Ascr SDATA "A" >
+<!ENTITY Bscr SDATA "B" >
+<!ENTITY Cacute SDATA "C" >
+<!ENTITY Ccaron SDATA "C" >
+<!ENTITY Ccirc SDATA "C" >
+<!ENTITY Cdot SDATA "[C dot]" >
+<!ENTITY Cscr SDATA "[script C]" >
+<!ENTITY Dcaron SDATA "D" >
+<!ENTITY Dscr SDATA "D" >
+<!ENTITY Dstrok SDATA "D" >
+<!ENTITY Ecaron SDATA "E" >
+<!ENTITY Edot SDATA "[E dot]" >
+<!ENTITY Emacr SDATA "E" >
+<!ENTITY Eogon SDATA "E" >
+<!ENTITY Escr SDATA "E" >
+<!ENTITY Fscr SDATA "F" >
+<!ENTITY Gbreve SDATA "G" >
+<!ENTITY Gcedil SDATA "G" >
+<!ENTITY Gcirc SDATA "G" >
+<!ENTITY Gdot SDATA "G" >
+<!ENTITY Gscr SDATA "G" >
+<!ENTITY Hcirc SDATA "H" >
+<!ENTITY Hscr SDATA "H" >
+<!ENTITY Hstrok SDATA "H" >
+<!ENTITY Ibreve SDATA "I" >
+<!ENTITY Idot SDATA "I" >
+<!ENTITY Imacr SDATA "I" >
+<!ENTITY Iogon SDATA "I" >
+<!ENTITY Iscr SDATA "I" >
+<!ENTITY Itilde SDATA "I" >
+<!ENTITY Jcirc SDATA "J" >
+<!ENTITY Jscr SDATA "J" >
+<!ENTITY Kcedil SDATA "K" >
+<!ENTITY Kscr SDATA "K" >
+<!ENTITY Lacute SDATA "L" >
+<!ENTITY Lcaron SDATA "L" >
+<!ENTITY Lcedil SDATA "L" >
+<!ENTITY Lmidot SDATA "[L middle dot]" >
+<!ENTITY Lscr SDATA "L" >
+<!ENTITY Lstrok SDATA "L" >
+<!ENTITY Mscr SDATA "M" >
+<!ENTITY Nacute SDATA "N" >
+<!ENTITY Ncaron SDATA "N" >
+<!ENTITY Ncedil SDATA "N" >
+<!ENTITY Nscr SDATA "N" >
+<!ENTITY Odblac SDATA "O" >
+<!ENTITY Omacr SDATA "O" >
+<!ENTITY Oscr SDATA "O" >
+<!ENTITY Pscr SDATA "P" >
+<!ENTITY Qscr SDATA "Q" >
+<!ENTITY Racute SDATA "R" >
+<!ENTITY Rcaron SDATA "R" >
+<!ENTITY Rcedil SDATA "R" >
+<!ENTITY Rscr SDATA "R" >
+<!ENTITY Sacute SDATA "S" >
+<!ENTITY Scaron SDATA "S" >
+<!ENTITY Scedil SDATA "S" >
+<!ENTITY Scirc SDATA "S" >
+<!ENTITY Sscr SDATA "S" >
+<!ENTITY Tcaron SDATA "T" >
+<!ENTITY Tcedil SDATA "T" >
+<!ENTITY Tscr SDATA "T" >
+<!ENTITY Tstrok SDATA "T" >
+<!ENTITY Ubreve SDATA "U" >
+<!ENTITY Udblac SDATA "U" >
+<!ENTITY Umacr SDATA "U" >
+<!ENTITY Uogon SDATA "U" >
+<!ENTITY Uring SDATA "U" >
+<!ENTITY Uscr SDATA "U" >
+<!ENTITY Utilde SDATA "U" >
+<!ENTITY Vscr SDATA "V" >
+<!ENTITY Wcirc SDATA "W" >
+<!ENTITY Wscr SDATA "W" >
+<!ENTITY Xscr SDATA "X" >
+<!ENTITY Ycirc SDATA "Y" >
+<!ENTITY Yuml SDATA "Y" >
+<!ENTITY Yscr SDATA "Y" >
+<!ENTITY Zacute SDATA "Z" >
+<!ENTITY Zcaron SDATA "Z" >
+<!ENTITY Zdot SDATA "Z" >
+<!ENTITY Zscr SDATA "Z" >
+<!ENTITY abreve SDATA "a" >
+<!ENTITY amacr SDATA "a" >
+<!ENTITY aogon SDATA "a" >
+<!ENTITY cacute SDATA "c" >
+<!ENTITY ccaron SDATA "c" >
+<!ENTITY ccirc SDATA "c" >
+<!ENTITY cdot SDATA "c" >
+<!ENTITY dcaron SDATA "d" >
+<!ENTITY delta SDATA "[small delta]" >
+<!ENTITY diam SDATA "[open diamond]" >
+<!ENTITY diams SDATA "[diamond suit symbol]" >
+<!ENTITY divide SDATA "[divide sign]" >
+<!ENTITY dstrok SDATA "d" >
+<!ENTITY ecaron SDATA "e" >
+<!ENTITY edot SDATA "e" >
+<!ENTITY emacr SDATA "e" >
+<!ENTITY eogon SDATA "e" >
+<!ENTITY gacute SDATA "g" >
+<!ENTITY gamma SDATA "[gamma]" >
+<!ENTITY gbreve SDATA "g" >
+<!ENTITY gcaron SDATA "g" >
+<!ENTITY gcirc SDATA "g" >
+<!ENTITY gdot SDATA "g" >
+<!ENTITY hcirc SDATA "h" >
+<!ENTITY hstrok SDATA "h" >
+<!ENTITY ibreve SDATA "i" >
+<!ENTITY imacr SDATA "i" >
+<!ENTITY iogon SDATA "i" >
+<!ENTITY itilde SDATA "i" >
+<!ENTITY jcirc SDATA "j" >
+<!ENTITY kcedil SDATA "k" >
+<!ENTITY lacute SDATA "l" >
+<!ENTITY lcaron SDATA "l" >
+<!ENTITY lcedil SDATA "l" >
+<!ENTITY lscr SDATA "l" >
+<!ENTITY lstrok SDATA "l" >
+<!ENTITY nacute SDATA "n" >
+<!ENTITY ncaron SDATA "n" >
+<!ENTITY ncedil SDATA "n" >
+<!ENTITY odblac SDATA "o" >
+<!ENTITY odot SDATA "o" >
+<!ENTITY omacr SDATA "o" >
+<!ENTITY omega SDATA "[small omega]" >
+<!ENTITY pscr SDATA "p" >
+<!ENTITY racute SDATA "r" >
+<!ENTITY rcaron SDATA "r" >
+<!ENTITY rcedil SDATA "r" >
+<!ENTITY sacute SDATA "s" >
+<!ENTITY scaron SDATA "s" >
+<!ENTITY scedil SDATA "s" >
+<!ENTITY scirc SDATA "s" >
+<!ENTITY spades SDATA "[spade suit symbol]" >
+<!ENTITY tcaron SDATA "t" >
+<!ENTITY tcedil SDATA "t" >
+<!ENTITY there4 SDATA "[therefore]" >
+<!ENTITY thetas SDATA "[small theta]" >
+<!ENTITY thetav SDATA "[curly or open theta]" >
+<!ENTITY thinsp SDATA "[U2009]" >
+<!ENTITY timesb SDATA "[boxtimes]" >
+<!ENTITY tprime SDATA "[triple prime]" >
+<!ENTITY trade SDATA "[trade mark sign]" >
+<!ENTITY tridot SDATA "[dot in triangle]" >
+<!ENTITY trie SDATA "[triangleq R: triangle, equals]" >
+<!ENTITY tstrok SDATA "t" >
+<!ENTITY uArr SDATA "[double upward arrow]" >
+<!ENTITY uarr SDATA "[upward arrow]" >
+<!ENTITY ubreve SDATA "u" >
+<!ENTITY udblac SDATA "[double acute accent]" >
+<!ENTITY uharr SDATA "[upharpoonright]" >
+<!ENTITY umacr SDATA "u" >
+<!ENTITY uogon SDATA "u" >
+<!ENTITY upsi SDATA "[small upsilon]" >
+<!ENTITY uring SDATA "u" >
+<!ENTITY utilde SDATA "u" >
+<!ENTITY utri SDATA "[up triangle, open]" >
+<!ENTITY utrif SDATA "[blacktriangle]" >
+<!ENTITY vellip SDATA "[vertical ellipsis]" >
+<!ENTITY wcirc SDATA "w" >
+<!ENTITY wedgeq SDATA "[corresponds to]" >
+<!ENTITY xi SDATA "[small xi]" >
+<!ENTITY ycirc SDATA "y" >
+<!ENTITY yen SDATA "[yen sign]" >
+<!ENTITY zacute SDATA "z" >
+<!ENTITY zcaron SDATA "z" >
+<!ENTITY zdot SDATA "z" >
+<!ENTITY zeta SDATA "[small zeta]" >
+<!ENTITY cmb.a.dline SDATA "[combining double overline]" >
+<!ENTITY cmb.a.dot SDATA "[combining dot above]" >
+<!ENTITY cmb.a.line SDATA "[combining overline]" >
+<!ENTITY cmb.a.lvline SDATA "[combining long vertical line overlay]" >
+<!ENTITY cmb.a.rharp SDATA "[combining right harpoon above]" >
+<!ENTITY cmb.b.dot SDATA "[combining dot below]" >
+<!ENTITY cmb.b.line SDATA "[combining low line]" >
+<!ENTITY cmb.breve SDATA "[combining breve]" >
+<!ENTITY cmb.caron SDATA "[combining caron]" >
+<!ENTITY cmb.cedil SDATA "[combining cedilla]" >
+<!ENTITY cmb.macr SDATA "[combining macron]" >
+<!ENTITY cmb.tilde SDATA "[combining tilde]" >
+<!ENTITY cmb.circ SDATA "[combining circumflex]" >
+<!ENTITY cmb.uml SDATA "[combining umlaut]" >
+<!ENTITY z.dbd SDATA "[double bond, length as m-dash]" >
+<!ENTITY z.tbd SDATA "[triple bond, length as m-dash]" >
+<!ENTITY z.qbd SDATA "[quadruple bond, length as m-dash]" >
+<!ENTITY z.dbd6 SDATA "[double bond, length half m-dash]" >
+<!ENTITY z.tbd6 SDATA "[triple bond, length half m-dash]" >
+<!ENTITY z.dbdsl SDATA "[double bond splayed left]" >
+<!ENTITY z.dbdsr SDATA "[double bond splayed right]" >
+<!ENTITY z.tbdsr SDATA "[triple bond splayed right]" >
+<!ENTITY z.tbdsl SDATA "[triple bond splayed left]" >
+<!ENTITY z.pdbdbd SDATA "[partial double bond, bottom dashed]" >
+<!ENTITY z.pdbdtd SDATA "[partial double bond, top dashed]" >
+<!ENTITY z.ub1s SDATA "[upper bond 1 start]" >
+<!ENTITY z.ub1e SDATA "[upper bond 1 end]" >
+<!ENTITY z.lb1s SDATA "[lower bond 1 start]" >
+<!ENTITY z.lb1e SDATA "[lower bond 1 end]" >
+<!ENTITY z.ub2s SDATA "[upper bond 2 start]" >
+<!ENTITY z.ub2e SDATA "[upper bond 2 end]" >
+<!ENTITY z.lb2s SDATA "[lower bond 2 start]" >
+<!ENTITY z.lb2e SDATA "[lower bond 2 end]" >
+<!ENTITY z.ub3s SDATA "[upper bond 3 start]" >
+<!ENTITY z.ub3e SDATA "[upper bond 3 end]" >
+<!ENTITY z.lb3s SDATA "[lower bond 3 start]" >
+<!ENTITY z.lb3e SDATA "[lower bond 3 end]" >
+<!ENTITY z.ub4s SDATA "[upper bond 4 start]" >
+<!ENTITY z.ub4e SDATA "[upper bond 4 end]" >
+<!ENTITY z.lb4s SDATA "[lower bond 4 start]" >
+<!ENTITY z.lb4e SDATA "[lower bond 4 end]" >
+<!ENTITY z.ub5s SDATA "[upper bond 5 start]" >
+<!ENTITY z.ub5e SDATA "[upper bond 5 end]" >
+<!ENTITY z.lb5s SDATA "[lower bond 5 start]" >
+<!ENTITY z.lb5e SDATA "[lower bond 5 end]" >
+<!ENTITY z.hex SDATA "[hexagon open, point down]" >
+<!ENTITY z.hexr SDATA "[hexagon open, flat-side down]" >
+<!ENTITY z.hexf SDATA "[hexagon filled]" >
+<!ENTITY z.hexfr SDATA "[hexagon filled, rotated]" >
+<!ENTITY z.cirft SDATA "[circle filled top]" >
+<!ENTITY z.cirfb SDATA "[circle filled bottom]" >
+<!ENTITY z.cirfr SDATA "[circle filled right]" >
+<!ENTITY z.cirshr SDATA "[circle shaded right slant]" >
+<!ENTITY z.cirshl SDATA "[circle shaded left slant]" >
+<!ENTITY z.cirshv SDATA "[circle shaded vert]" >
+<!ENTITY z.cirshh SDATA "[circle shaded horiz]" >
+<!ENTITY z.cirshlr SDATA "[circle shaded diagonal crosshatch]" >
+<!ENTITY z.cirshhv SDATA "[circle shaded horizontal/vertical crosshatch]" >
+<!ENTITY z.cirtinl SDATA "[circle tinted (light)]" >
+<!ENTITY z.cirtinh SDATA "[circle tinted (heavy)]" >
+<!ENTITY z.olcir SDATA "[bullseye (circle within another circle)]" >
+<!ENTITY z.pent SDATA "[pentagon open]" >
+<!ENTITY z.pentf SDATA "[pentagon filled]" >
+<!ENTITY z.squt SDATA "[square tilted open]" >
+<!ENTITY z.squtf SDATA "[square tilted filled]" >
+<!ENTITY z.squshr SDATA "[square shaded right slant]" >
+<!ENTITY z.squshl SDATA "[square shaded left slant]" >
+<!ENTITY z.squshv SDATA "[square shaded vert]" >
+<!ENTITY z.squshh SDATA "[square shaded horiz]" >
+<!ENTITY z.squshlr SDATA "[square shaded diagonal crosshatch]" >
+<!ENTITY z.squshhv SDATA "[square shaded horizontal/vertical crosshatch]" >
+<!ENTITY z.squtinl SDATA "[square tinted (light)]" >
+<!ENTITY z.squtinh SDATA "[square tinted (heavy)]" >
+<!ENTITY z.squftr SDATA "[square filled top right]" >
+<!ENTITY z.squftl SDATA "[square filled top left]" >
+<!ENTITY z.squfbl SDATA "[square filled bottom left]" >
+<!ENTITY z.squfbr SDATA "[square filled bottom right]" >
+<!ENTITY z.squfl SDATA "[square filled left]" >
+<!ENTITY z.squfr SDATA "[square filled right]" >
+<!ENTITY z.squft SDATA "[square filled top]" >
+<!ENTITY z.squfb SDATA "[square filled bottom]" >
+<!ENTITY z.utfl SDATA "[up triangle filled left]" >
+<!ENTITY z.utfr SDATA "[up triangle filled right]" >
+<!ENTITY z.utlhb SDATA "[up triangle, long horiz bar]" >
+<!ENTITY z.dtfl SDATA "[down triangle filled left]" >
+<!ENTITY z.dtfr SDATA "[down triangle filled right]" >
+<!ENTITY z.diamfl SDATA "[diamond filled left]" >
+<!ENTITY z.diamfr SDATA "[diamond filled right]" >
+<!ENTITY z.diamft SDATA "[diamond filled top]" >
+<!ENTITY z.diamfb SDATA "[diamond filled bottom]" >
+<!ENTITY z.diadot SDATA "[diamond dotted]" >
+<!ENTITY z.xtlr SDATA "[X triangles, left, right]" >
+<!ENTITY z.xttfbf SDATA "[X triangles, filled, top, bottom]" >
+<!ENTITY z.vrecto SDATA "[rectangle open, vertical]" >
+<!ENTITY z.dshdot SDATA "[dash dot, graph caption]" >
+<!ENTITY z.dshdsh SDATA "[dash dash, graph caption]" >
+<!ENTITY z.thline SDATA "[thick line, graph caption]" >
+<!ENTITY z.gDa SDATA "[small g, double dot above]" >
+<!ENTITY z.gDda SDATA "[small g, triple dot above]" >
+<!ENTITY z.agrda SDATA "[small alpha, Greek, dot above]" >
+<!ENTITY z.khgrda SDATA "[small chi, Greek, dot above]" >
+<!ENTITY z.egrda SDATA "[small epsi, Greek, dot above]" >
+<!ENTITY z.phgrda SDATA "[small phi, Greek, dot above]" >
+<!ENTITY z.ggrda SDATA "[small gamma, Greek, dot above]" >
+<!ENTITY z.phvgrda SDATA "[small phi (variant), Greek, dot above]" >
+<!ENTITY z.lgrda SDATA "[small lambda, Greek, dot above]" >
+<!ENTITY z.mgrda SDATA "[small mu, Greek, dot above]" >
+<!ENTITY z.thgrda SDATA "[small theta, Greek, dot above]" >
+<!ENTITY z.rgrda SDATA "[small rho, Greek, dot above]" >
+<!ENTITY z.psgrda SDATA "[small psi, Greek, dot above]" >
+<!ENTITY z.PHgrda SDATA "[capital Phi, Greek, dot above]" >
+<!ENTITY z.Lgrda SDATA "[capital Lambda, Greek, dot above]" >
+<!ENTITY z.PSgrda SDATA "[capital Psi, Greek, dot above]" >
+<!ENTITY z.agcir SDATA "[small alpha, Greek, circumflex]" >
+<!ENTITY z.bgcir SDATA "[small beta, Greek, circumflex]" >
+<!ENTITY z.khgcir SDATA "[small chi, Greek, circumflex]" >
+<!ENTITY z.dgcir SDATA "[small delta, Greek, circumflex]" >
+<!ENTITY z.egcir SDATA "[small epsilon, Greek, circumflex]" >
+<!ENTITY z.phgcir SDATA "[small phi, Greek, circumflex]" >
+<!ENTITY z.ggcir SDATA "[small gamma, Greek, circumflex]" >
+<!ENTITY z.eegcir SDATA "[small eta, Greek, circumflex]" >
+<!ENTITY z.kgcir SDATA "[small kappa, Greek, circumflex]" >
+<!ENTITY z.lgcir SDATA "[small klambda, Greek, circumflex]" >
+<!ENTITY z.mgcir SDATA "[small mu, Greek, circumflex]" >
+<!ENTITY z.pgcir SDATA "[small pi, Greek, circumflex]" >
+<!ENTITY z.thgcir SDATA "[small straight theta, Greek, circumflex]" >
+<!ENTITY z.rgcir SDATA "[small rho, Greek, circumflex]" >
+<!ENTITY z.sgcir SDATA "[small sigma, Greek, circumflex]" >
+<!ENTITY z.tgcir SDATA "[small tau, Greek, circumflex]" >
+<!ENTITY z.ohgcir SDATA "[small omega, Greek, circumflex]" >
+<!ENTITY z.xgcir SDATA "[small xi, Greek, circumflex]" >
+<!ENTITY z.psgcir SDATA "[small psi, Greek, circumflex]" >
+<!ENTITY z.zgcir SDATA "[small zeta, Greek, circumflex]" >
+<!ENTITY z.PHgcir SDATA "[capital Phi, Greek, circumflex]" >
+<!ENTITY z.Ggcir SDATA "[capital Gamma, Greek, circumflex]" >
+<!ENTITY z.Lgcir SDATA "[capital Lambda, Greek, circumflex]" >
+<!ENTITY z.Pgcir SDATA "[capital Pi, Greek, circumflex]" >
+<!ENTITY z.THgcir SDATA "[capital Theta, Greek, circumflex]" >
+<!ENTITY z.Sgcir SDATA "[capital Sigma, Greek, circumflex]" >
+<!ENTITY z.PSgcir SDATA "[capital Psi, Greek, circumflex]" >
+<!ENTITY z.agrm SDATA "[small alpha, Greek, macron]" >
+<!ENTITY z.bgrm SDATA "[small beta, Greek, macron]" >
+<!ENTITY z.khgrm SDATA "[small chi, Greek, macron]" >
+<!ENTITY z.dgrm SDATA "[small delta, Greek, macron]" >
+<!ENTITY z.egrm SDATA "[small epsilon, Greek, macron]" >
+<!ENTITY z.phgrm SDATA "[small phi, Greek, macron]" >
+<!ENTITY z.ggrm SDATA "[small gamma, Greek, macron]" >
+<!ENTITY z.eegrm SDATA "[small eta, Greek, macron]" >
+<!ENTITY z.igrm SDATA "[small iota, Greek, macron]" >
+<!ENTITY z.phvgrm SDATA "[small phi variant, Greek, macron]" >
+<!ENTITY z.kgrm SDATA "[small kappa, Greek, macron]" >
+<!ENTITY z.lgrm SDATA "[small lambda, Greek, macron]" >
+<!ENTITY z.mgrm SDATA "[small mu, Greek, macron]" >
+<!ENTITY z.ngrm SDATA "[small nu, Greek, macron]" >
+<!ENTITY z.pgrm SDATA "[small pi, Greek, macron]" >
+<!ENTITY z.thgrm SDATA "[small theta, Greek, macron]" >
+<!ENTITY z.rgrm SDATA "[small rho, Greek, macron]" >
+<!ENTITY z.sgrm SDATA "[small sigma, Greek, macron]" >
+<!ENTITY z.tgrm SDATA "[small tau, Greek, macron]" >
+<!ENTITY z.ugrm SDATA "[small upsilon, Greek, macron]" >
+<!ENTITY z.ohgrm SDATA "[small omega, Greek, macron]" >
+<!ENTITY z.xgrm SDATA "[small xi, Greek, macron]" >
+<!ENTITY z.psgrm SDATA "[small psi, Greek, macron]" >
+<!ENTITY z.zgrm SDATA "[small zeta, Greek, macron]" >
+<!ENTITY z.Dgrm SDATA "[capital Delta, Greek, macron]" >
+<!ENTITY z.PHgrm SDATA "[capital Phi, Greek, macron]" >
+<!ENTITY z.Ggrm SDATA "[capital Gamma, Greek, macron]" >
+<!ENTITY z.Lgrm SDATA "[capital Lambda, Greek, macron]" >
+<!ENTITY z.Pgrm SDATA "[capital Pi, Greek, macron]" >
+<!ENTITY z.sfgrm SDATA "[final small sigma, Greek, macron]" >
+<!ENTITY z.OHgrm SDATA "[capital Omega, Greek, macron]" >
+<!ENTITY z.Xgrm SDATA "[capital Xi, Greek, macron]" >
+<!ENTITY z.agrt SDATA "[small alpha, Greek, tilde]" >
+<!ENTITY z.bgrt SDATA "[small beta, Greek, tilde]" >
+<!ENTITY z.khgrt SDATA "[small chi, Greek, tilde]" >
+<!ENTITY z.dgrt SDATA "[small delta, Greek, tilde]" >
+<!ENTITY z.egrt SDATA "[small epsilon, Greek, tilde]" >
+<!ENTITY z.phgrt SDATA "[small phi, Greek, tilde]" >
+<!ENTITY z.ggrt SDATA "[small gamma, Greek, tilde]" >
+<!ENTITY z.eegrt SDATA "[small eta, Greek, tilde]" >
+<!ENTITY z.phvgrt SDATA "[small variant phi, Greek, tilde]" >
+<!ENTITY z.lgrt SDATA "[small lambda, Greek, tilde]" >
+<!ENTITY z.mgrt SDATA "[small mu, Greek, tilde]" >
+<!ENTITY z.ngrt SDATA "[small nu, Greek, tilde]" >
+<!ENTITY z.thgrt SDATA "[small theta, Greek, tilde]" >
+<!ENTITY z.rgrt SDATA "[small rho, Greek, tilde]" >
+<!ENTITY z.sgrt SDATA "[small sigma, Greek, tilde]" >
+<!ENTITY z.tgrt SDATA "[small tau, Greek, tilde]" >
+<!ENTITY z.ugrt SDATA "[small upsilon, Greek, tilde]" >
+<!ENTITY z.ohgrt SDATA "[small omega, Greek, tilde]" >
+<!ENTITY z.xgrt SDATA "[small xi, Greek, tilde]" >
+<!ENTITY z.psgrt SDATA "[small psi, Greek, tilde]" >
+<!ENTITY z.zgrt SDATA "[small zeta, Greek, tilde]" >
+<!ENTITY z.Dgrt SDATA "[capital Delta, Greek, tilde]" >
+<!ENTITY z.PHgrt SDATA "[capital Phi, Greek, tilde]" >
+<!ENTITY z.Pgrt SDATA "[capital Pi, Greek, tilde]" >
+<!ENTITY z.THgrt SDATA "[capital Theta, Greek, tilde]" >
+<!ENTITY z.OHgrt SDATA "[capital Omega, Greek, tilde]" >
+<!ENTITY z.PSgrt SDATA "[capital Psi, Greek, tilde]" >
+<!ENTITY z.agvec SDATA "[small alpha, Greek, vector]" >
+<!ENTITY z.bgvec SDATA "[small beta, Greek, vector]" >
+<!ENTITY z.egvec SDATA "[small epsilon, Greek, vector]" >
+<!ENTITY z.phgvec SDATA "[small phi, Greek, vector]" >
+<!ENTITY z.eegvec SDATA "[small eta, Greek, vector]" >
+<!ENTITY z.lgvec SDATA "[small lambda, Greek, vector]" >
+<!ENTITY z.mgvec SDATA "[small mu, Greek, vector]" >
+<!ENTITY z.ngvec SDATA "[small nu, Greek, vector]" >
+<!ENTITY z.rgvec SDATA "[small rho, Greek, vector]" >
+<!ENTITY z.sgvec SDATA "[small sigma, Greek, vector]" >
+<!ENTITY z.tgvec SDATA "[small tau, Greek, vector]" >
+<!ENTITY z.ohgvec SDATA "[small omega, Greek, vector]" >
+<!ENTITY z.xgvec SDATA "[small xi, Greek, vector]" >
+<!ENTITY z.Dgvec SDATA "[capital Delta, Greek, vector]" >
+<!ENTITY z.Ggvec SDATA "[capital Gamma, Greek, vector]" >
+<!ENTITY z.PSgvec SDATA "[capital Psi, Greek, vector]" >
+<!ENTITY z.ccsh SDATA "[circle, cut, short horiz bar]" >
+<!ENTITY z.dfncl SDATA "[double-rule fence; left big]" >
+<!ENTITY z.dfncr SDATA "[double-rule fence; right big]" >
+<!ENTITY z.frac32 SDATA "3/2" >
+<!ENTITY z.frac52 SDATA "5/2" >
+<!ENTITY z.frac54 SDATA "5/4" >
+<!ENTITY z.frac19 SDATA "1/9" >
+<!ENTITY z.frac59 SDATA "5/9" >
+<!ENTITY z.frac5o12 SDATA "5/12" >
+<!ENTITY z.frac43 SDATA "4/3" >
+<!ENTITY z.Gtc SDATA "[double greater-than, compressed]" >
+<!ENTITY z.Ltc SDATA "[double less-than, compressed]" >
+<!ENTITY z.hbtda SDATA "[horiz bar, triple dot above]" >
+<!ENTITY z.hbdda SDATA "[horiz bar, double dot above]" >
+<!ENTITY z.hbtdb SDATA "[horiz bar, triple dot below]" >
+<!ENTITY z.ldang SDATA "[left double angle bracket]" >
+<!ENTITY z.rdang SDATA "[right double angle bracket]" >
+<!ENTITY z.italv SDATA "v" >
+<!ENTITY z.wvstarr SDATA "[long arrow, wavy then straight]" >
+<!ENTITY z.radarr SDATA "[radiolysis arrow - arrow with voltage kink]" >
+<!ENTITY z.realm SDATA "[real number, macron]" >
+<!ENTITY z.dshfnc SDATA "[dashed fence]" >
+<!ENTITY z.spstarf SDATA "[*]" >
+<!ENTITY z.xvbar SDATA "[Cross with vertical bar through centre]" >
+<!ENTITY z.dstrA SDATA "[Doublestruck A]" >
+<!ENTITY z.dstrB SDATA "[Doublestruck B]" >
+<!ENTITY z.dstrC SDATA "[Doublestruck C]" >
+<!ENTITY z.dstrD SDATA "[Doublestruck D]" >
+<!ENTITY z.dstrE SDATA "[Doublestruck E]" >
+<!ENTITY z.dstrF SDATA "[Doublestruck F]" >
+<!ENTITY z.dstrG SDATA "[Doublestruck G]" >
+<!ENTITY z.dstrH SDATA "[Doublestruck H]" >
+<!ENTITY z.dstrI SDATA "[Doublestruck I]" >
+<!ENTITY z.dstrJ SDATA "[Doublestruck J]" >
+<!ENTITY z.dstrK SDATA "[Doublestruck K]" >
+<!ENTITY z.dstrL SDATA "[Doublestruck L]" >
+<!ENTITY z.dstrM SDATA "[Doublestruck M]" >
+<!ENTITY z.dstrN SDATA "[Doublestruck N]" >
+<!ENTITY z.dstrO SDATA "[Doublestruck O]" >
+<!ENTITY z.dstrP SDATA "[Doublestruck P]" >
+<!ENTITY z.dstrQ SDATA "[Doublestruck Q]" >
+<!ENTITY z.dstrR SDATA "[Doublestruck R]" >
+<!ENTITY z.dstrS SDATA "[Doublestruck S]" >
+<!ENTITY z.dstrT SDATA "[Doublestruck T]" >
+<!ENTITY z.dstrU SDATA "[Doublestruck U]" >
+<!ENTITY z.dstrV SDATA "[Doublestruck V]" >
+<!ENTITY z.dstrW SDATA "[Doublestruck W]" >
+<!ENTITY z.dstrX SDATA "[Doublestruck X]" >
+<!ENTITY z.dstrY SDATA "[Doublestruck Y]" >
+<!ENTITY z.dstrZ SDATA "[Doublestruck Z]" >
+<!ENTITY z.frakA SDATA "[Fraktur A]" >
+<!ENTITY z.frakB SDATA "[Fraktur B]" >
+<!ENTITY z.frakC SDATA "[Fraktur C]" >
+<!ENTITY z.frakD SDATA "[Fraktur D]" >
+<!ENTITY z.frakE SDATA "[Fraktur E]" >
+<!ENTITY z.frakF SDATA "[Fraktur F]" >
+<!ENTITY z.frakG SDATA "[Fraktur G]" >
+<!ENTITY z.frakH SDATA "[Fraktur H]" >
+<!ENTITY z.frakI SDATA "[Fraktur I]" >
+<!ENTITY z.frakJ SDATA "[Fraktur J]" >
+<!ENTITY z.frakK SDATA "[Fraktur K]" >
+<!ENTITY z.frakL SDATA "[Fraktur L]" >
+<!ENTITY z.frakM SDATA "[Fraktur M]" >
+<!ENTITY z.frakN SDATA "[Fraktur N]" >
+<!ENTITY z.frakO SDATA "[Fraktur O]" >
+<!ENTITY z.frakP SDATA "[Fraktur P]" >
+<!ENTITY z.frakQ SDATA "[Fraktur Q]" >
+<!ENTITY z.frakR SDATA "[Fraktur R]" >
+<!ENTITY z.frakS SDATA "[Fraktur S]" >
+<!ENTITY z.frakT SDATA "[Fraktur T]" >
+<!ENTITY z.frakU SDATA "[Fraktur U]" >
+<!ENTITY z.frakV SDATA "[Fraktur V]" >
+<!ENTITY z.frakW SDATA "[Fraktur W]" >
+<!ENTITY z.frakX SDATA "[Fraktur X]" >
+<!ENTITY z.frakY SDATA "[Fraktur Y]" >
+<!ENTITY z.frakZ SDATA "[Fraktur Z]" >
+<!ENTITY z.agdda SDATA "[greek alpha with two dots above]" >
+<!ENTITY z.bgdda SDATA "[greek beta with two dots above]" >
+<!ENTITY z.khgdda SDATA "[greek chi with two dots above]" >
+<!ENTITY z.dgdda SDATA "[greek delta with two dots above]" >
+<!ENTITY z.egdda SDATA "[greek epsilon with two dots above]" >
+<!ENTITY z.phgdda SDATA "[greek phi with two dots above]" >
+<!ENTITY z.ggdda SDATA "[greek gamma with two dots above]" >
+<!ENTITY z.eegdda SDATA "[greek eta with two dots above]" >
+<!ENTITY z.igdda SDATA "[greek iota with two dots above]" >
+<!ENTITY z.phvgdda SDATA "[greek variant phi with two dots above]" >
+<!ENTITY z.kgdda SDATA "[greek kappa with two dots above]" >
+<!ENTITY z.lgdda SDATA "[greek lambda with two dots above]" >
+<!ENTITY z.mgdda SDATA "[greek mu with two dots above]" >
+<!ENTITY z.ngdda SDATA "[greek nu with two dots above]" >
+<!ENTITY z.pgdda SDATA "[greek pi with two dots above]" >
+<!ENTITY z.thgdda SDATA "[greek theta with two dots above]" >
+<!ENTITY z.rgdda SDATA "[greek rho with two dots above]" >
+<!ENTITY z.sgdda SDATA "[greek sigma with two dots above]" >
+<!ENTITY z.tgdda SDATA "[greek tau with two dots above]" >
+<!ENTITY z.ugdda SDATA "[greek upsilon with two dots above]" >
+<!ENTITY z.pvgdda SDATA "[greek variant pi with two dots above]" >
+<!ENTITY z.ohgdda SDATA "[greek omega with two dots above]" >
+<!ENTITY z.xgdda SDATA "[greek xi with two dots above]" >
+<!ENTITY z.psgdda SDATA "[greek psi with two dots above]" >
+<!ENTITY z.zgdda SDATA "[greek zeta with two dots above]" >
+<!ENTITY z.Dgdda SDATA "[greek Delta with two dots above]" >
+<!ENTITY z.PHgdda SDATA "[greek Phi with two dots above]" >
+<!ENTITY z.Ggdda SDATA "[greek Gamma with two dots above]" >
+<!ENTITY z.thvgdda SDATA "[greek variant theta with two dots above]" >
+<!ENTITY z.Lgdda SDATA "[greek Lambda with two dots above]" >
+<!ENTITY z.Pgdda SDATA "[greek Pi with two dots above]" >
+<!ENTITY z.THgdda SDATA "[greek Theta with two dots above]" >
+<!ENTITY z.Sgdda SDATA "[greek Sigma with two dots above]" >
+<!ENTITY z.Ugdda SDATA "[greek Upsilon with two dots above]" >
+<!ENTITY z.sfgdda SDATA "[greek final sigma with two dots above]" >
+<!ENTITY z.OHgdda SDATA "[greek Omega with two dots above]" >
+<!ENTITY z.Xgdda SDATA "[greek Xi with two dots above]" >
+<!ENTITY z.PSgdda SDATA "[greek Psi with two dots above]" >
+<!ENTITY z.oone SDATA "[circle containing 1]" >
+<!ENTITY z.otwo SDATA "[circle containing 2]" >
+<!ENTITY z.othr SDATA "[circle containing 3]" >
+<!ENTITY z.ofour SDATA "[circle containing 4]" >
+<!ENTITY z.ofive SDATA "[circle containing 5]" >
+<!ENTITY z.osix SDATA "[circle containing 6]" >
+<!ENTITY z.osev SDATA "[circle containing 7]" >
+<!ENTITY z.oeigh SDATA "[circle containing 8]" >
+<!ENTITY z.onine SDATA "[circle containing 9]" >
+<!ENTITY z.cirf SDATA "[black circle]" >
+<!ENTITY z.cirfl SDATA "[circle filled left]" >
+<!ENTITY z.nsupne SDATA "[neither a superset of nor equal to]" >
+<!ENTITY z.rad SDATA "[radical dot]" >

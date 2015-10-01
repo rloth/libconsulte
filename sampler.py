@@ -43,14 +43,24 @@ from argparse  import ArgumentParser, RawTextHelpFormatter
 
 # imports locaux
 try:
+	# CHEMIN 1 cas de figure du dossier utilisé comme librairie
+	#          au sein d'un package plus grand (exemple: bib-adapt-corpus)
 	from libconsulte import api
 	from libconsulte import field_value_lists
 	# =<< target_language_values, target_scat_values,
 	#     target_genre_values, target_date_ranges
 except ImportError:
-	print("""ERR: Les modules 'api.py' et 'field_value_lists.py' doivent être
-     placés à côté du script sampler.py ou dans un dossier du PYTHONPATH, pour sa bonne execution...""", file=stderr)
-	exit(1)
+	try:
+		# CHEMIN 2: cas de figure d'un appel depuis le dossier courant
+		#           exemple: on veut juste lancer le sampler tout seul
+		import api
+		import field_value_lists
+		
+	# cas de figure où il n'y a vraiment rien
+	except ImportError:
+		print("""ERR: Les modules 'api.py' et 'field_value_lists.py' doivent être
+		 placés à côté du script sampler.py ou dans un dossier du PYTHONPATH, pour sa bonne execution...""", file=stderr)
+		exit(1)
 
 # utile pour le cache
 HOME=path.dirname(path.realpath(__file__))
@@ -601,7 +611,7 @@ def full_run(arglist=None):
 	
 	# do we need to change smoothing ?
 	if args.smoothing_init and float(args.smoothing_init) > 0:
-		print("Setting initial smoothing to %.2f" % args.smoothing_init)
+		print("Setting initial smoothing to %.2f" % args.smoothing_init, file=stderr)
 		# global var change in main
 		LISSAGE = args.smoothing_init
 	

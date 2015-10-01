@@ -1,0 +1,201 @@
+<!-- ============================================================= -->
+<!--  MODULE:    Journal Archiving DTD Atypon Element Classes      -->
+<!--  VERSION:   3.0                                             -->
+<!--  DATE:      Apr 2009                                          -->
+<!--                                                               -->
+<!-- ============================================================= -->
+
+<!-- ============================================================= -->
+<!--                    PUBLIC DOCUMENT TYPE DEFINITION            -->
+<!--                        TYPICAL INVOCATION                     -->
+<!--
+"-//Atypon//DTD Atypon Systems Archival NLM DTD Atypon Element Classes Module v3.0.2 20101108//EN"
+Delivered as file "atypon-elements.ent"                            -->
+<!-- ============================================================= -->
+
+
+<!-- ============================================================= -->
+<!-- SYSTEM:     Journal Archiving and Interchange DTD of the      -->
+<!--             Archiving and Interchange DTD Suite               -->
+<!--                                                               -->
+<!-- PURPOSE:    To declare the Parameter Entities (PEs) used to   -->
+<!--             over-ride the named element classes               -->
+<!--                                                               -->
+<!--             Note: Since PEs must be declared before they      -->
+<!--             are used, this module must be called before the   -->
+<!--             content modules that declare elements, and before -->
+<!--             the default classes module.                       -->
+<!--                                                               -->
+<!-- CONTAINS:   1) PEs for changing the contents of the default   -->
+<!--                element classes                                -->
+<!--                                                               -->
+<!-- CREATED FOR:                                                  -->
+<!--             Digital Archive of Journal Articles               -->
+<!--             National Center for Biotechnology Information     -->
+<!--                (NCBI)                                         -->
+<!--             National Library of Medicine (NLM)                -->
+<!--                                                               -->
+<!-- ORIGINAL CREATION DATE:                                       -->
+<!--             August 2004                                       -->
+<!--                                                               -->
+<!-- CREATED BY: Deborah Lapeyre (Mulberry Technologies, Inc.)     -->
+<!--             B. Tommie Usdin (Mulberry Technologies, Inc.)     -->
+<!--                                                               -->
+<!--             Suggestions for refinements and enhancements to   -->
+<!--             this DTD should be sent in email to:              -->
+<!--                 archive-dtd@ncbi.nlm.nih.gov                  -->
+<!-- ============================================================= -->
+
+
+<!-- ============================================================= -->
+<!--                    DTD VERSION/CHANGE HISTORY                 -->
+<!-- ============================================================= -->
+<!--
+
+Version  Reason/Occasion                   (who) vx.x (yyyy-mm-dd)
+
+     =============================================================
+     Version 3.0                       (DAL/BTU) v3.0 (2007-10-31)
+     
+     Version 3.0 is the first non-backward-compatible release.
+     In addition to the usual incremental changes, some
+     elements and attributes have been renamed and/or remodeled
+     to better meet user needs and to increase tag set consistency.
+     All module change histories are available through the Tag Suite 
+     web site at http://dtd.nlm.nih.gov. 
+
+     Details on version 3.0 are available at 
+           http://dtd.nlm.nih.gov/3.0.
+  
+  1. Updated public identifier to "v3.0 20080202//EN"              -->
+
+
+<!-- ============================================================= -->
+<!--                    METADATA CLASSES                           -->
+<!-- ============================================================= -->
+
+<!--                    BBOX                                       -->
+<!--                    Bounding Box Coordinates Element           -->
+<!--                    Atypon internal use only (Reserved)        -->
+<!ENTITY % bbox-atts
+          "pg      CDATA                              #REQUIRED
+	   x       CDATA                              #REQUIRED
+	   y       CDATA                              #REQUIRED
+	   w       CDATA                              #REQUIRED
+	   h       CDATA                              #REQUIRED
+	   words   CDATA                              #IMPLIED"      >
+
+<!ELEMENT  bbox          EMPTY                                       >
+
+<!ATTLIST  bbox
+             %bbox-atts;                                             >
+
+
+<!-- ============================================================= -->
+<!--                EXAM ACCREDITATION INFORMATION ELEMENTS        -->
+<!-- ============================================================= -->
+
+<!--                    EXAM ACCREDITATION ELEMENTS                -->
+<!--                    Used to record the accreditation organization
+                        and credit hours earned after successful
+	                completion of the exam contained in the
+                        article. Used only for online exams.       -->
+<!ENTITY % accreditation-model
+			"(accred-org-name, max-credit-hours)"        >
+
+<!ELEMENT accreditation  %accreditation-model;                       >
+
+<!ELEMENT accred-org-name (#PCDATA)                                  >
+
+<!ELEMENT max-credit-hours (#PCDATA)                                 >
+<!--         max-credit-hours  Specifies whether correct answers
+                               are required to earn the specified
+                               credit hours                        -->
+<!ATTLIST max-credit-hours
+             correct-answers-required (yes | no)      #REQUIRED      >
+
+
+<!-- ============================================================= -->
+<!--                    EXAM ELEMENTS                              -->
+<!-- ============================================================= -->
+
+<!--                    QUESTION ATTRIBUTES                        -->
+<!--                    Attribute list for Question element        -->
+<!ENTITY % question-atts
+            "id         ID                                 #IMPLIED
+             xml:lang   NMTOKEN                            #IMPLIED">
+
+
+<!--                    QUESTION                                   -->
+<!--                    A question structure used in an exam       -->
+<!ELEMENT  question     (%sec-opt-title-model;, answer+,
+                         explanation?)                               >
+<!--         id         Unique identifier, so the Question can be
+                        referenced                   
+             xml:lang   The language in which the value of the
+                        element is expressed.  Recommended best 
+                        practice is to use values as defined in
+                        RFC 1766, typically 2-letter language
+                        codes such as "FR" (French), "EN" (English),
+                        and "DE" (German). These values are NOT
+                        case sensitive, so "EN" = "en". The values
+                        may include hyphenated differentiations such 
+                        as "EN-AU" (Australian English) and "EN-US"
+                        (United States English)                    -->
+<!ATTLIST  question
+             %question-atts;                                         >
+
+<!--                    ANSWER ATTRIBUTES                          -->
+<!--                    Attribute list for Answer element          -->
+<!ENTITY % answer-atts
+            "id         ID                                 #IMPLIED
+             xml:lang   NMTOKEN                            #IMPLIED
+             correct    (yes|no)                           #IMPLIED" >
+
+<!--                    ANSWER                                     -->
+<!--                    An answer element to an exam question      -->
+<!ELEMENT  answer  %sec-opt-title-model;                             >
+<!--         id         Unique identifier, so the Answer can be
+                        referenced                   
+             xml:lang   The language in which the value of the
+                        element is expressed.  Recommended best 
+                        practice is to use values as defined in
+                        RFC 1766, typically 2-letter language
+                        codes such as "FR" (French), "EN" (English),
+                        and "DE" (German). These values are NOT
+                        case sensitive, so "EN" = "en". The values
+                        may include hyphenated differentiations such 
+                        as "EN-AU" (Australian English) and "EN-US"
+                        (United States English)
+	    correct     Indicates whether this answer is the correct
+	                one. The attribute has a default value of
+			"no"                                       -->
+<!ATTLIST  answer
+             %answer-atts;                                           >
+
+<!--                    EXPLANATION ATTRIBUTES                     -->
+<!--                    Attribute list for Explanation element     -->
+<!ENTITY % explanation-atts
+            "id         ID                                 #IMPLIED
+             xml:lang   NMTOKEN                            #IMPLIED" >
+
+<!--                    EXPLANATION                                -->
+<!--                    An explanation to an exam answer           -->
+<!ELEMENT  explanation  %sec-opt-title-model;                        >
+<!--         id         Unique identifier, so the Explanation can be
+                        referenced                   
+             xml:lang   The language in which the value of the
+                        element is expressed.  Recommended best 
+                        practice is to use values as defined in
+                        RFC 1766, typically 2-letter language
+                        codes such as "FR" (French), "EN" (English),
+                        and "DE" (German). These values are NOT
+                        case sensitive, so "EN" = "en". The values
+                        may include hyphenated differentiations such 
+                        as "EN-AU" (Australian English) and "EN-US"
+                        (United States English)                    -->
+<!ATTLIST  explanation
+             %explanation-atts;                                      >
+
+
+<!-- ================== End Atypon Element Classes =============== -->

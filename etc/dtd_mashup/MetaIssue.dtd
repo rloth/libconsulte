@@ -1,0 +1,78 @@
+<!--
+
+  HighWire Express MetaIssue DTD
+  Copyright 2009, HighWire Press
+  Last updated 3 Oct 2013, by kh
+
+-->
+
+<!ENTITY % format "(#PCDATA|b|br|i|sup|sub|small|span)*">
+
+<!ELEMENT MetaIssue (Provider, IssueDate?, IssueType*, Editors?, Sponsorship?, PageRange?, IssueTitle?, TOC?)>
+<!ATTLIST MetaIssue
+  volume       CDATA           #IMPLIED
+  issue        CDATA           #IMPLIED>
+
+<!ELEMENT Provider (#PCDATA)>
+<!ELEMENT IssueDate (#PCDATA)>
+<!ATTLIST    IssueDate
+  day          CDATA           #IMPLIED
+  mo           CDATA           #IMPLIED
+  yr           CDATA           #IMPLIED
+>
+<!ELEMENT IssueType EMPTY>
+<!ATTLIST IssueType
+  value        (book|
+                meeting|
+                supplement|
+                special)    #REQUIRED
+>
+<!ELEMENT TOC (TocSection | Search)+>
+<!ELEMENT TocSection (Heading?,  (ResId | DOI | Resource | TocSection | Search)*)>
+<!ATTLIST TocSection
+  section_id  ID              #IMPLIED
+>
+
+<!--
+  Use the Search element when a search is required instead of an explicit listing of articles.
+  Typically for sections with very long lists of articles. The string value of Heading will
+  be used for the search term.
+-->
+
+<!ELEMENT Search (Heading, Search*)>
+
+<!ELEMENT Heading %format;>
+
+<!--
+  NOTE: DOI is allowed as a TocSection child for backwards compatibility,
+  but DOI as child of Resource is preferred, and in fact necessary for
+  more recent functionality -->
+
+<!ELEMENT DOI (#PCDATA)>
+<!ELEMENT Resource (DOI | ResId)>
+
+<!ELEMENT ResId  (#PCDATA)>
+<!ATTLIST    ResId
+ type        (publisher-id)    #REQUIRED
+>
+
+<!ELEMENT Editors %format;>
+<!ELEMENT Sponsorship %format;>
+<!ELEMENT PageRange (#PCDATA)>
+<!ATTLIST PageRange
+  fpage        CDATA           #IMPLIED
+  lpage        CDATA           #IMPLIED
+>
+<!ELEMENT IssueTitle %format;>
+
+<!-- format elements-->
+<!ELEMENT b %format;>
+<!ELEMENT br EMPTY>
+<!ELEMENT i %format;>
+<!ELEMENT sup %format;>
+<!ELEMENT sub %format;>
+<!ELEMENT small %format;>
+<!ELEMENT span %format;>
+<!ATTLIST span
+  class        CDATA           #IMPLIED
+>

@@ -1,0 +1,69 @@
+<!-- (C) International Organization for Standardization 1986
+     Permission to copy in any form is granted for use with
+     conforming SGML systems and applications as defined in
+     ISO 8879, provided this notice is included in all copies.
+-->
+<!-- Character entity set. Typical invocation:
+    <!ENTITY XML-GRK4-STAG "<BOLD>">
+    <!ENTITY XML-GRK4-ETAG "</BOLD>">
+    <!ENTITY % ISOgrk4 PUBLIC
+       "ISO 8879:1986//ENTITIES Alternative Greek Symbols//EN//XML">
+     %ISOgrk4;
+-->
+<!-- This version of the entity set can be used with any SGML document
+     which uses ISO 10646 as its document character set. 
+     This includes XML documents and ISO HTML documents.
+     This entity set uses hexadecimal numeric character references. 
+          
+     Creator: Rick Jelliffe
+     
+     Version: 1997-07-07
+-->
+<!ENTITY XML-GRK4-STAG "">
+<!ENTITY XML-GRK4-ETAG "">
+
+<!ENTITY b.alpha    "&XML-GRK4-STAG;&#x3B1;&XML-GRK4-ETAG;" ><!--=small alpha, Greek-->
+<!ENTITY b.beta     "&XML-GRK4-STAG;&#x3B2;&XML-GRK4-ETAG;" ><!--=small beta, Greek-->
+<!ENTITY b.gamma    "&XML-GRK4-STAG;&#x3B3;&XML-GRK4-ETAG;" ><!--=small gamma, Greek-->
+<!ENTITY b.Gamma    "&XML-GRK4-STAG;&#x393;&XML-GRK4-ETAG;" ><!--=capital Gamma, Greek-->
+<!ENTITY b.gammad   "&XML-GRK4-STAG;&#x3DC;&XML-GRK4-ETAG;" ><!--/digamma-->
+<!ENTITY b.delta    "&XML-GRK4-STAG;&#x3B4;&XML-GRK4-ETAG;" ><!--=small delta, Greek-->
+<!ENTITY b.Delta    "&XML-GRK4-STAG;&#x394;&XML-GRK4-ETAG;" ><!--=capital Delta, Greek-->
+<!ENTITY b.epsi     "&XML-GRK4-STAG;&#x3B5;&XML-GRK4-ETAG;" ><!--=small epsilon, Greek -->
+<!ENTITY b.epsiv    "&XML-GRK4-STAG;&#x2107;&XML-GRK4-ETAG;" ><!--/varepsilon ?-->
+<!ENTITY b.epsis    "&XML-GRK4-STAG;&#x1B8;&XML-GRK4-ETAG;" ><!--/straightepsilon ?-->
+<!ENTITY b.zeta     "&XML-GRK4-STAG;&#x3B6;&XML-GRK4-ETAG;" ><!--=small zeta, Greek-->
+<!ENTITY b.eta      "&XML-GRK4-STAG;&#x3B7;&XML-GRK4-ETAG;" ><!--=small eta, Greek-->
+<!ENTITY b.thetas   "&XML-GRK4-STAG;&#x3B8;&XML-GRK4-ETAG;" ><!--straight theta-->
+<!ENTITY b.Theta    "&XML-GRK4-STAG;&#x398;&XML-GRK4-ETAG;" ><!--=capital Theta, Greek-->
+<!ENTITY b.thetav   "&XML-GRK4-STAG;&#x3D1;&XML-GRK4-ETAG;" ><!--/vartheta - curly or open theta-->
+<!ENTITY b.iota     "&XML-GRK4-STAG;&#x3B9;&XML-GRK4-ETAG;" ><!--=small iota, Greek-->
+<!ENTITY b.kappa    "&XML-GRK4-STAG;&#x3BA;&XML-GRK4-ETAG;" ><!--=small kappa, Greek-->
+<!ENTITY b.kappav   "&XML-GRK4-STAG;&#x3F0;&XML-GRK4-ETAG;" ><!--/varkappa-->
+<!ENTITY b.lambda   "&XML-GRK4-STAG;&#x3BB;&XML-GRK4-ETAG;" ><!--=small lambda, Greek-->
+<!ENTITY b.Lambda   "&XML-GRK4-STAG;&#x39B;&XML-GRK4-ETAG;" ><!--=capital Lambda, Greek-->
+<!ENTITY b.mu       "&XML-GRK4-STAG;&#x3BC;&XML-GRK4-ETAG;" ><!--=small mu, Greek-->
+<!ENTITY b.nu       "&XML-GRK4-STAG;&#x3BD;&XML-GRK4-ETAG;" ><!--=small nu, Greek-->
+<!ENTITY b.xi       "&XML-GRK4-STAG;&#x3BE;&XML-GRK4-ETAG;" ><!--=small xi, Greek-->
+<!ENTITY b.Xi       "&XML-GRK4-STAG;&#x39E;&XML-GRK4-ETAG;" ><!--=capital Xi, Greek-->
+<!ENTITY b.pi       "&XML-GRK4-STAG;&#x3C0;&XML-GRK4-ETAG;" ><!--=small pi, Greek-->
+<!ENTITY b.piv      "&XML-GRK4-STAG;&#x3D6;&XML-GRK4-ETAG;" ><!--/varpi-->
+<!ENTITY b.Pi       "&XML-GRK4-STAG;&#x3A0;&XML-GRK4-ETAG;" ><!--=capital Pi, Greek-->
+<!ENTITY b.rho      "&XML-GRK4-STAG;&#x3c1;&XML-GRK4-ETAG;" ><!--=small rho, Greek-->
+<!ENTITY b.rhov     "&XML-GRK4-STAG;&#x3F1;&XML-GRK4-ETAG;" ><!--/varrho-->
+<!ENTITY b.sigma    "&XML-GRK4-STAG;&#x3C3;&XML-GRK4-ETAG;" ><!--=small sigma, Greek-->
+<!ENTITY b.Sigma    "&XML-GRK4-STAG;&#x3A3;&XML-GRK4-ETAG;" ><!--=capital Sigma, Greek-->
+<!ENTITY b.sigmav   "&XML-GRK4-STAG;&#x3C2;&XML-GRK4-ETAG;" ><!--/varsigma-->
+<!ENTITY b.tau      "&XML-GRK4-STAG;&#x3C4;&XML-GRK4-ETAG;" ><!--=small tau, Greek-->
+<!ENTITY b.upsi     "&XML-GRK4-STAG;&#x3C5;&XML-GRK4-ETAG;" ><!--=small upsilon, Greek-->
+<!ENTITY b.Upsi     "&XML-GRK4-STAG;&#x3A5;&XML-GRK4-ETAG;" ><!--=capital Upsilon, Greek-->
+<!ENTITY b.phis     "&XML-GRK4-STAG;&#x3C6;&XML-GRK4-ETAG;" ><!--/straightphi - straight phi-->
+<!ENTITY b.Phi      "&XML-GRK4-STAG;&#x3A6;&XML-GRK4-ETAG;" ><!--=capital Phi, Greek-->
+<!ENTITY b.phiv     "&XML-GRK4-STAG;&#x3D5;&XML-GRK4-ETAG;" ><!--/varphi - curly or open phi-->
+<!ENTITY b.chi      "&XML-GRK4-STAG;&#x3C7;&XML-GRK4-ETAG;" ><!--=small chi, Greek-->
+<!ENTITY b.psi      "&XML-GRK4-STAG;&#x3C8;&XML-GRK4-ETAG;" ><!--=small psi, Greek-->
+<!ENTITY b.Psi      "&XML-GRK4-STAG;&#x3A8;&XML-GRK4-ETAG;" ><!--=capital Psi, Greek-->
+<!ENTITY b.omega    "&XML-GRK4-STAG;&#x3C9;&XML-GRK4-ETAG;" ><!--=small omega, Greek-->
+<!ENTITY b.Omega    "&XML-GRK4-STAG;&#x3A9;&XML-GRK4-ETAG;" ><!--=capital Omega, Greek-->
+
+

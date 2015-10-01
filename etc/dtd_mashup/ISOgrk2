@@ -1,0 +1,45 @@
+<!-- (C) International Organization for Standardization 1986
+     Permission to copy in any form is granted for use with
+     conforming SGML systems and applications as defined in
+     ISO 8879, provided this notice is included in all copies.
+     
+     Creator: updated by Anders Berglund
+     
+     Version: 0.21 1992-12-04
+--> 
+<!-- Character entity set. Typical invocation:
+     <!ENTITY % ISOGRK2 PUBLIC
+       "ISO 9573-15:1993//ENTITIES Monotoniko Greek//EN//XML">
+     %ISOGRK2;
+-->
+<!-- This version of the entity set can be used with any SGML document
+     which uses ISO 10646 as its document character set. 
+     This includes XML documents and ISO HTML documents.  
+     This entity set uses hexadecimal numeric character references. 
+          
+     Creator: Rick Jelliffe 
+     
+     Version: 1997-07-07
+-->
+
+<!ENTITY aacgr  "&#x3AC;" ><!--=small alpha, accent, Greek-->
+<!ENTITY Aacgr  "&#x386;" ><!--=capital Alpha, accent, Greek-->
+<!ENTITY eacgr  "&#x3AD;" ><!--=small epsilon, accent, Greek-->
+<!ENTITY Eacgr  "&#x388;" ><!--=capital Epsilon, accent, Greek-->
+<!ENTITY eeacgr "&#x3AE;" ><!--=small eta, accent, Greek-->
+<!ENTITY EEacgr "&#x389;" ><!--=capital Eta, accent, Greek-->
+<!ENTITY idigr  "&#x3CA;" ><!--=small iota, dieresis, Greek-->
+<!ENTITY Idigr  "&#x3AA;" ><!--=capital Iota, dieresis, Greek-->
+<!ENTITY iacgr  "&#x3AF;" ><!--=small iota, accent, Greek-->
+<!ENTITY Iacgr  "&#x38A;" ><!--=capital Iota, accent, Greek-->
+<!ENTITY idiagr "&#x390;" ><!--=small iota, dieresis, accent, Greek-->
+<!ENTITY oacgr  "&#x3CC;" ><!--=small omicron, accent, Greek-->
+<!ENTITY Oacgr  "&#x38C;" ><!--=capital Omicron, accent, Greek-->
+<!ENTITY udigr  "&#x3CB;" ><!--=small upsilon, dieresis, Greek-->
+<!ENTITY Udigr  "&#x3AB;" ><!--=capital Upsilon, dieresis, Greek-->
+<!ENTITY uacgr  "&#x3CD;" ><!--=small upsilon, accent, Greek-->
+<!ENTITY Uacgr  "&#x38E;" ><!--=capital Upsilon, accent, Greek-->
+<!ENTITY udiagr "&#x3B0;" ><!--=small upsilon, dieresis, accent, Greek-->
+<!ENTITY Udiagr "&#x3AB;&#x30D;" ><!--=capital Upsilon, dieresis, accent, Greek-->
+<!ENTITY ohacgr "&#x3CE;" ><!--=small omega, accent, Greek-->
+<!ENTITY OHacgr "&#x38F;" ><!--=capital Omega, accent, Greek-->  

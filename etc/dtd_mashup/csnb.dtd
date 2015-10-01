@@ -1,0 +1,95 @@
+<!-- ******************************************************************** -->
+<!--                                                                      -->
+<!--           Copyright (c) Royal Society of Chemistry, 2002             -->
+<!--                                                                      -->
+<!--              Chemical Safety NewsBase On-line  (CSNB)                -->
+<!--                   XML Document Type Definition                       -->
+<!--                                                                      -->
+<!--       Neil Hunter  April 26th 2002           Version 2.0             -->
+<!--                                                                      -->
+<!-- ******************************************************************** -->
+
+<!-- ==================================================================== -->
+<!--   Declare files containing ISO special characters                    -->
+<!--   Declare parameter entities (elements declared below)               -->
+<!-- ==================================================================== -->
+
+<!ENTITY % aa SYSTEM "entities/aa.ent" >
+%aa;
+
+<!ENTITY % special "INF|SUP|BO|IT|SCP" >
+
+<!-- ==================================================================== -->
+<!--   Declare top-level elements                                         -->
+<!-- ==================================================================== -->
+
+<!ELEMENT CSNB    (RSCHead, RECORD+)>
+<!ELEMENT RSCHead   (COP,CDT) >
+<!ELEMENT COP       (#PCDATA | %special;)* >
+<!ELEMENT CDT       (#PCDATA) >
+
+<!ELEMENT RECORD    (REF, SEC, IDC, DOC, 
+FJL?, JNL?, CDN?, ISN?, LCD?, LCO?, LAN?, VOL?, ISS?, 
+ATL, OTL?, AUT*, PAG?, AVL?, CIT?, 
+ADS?, DIV?, ORG?, CTR?, SOURCE?, CFI?, 
+RPT?, RPN?, PBD, EDN?, IBN?, PBR?, PAD?, 
+CHEMICAL*, GIN*, ABS, XRF*) >
+
+<!-- ==================================================================== -->
+<!--   Declare RECORD elements                                            -->
+<!-- ==================================================================== -->
+
+<!ELEMENT REF  (#PCDATA) >
+<!ELEMENT SEC  (#PCDATA) >
+<!ELEMENT SSC  (#PCDATA) >
+<!ELEMENT IDC (#PCDATA) >
+<!ELEMENT DOC  (#PCDATA) >
+<!ELEMENT FJL  (#PCDATA | %special;)* >
+<!ELEMENT JNL  (#PCDATA | %special;)* >
+<!ELEMENT CDN  (#PCDATA) >
+<!ELEMENT ISN  (#PCDATA) >
+<!ELEMENT LCD  (#PCDATA) >
+<!ELEMENT LCO  (#PCDATA) >
+<!ELEMENT LAN  (#PCDATA) >
+<!ELEMENT VOL  (#PCDATA) >
+<!ELEMENT ISS  (#PCDATA) >
+<!ELEMENT ATL  (#PCDATA  | %special;)* >
+<!ELEMENT OTL  (#PCDATA) >
+<!ELEMENT AUT  (#PCDATA | %special;)* >
+<!ELEMENT PAG  (#PCDATA) >
+<!ELEMENT AVL  (#PCDATA) >
+<!ELEMENT CIT  (#PCDATA) >
+<!ELEMENT ADS  (#PCDATA) >
+<!ELEMENT DIV  (#PCDATA | %special;)* >
+<!ELEMENT ORG  (#PCDATA | %special;)* >
+<!ELEMENT CTR  (#PCDATA) >
+<!ELEMENT SOURCE  (SRC?, SAD?, SCT?)* >
+<!ELEMENT SRC  (#PCDATA) >
+<!ELEMENT SAD  (#PCDATA) >
+<!ELEMENT SCT  (#PCDATA) >
+<!ELEMENT CFI  (#PCDATA) >
+<!ELEMENT FSD  (#PCDATA) >
+<!ELEMENT RPT  (#PCDATA) >
+<!ELEMENT RPN  (#PCDATA) >
+<!ELEMENT PBD  (#PCDATA) >
+<!ELEMENT EDN  (#PCDATA) >
+<!ELEMENT IBN  (#PCDATA) >
+<!ELEMENT PBR  (#PCDATA) >
+<!ELEMENT PAD  (#PCDATA) >
+<!ELEMENT CHEMICAL  (CIN, REG?)* >
+<!ELEMENT CIN  (#PCDATA | %special;)* >
+<!ELEMENT REG  (#PCDATA) >
+<!ELEMENT GIN  (#PCDATA | %special;)* >
+<!ELEMENT ABS  (#PCDATA | %special;)* >
+<!ELEMENT XRF  (#PCDATA) >
+
+<!-- ==================================================================== -->
+<!--   Declare parameter elements                                         -->
+<!-- ==================================================================== -->
+
+<!ELEMENT INF       (#PCDATA) >
+<!ELEMENT SUP       (#PCDATA) >
+<!ELEMENT BO        (#PCDATA) >
+<!ELEMENT IT        (#PCDATA) >
+<!ELEMENT SCP       (#PCDATA) >
+

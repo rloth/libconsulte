@@ -1,0 +1,88 @@
+
+<!-- ******************************************************************* -->
+<!--                                                                     -->
+<!--                   Royal Society of Chemistry                        -->
+<!--                                                                     -->
+<!--                   RSC Classification Concepts 1.0                   -->
+<!--                                                                     -->
+<!-- ******************************************************************* -->
+<!--                                                                     -->
+<!-- PUBLIC identifier: "-//RSC//DTD RSC Classification Concepts 1.0//EN"-->
+<!--                                                                     -->
+<!-- DTD filename:  CLASS.DTD                                            -->
+<!--                                                                     -->
+<!-- ******************************************************************* -->
+
+<!-- Top-level classification element type.  Contains up to one each, of one or 
+     more types of journal classification: -->
+<!ELEMENT classification	(AAclass?, NPUclass?, MOSclass?, CCRclass?) >
+
+<!-- Wrappers for specific journals: -->
+
+<!ELEMENT AAclass					%no-omission;  (sec?, isb?, xrf*, xsb*, iay*, aat*, imx*, mat*,
+													 								icp*, cmd*) >
+														 
+<!ELEMENT NPUclass				%no-omission;  EMPTY >
+
+<!ELEMENT MOSclass				%no-omission;  EMPTY >
+
+<!ELEMENT CCRclass				%no-omission;  (sec?, abs?, str, catalysis*, rct*, pdt*, flg*,
+																					gin*) >
+														 
+<!-- Low-level elements used by one or more journals: -->														 														 
+
+<!-- Section: -->
+<!ELEMENT sec							%no-omission;  (#PCDATA) >
+
+<!-- Subsection: -->
+<!ELEMENT isb							%no-omission;  (#PCDATA) >
+
+<!-- Cross-reference: -->
+<!ELEMENT xrf							%no-omission;  (#PCDATA) >
+
+<!-- Cross-reference subsection: -->
+<!ELEMENT xsb							%no-omission;  (#PCDATA) >
+
+<!-- Analyte: -->
+<!ELEMENT iay							%no-omission;  %m.simple-text; >
+
+<!-- Analyte additional text: -->
+<!ELEMENT aat							%no-omission;  %m.simple-text; >
+
+<!-- Matrix: -->
+<!ELEMENT imx							%no-omission;  %m.simple-text; >
+
+<!-- Matrix additional text: -->
+<!ELEMENT mat							%no-omission;  %m.simple-text; >
+
+<!-- Concept: -->
+<!ELEMENT icp							%no-omission;  %m.simple-text; >
+
+<!-- Concept additional text: -->
+<!ELEMENT cmd							%no-omission;  %m.simple-text; >
+
+<!-- [CCR] Abstract: -->
+<!ELEMENT abs							%no-omission;  %m.simple-text; >
+
+<!-- [CCR] Identifier string: -->
+<!ELEMENT str							%no-omission;  (#PCDATA) >
+
+<!-- Catalysis: -->
+<!ELEMENT catalysis 			%no-omission;  (cat*) >
+<!ATTLIST catalysis				type		CDATA		#IMPLIED >
+
+<!-- Catalyst: -->
+<!ELEMENT cat       			%no-omission;  %m.simple-text; >
+
+<!-- Reactants: -->
+<!ELEMENT rct       			%no-omission;  %m.simple-text; >
+
+<!-- Products: -->
+<!ELEMENT pdt       			%no-omission;  %m.simple-text; >
+
+<!-- Flag: -->
+<!ELEMENT flg							%no-omission;  (#PCDATA) >
+
+<!-- General index: -->
+<!ELEMENT gin       			%no-omission;  %m.simple-text; >
+

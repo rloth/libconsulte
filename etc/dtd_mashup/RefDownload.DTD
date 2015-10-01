@@ -1,0 +1,76 @@
+<!-- 							
+
+		RefDownload.DTD XML (RAAPS)
+		Copyright(c) Royal Society of Chemistry, 2007
+     		Analytical Abstracts On-line
+     		For data extracted from AWB into a Reference Download Manager
+     		Document Type Definition
+     		26-Feb-2002: Version 1.2 (NHu)
+
+		Mods: 09-Sep-2011 (NHu) Added Xlink element. 
+		      See HD Call: 71681 SF 00002235 : Website Email: Endote pro
+		     
+
+
+<refxml>
+	<ref_format>endnote</ref_format>
+	<Record>
+		<Ref>AAN6842B10012</Ref>
+		<FAuthor>Ruiz-Jimenez J. , Luque de Castro M. D.* </FAuthor>
+		<ArtTitle>Coupling microdialysis to capillary electrophoresis.</ArtTitle>
+		<CommonTitle>TrAC Trends in Analytical Chemistry</CommonTitle>
+		<TitleCitedAs>Trends Anal. Chem.</TitleCitedAs>
+		<SubYear>2006</SubYear>
+		<Volume>25</Volume>
+		<Issue>6</Issue>
+		<FPage>563</FPage>
+		<LPage>571</LPage>
+		<Abstract>An overview of the most outstanding aspects of microdialysis (MD) and capillary electrophoresis (CE) separately, but especially the promising trend of their off and on-line coupling is presented here. The interfaces required and the main advantages of MD-CE arrangements as compared with those used in MD-HPLC are emphasized as well as key applications of MD-CE in pharmacokinetics, pharmacodynamics and neuroscience. (62 references).</Abstract>
+	</Record>
+	<Record>
+		<Ref>AAN6842C10013</Ref>
+		<FAuthor>Matusiewicz H. , Krawczyk M. </FAuthor>
+		<ArtTitle>Determination of cadmium and lead in reference materials by volatile species generation with in situ trapping flame atomic absorption spectrometry.</ArtTitle>
+		<CommonTitle>Microchemical Journal</CommonTitle>
+		<TitleCitedAs>Microchem. J.</TitleCitedAs>
+		<SubYear>2006</SubYear>
+		<Volume>83</Volume>
+		<Issue>1</Issue>
+		<FPage>17</FPage>
+		<LPage>23</LPage>
+		<Abstract>The analytical performance of coupled volatile species generation-integrated atom trap (VSG-IAT) atomizer flame atomic absorption spectrometry (FAAS) system was evaluated for determination of Cd and Pb in reference materials. Lead using formation of PbH
+			<inf>4</inf> and Cd
+			<sup>0</sup> vapors are atomized in air-acetylene flame-heated IAT. A new design of VSG-IAT-FAAS hyphenated technique that would exceed the operational capabilities of existing arrangements (a water-cooled single silica tube, double-slotted quartz tube or an &ldquo;integrated trap&rdquo;) was investigated. A dramatic improvement in detection limit was achieved compared with that obtained using either of the above atom trapping techniques separately. The concentration detection limits, defined as 3 times the blank standard deviation (3&sigma;), were 0.05 and 0.40 ng mL
+			<sup>&minus;1</sup> for Cd and Pb, respectively. For a 120 s in situ pre-concentration time, sensitivity enhancement compared to flame AAS, was 500 and 575 folds for Cd and Pb, respectively, using volatile species generator-atom trapping technique. The sensitivity can be further improved by increasing the collection time. The precision, expressed as RSD, was 4.4% and 4.1% (
+			<it>n</it> = 6) for Cd and Pb, respectively. The designs studied include slotted tube, single silica tube and integrated atom trap-cooled atom traps. The accuracy of method was verified using certified reference materials (PLANTS 3 and IAEA/W-4) by standard additional calibration technique. The measured Cd and Pb contents in two reference materials were in satisfactory agreement with the certified values.
+		</Abstract>
+		<XLink>http://dx.doi.org/10.1080/00032710801935095</XLink>
+	</Record>
+</refxml>
+
+-->
+
+<!ELEMENT refxml ( ref_format, Record+ ) >
+<!ENTITY % m.para "(#PCDATA|inf|sup|bo|it|scp)*" >
+<!ELEMENT ref_format 		( #PCDATA ) >
+<!ELEMENT Record ( Ref, FAuthor, ArtTitle, CommonTitle, TitleCitedAs, SubYear?, Volume?, Issue?, FPage?, LPage?, Abstract, XLink?) >
+<!ELEMENT Ref 				( #PCDATA ) >
+<!ELEMENT FAuthor 			( #PCDATA ) >
+<!ELEMENT ArtTitle %m.para;  			>
+<!ELEMENT CommonTitle 		( #PCDATA ) >
+<!ELEMENT TitleCitedAs 		( #PCDATA ) >
+<!ELEMENT SubYear 			( #PCDATA ) >
+<!ELEMENT Volume 			( #PCDATA ) >
+<!ELEMENT Issue 			( #PCDATA ) >
+<!ELEMENT FPage 			( #PCDATA ) >
+<!ELEMENT LPage 			( #PCDATA ) >
+<!ELEMENT XLink 			( #PCDATA ) >
+<!ELEMENT Abstract %m.para;  				>
+<!ELEMENT bo %m.para;  					>
+<!ELEMENT inf %m.para;  				>
+<!ELEMENT it %m.para;  					>
+<!ELEMENT scp %m.para;  				>
+<!ELEMENT sup %m.para;  				>
+<!ENTITY % aa SYSTEM "entities/aa.ent" >
+%aa;
+

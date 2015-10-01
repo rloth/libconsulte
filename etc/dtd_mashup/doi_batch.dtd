@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Content:  DOI-X Prototype DTD for Scientific Journal Metadata -->
+<!-- Contact:  Howard Ratner, Springer-Verlag New York, Inc., hratner@springer-ny.com, 212-460-1615 -->
+
+<!ELEMENT doi_batch (head, body) >
+	<!ATTLIST doi_batch
+		    version CDATA #FIXED "0.3" >
+<!ELEMENT head (doi_batch_id, timestamp, depositor, registrant) >
+<!ELEMENT doi_batch_id (#PCDATA) >
+<!ELEMENT timestamp (#PCDATA) >
+<!ELEMENT depositor (name, email_address)>
+<!ELEMENT name (#PCDATA) >
+<!ELEMENT email_address (#PCDATA) >
+<!ELEMENT registrant (#PCDATA) >
+<!ELEMENT body (doi_record+) >
+<!ELEMENT doi_record (timestamp?, doi_data, journal_article_metadata) >
+    <!ATTLIST doi_record
+        	type (abstract_only | full_text | bibliographic_record)
+		"full_text" >
+<!ELEMENT doi_data (doi, url) >
+<!ELEMENT doi (#PCDATA) >
+<!ELEMENT url (#PCDATA) >
+<!ELEMENT journal_article_metadata (article, journal) >
+<!ELEMENT article (title?, author*, date+, enumeration?, identifier*) >
+<!ELEMENT title (#PCDATA) >
+<!ELEMENT author (given_name?, surname) >
+    <!ATTLIST author
+              sequence (first | additional) #REQUIRED >
+<!ELEMENT  given_name (#PCDATA) >
+<!ELEMENT  surname (#PCDATA) >
+<!ELEMENT  date (month?, day?, year) >
+    <!ATTLIST date
+              type (online | print | other) "print" >
+<!ELEMENT month (#PCDATA) >
+<!ELEMENT day (#PCDATA) >
+<!ELEMENT year (#PCDATA) >
+<!ELEMENT enumeration (volume?, issue?, first_page?, last_page?,
+article_number?, special_numbering?) >
+<!ELEMENT volume (#PCDATA) >
+<!ELEMENT issue (#PCDATA) >
+<!ELEMENT first_page (#PCDATA) >
+<!ELEMENT last_page (#PCDATA) >
+<!ELEMENT article_number (#PCDATA) >
+<!ELEMENT special_numbering (#PCDATA) >
+<!ELEMENT identifier (#PCDATA) >
+    <!ATTLIST identifier
+              type (pii | sici | doi | other) #REQUIRED >
+<!ELEMENT journal (full_title, abbrev_title*, issn*, coden?) >
+<!ELEMENT full_title (#PCDATA) >
+<!ELEMENT abbrev_title (#PCDATA) >
+<!ELEMENT issn (#PCDATA) >
+    <!ATTLIST issn
+              type (print | electronic) "print" >
+<!ELEMENT coden (#PCDATA) >

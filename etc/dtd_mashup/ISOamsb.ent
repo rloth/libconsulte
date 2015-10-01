@@ -1,0 +1,178 @@
+<!-- (C) International Organization for Standardization 1991
+     Permission to copy in any form is granted for use with
+     conforming SGML systems and applications as defined in
+     ISO 8879, provided this notice is included in all copies.
+-->
+<!-- Character entity set. Typical invocation:
+     <!ENTITY % ISOAMSA  PUBLIC
+       "ISO 9573-13:1991//ENTITIES Added Math Symbols: Arrow Relations //EN">
+     %ISOAMSA;
+-->
+
+<!ENTITY dArr     	SDATA "font=symbol charset=fontspecific code=223" --/Downarrow A: down dbl arrow-->
+<!ENTITY harr     	SDATA "font=symbol charset=fontspecific code=171" --/leftrightarrow A: l&r arrow-->
+<!ENTITY hArr     	SDATA "font=symbol charset=fontspecific code=219" --/Leftrightarrow A: l&r dbl arrow-->
+<!ENTITY uArr     	SDATA "font=symbol charset=fontspecific code=221" --/Uparrow A: up dbl arrow-->
+
+<!-- The following characters could not be defined using commonly available
+fonts. Therefore, EBT is using placeholders for these characters. To include
+the placeholders in your document, make sure that the marked section below has
+the keyword "INCLUDE".
+
+To ignore the placeholders, use the keyword "IGNORE". If you are ignoring this
+marked section and your SGML document references any of the entities declared
+below, you will get (non-fatal) mkbook errors, and the entity references will
+not be replaced.
+
+Finally, you may choose to define the entities below yourself, using a special
+font that will be available to readers of your DynaText books. Use the same
+SDATA entity declaration model as is used above, substituting the appropriate
+names and decimal numbers for font, charset, code, and descr. In that case, you
+should INCLUDE the marked section.
+
+See Chapter 7 of Publisher Guide, Volume 1 for more information. -->
+
+<![ INCLUDE [
+<!ENTITY angzarr  CDATA "[angzarr ]" --angle with down zig-zag arrow-->
+<!ENTITY cirmid   CDATA "[cirmid  ]" --circle, mid below-->
+<!ENTITY cudarrl  CDATA "[cudarrl ]" --left, curved, down arrow-->
+<!ENTITY cudarrr  CDATA "[cudarrr ]" --right, curved, down arrow-->
+<!ENTITY cularr   CDATA "[cularr  ]" --/curvearrowleft A: left curved arrow-->
+<!ENTITY cularrp  CDATA "[cularrp ]" --curved left arrow with plus-->
+<!ENTITY curarr   CDATA "[curarr  ]" --/curvearrowright A: rt curved arrow-->
+<!ENTITY curarrm  CDATA "[curarrm ]" --curved right arrow with minus-->
+<!ENTITY Darr     CDATA "[Darr    ]" --down two-headed arrow-->
+<!ENTITY ddarr    CDATA "[ddarr   ]" --/downdownarrows A: two down arrows-->
+<!ENTITY DDotrahd CDATA "[DDotrahd]" --right arrow with dotted stem-->
+<!ENTITY dfisht   CDATA "[dfisht  ]" --down fish tail-->
+<!ENTITY dHar     CDATA "[dHar    ]" --down harpoon-left, down harpoon-right-->
+<!ENTITY dharl    CDATA "[dharl   ]" --/downharpoonleft A: dn harpoon-left-->
+<!ENTITY dharr    CDATA "[dharr   ]" --/downharpoonright A: down harpoon-rt-->
+<!ENTITY duarr    CDATA "[duarr   ]" --down arrow, up arrow-->
+<!ENTITY duhar    CDATA "[duhar   ]" --down harp, up harp-->
+<!ENTITY dzigrarr CDATA "[dzigrarr]" --right long zig-zag arrow-->
+<!ENTITY erarr    CDATA "[erarr   ]" --equal, right arrow below-->
+<!ENTITY harrcir  CDATA "[harrcir ]" --left and right arrow with a circle-->
+<!ENTITY harrw    CDATA "[harrw   ]" --/leftrightsquigarrow A: l&r arr-wavy-->
+<!ENTITY hoarr    CDATA "[hoarr   ]" --horizontal open arrow-->
+<!ENTITY imof     CDATA "[imof    ]" --image of-->
+<!ENTITY lAarr    CDATA "[lAarr   ]" --/Lleftarrow A: left triple arrow-->
+<!ENTITY Larr     CDATA "[Larr    ]" --/twoheadleftarrow A:-->
+<!ENTITY larrbfs  CDATA "[larrbfs ]" --left arrow-bar, filled square-->
+<!ENTITY larrfs   CDATA "[larrfs  ]" --left arrow, filled square-->
+<!ENTITY larrhk   CDATA "[larrhk  ]" --/hookleftarrow A: left arrow-hooked-->
+<!ENTITY larrlp   CDATA "[larrlp  ]" --/looparrowleft A: left arrow-looped-->
+<!ENTITY larrpl   CDATA "[larrpl  ]" --left arrow, plus-->
+<!ENTITY larrsim  CDATA "[larrsim ]" --left arrow, similar-->
+<!ENTITY larrtl   CDATA "[larrtl  ]" --/leftarrowtail A: left arrow-tailed-->
+<!ENTITY latail   CDATA "[latail  ]" --left arrow-tail-->
+<!ENTITY lAtail   CDATA "[lAtail  ]" --left double arrow-tail-->
+<!ENTITY lbarr    CDATA "[lbarr   ]" --left broken arrow-->
+<!ENTITY lBarr    CDATA "[lBarr   ]" --left doubly broken arrow-->
+<!ENTITY ldca     CDATA "[ldca    ]" --left down curved arrow-->
+<!ENTITY ldrdhar  CDATA "[ldrdhar ]" --left harpoon-down over right harpoon-down-->
+<!ENTITY ldrushar CDATA "[ldrushar]" --left-down-right-up harpoon-->
+<!ENTITY ldsh     CDATA "[ldsh    ]" --left down angled arrow-->
+<!ENTITY lfisht   CDATA "[lfisht  ]" --left fish tail-->
+<!ENTITY lHar     CDATA "[lHar    ]" --left harpoon-up over left harpoon-down-->
+<!ENTITY lhard    CDATA "[lhard   ]" --/leftharpoondown A: l harpoon-down-->
+<!ENTITY lharu    CDATA "[lharu   ]" --/leftharpoonup A: left harpoon-up-->
+<!ENTITY lharul   CDATA "[lharul  ]" --left harpoon-up over long dash-->
+<!ENTITY llarr    CDATA "[llarr   ]" --/leftleftarrows A: two left arrows-->
+<!ENTITY llhard   CDATA "[llhard  ]" --left harpoon-down below long dash-->
+<!ENTITY loarr    CDATA "[loarr   ]" --left open arrow-->
+<!ENTITY lrarr    CDATA "[lrarr   ]" --/leftrightarrows A: l arr over r arr-->
+<!ENTITY lrhar    CDATA "[lrhar   ]" --/leftrightharpoons A: l harp over r-->
+<!ENTITY lrhard   CDATA "[lrhard  ]" --right harpoon-down below long dash-->
+<!ENTITY lsh      CDATA "[lsh     ]" --/Lsh A:-->
+<!ENTITY lurdshar CDATA "[lurdshar]" --left-up-right-down harpoon-->
+<!ENTITY luruhar  CDATA "[luruhar ]" --left harpoon-up over right harpoon-up-->
+<!ENTITY map      CDATA "[map     ]" --/mapsto A:-->
+<!ENTITY Map      CDATA "[Map     ]" --twoheaded mapsto-->
+<!ENTITY midcir   CDATA "[midcir  ]" --mid, circle below-->
+<!ENTITY mumap    CDATA "[mumap   ]" --/multimap A:-->
+<!ENTITY nearhk   CDATA "[nearhk  ]" --NE arrow-hooked-->
+<!ENTITY nearr    CDATA "[nearr   ]" --/nearrow A: NE pointing arrow-->
+<!ENTITY neArr    CDATA "[neArr   ]" --NE pointing dbl arrow-->
+<!ENTITY nesear   CDATA "[nesear  ]" --/toea A: NE & SE arrows-->
+<!ENTITY nharr    CDATA "[nharr   ]" --/nleftrightarrow A: not l&r arrow-->
+<!ENTITY nhArr    CDATA "[nhArr   ]" --/nLeftrightarrow A: not l&r dbl arr-->
+<!ENTITY nlarr    CDATA "[nlarr   ]" --/nleftarrow A: not left arrow-->
+<!ENTITY nlArr    CDATA "[nlArr   ]" --/nLeftarrow A: not implied by-->
+<!ENTITY nrarr    CDATA "[nrarr   ]" --/nrightarrow A: not right arrow-->
+<!ENTITY nrArr    CDATA "[nrArr   ]" --/nRightarrow A: not implies-->
+<!ENTITY nrarrc   CDATA "[nrarrc  ]" --not right arrow-curved-->
+<!ENTITY nrarrw   CDATA "[nrarrw  ]" --not right arrow-wavy-->
+<!ENTITY nvHarr   CDATA "[nvHarr  ]" --not, vert, left and right double arrow-->
+<!ENTITY nvlArr   CDATA "[nvlArr  ]" --not, vert, left double arrow-->
+<!ENTITY nvrArr   CDATA "[nvrArr  ]" --not, vert, right double arrow-->
+<!ENTITY nwarhk   CDATA "[nwarhk  ]" --NW arrow-hooked-->
+<!ENTITY nwarr    CDATA "[nwarr   ]" --/nwarrow A: NW pointing arrow-->
+<!ENTITY nwArr    CDATA "[nwArr   ]" --NW pointing dbl arrow-->
+<!ENTITY nwnear   CDATA "[nwnear  ]" --NW & NE arrows-->
+<!ENTITY olarr    CDATA "[olarr   ]" --/circlearrowleft A: l arr in circle-->
+<!ENTITY orarr    CDATA "[orarr   ]" --/circlearrowright A: r arr in circle-->
+<!ENTITY origof   CDATA "[origof  ]" --original of-->
+<!ENTITY rAarr    CDATA "[rAarr   ]" --/Rrightarrow A: right triple arrow-->
+<!ENTITY Rarr     CDATA "[Rarr    ]" --/twoheadrightarrow A:-->
+<!ENTITY rarrap   CDATA "[rarrap  ]" --approximate, right arrow above-->
+<!ENTITY rarrbfs  CDATA "[rarrbfs ]" --right arrow-bar, filled square-->
+<!ENTITY rarrc    CDATA "[rarrc   ]" --right arrow-curved-->
+<!ENTITY rarrfs   CDATA "[rarrfs  ]" --right arrow, filled square-->
+<!ENTITY rarrhk   CDATA "[rarrhk  ]" --/hookrightarrow A: rt arrow-hooked-->
+<!ENTITY rarrlp   CDATA "[rarrlp  ]" --/looparrowright A: rt arrow-looped-->
+<!ENTITY rarrpl   CDATA "[rarrpl  ]" --right arrow, plus-->
+<!ENTITY rarrsim  CDATA "[rarrsim ]" --right arrow, similar-->
+<!ENTITY rarrtl   CDATA "[rarrtl  ]" --/rightarrowtail A: rt arrow-tailed-->
+<!ENTITY Rarrtl   CDATA "[Rarrtl  ]" --right two-headed arrow with tail-->
+<!ENTITY rarrw    CDATA "[rarrw   ]" --/rightsquigarrow A: rt arrow-wavy-->
+<!ENTITY ratail   CDATA "[ratail  ]" --right arrow-tail-->
+<!ENTITY rAtail   CDATA "[rAtail  ]" --right double arrow-tail-->
+<!ENTITY rbarr    CDATA "[rbarr   ]" --/bkarow A: right broken arrow-->
+<!ENTITY rBarr    CDATA "[rBarr   ]" --/dbkarow A: right doubly broken arrow-->
+<!ENTITY RBarr    CDATA "[RBarr   ]" --/drbkarow A: twoheaded right broken arrow-->
+<!ENTITY rdca     CDATA "[rdca    ]" --right down curved arrow-->
+<!ENTITY rdldhar  CDATA "[rdldhar ]" --right harpoon-down over left harpoon-down-->
+<!ENTITY rdsh     CDATA "[rdsh    ]" --right down angled arrow-->
+<!ENTITY rfisht   CDATA "[rfisht  ]" --right fish tail-->
+<!ENTITY rHar     CDATA "[rHar    ]" --right harpoon-up over right harpoon-down-->
+<!ENTITY rhard    CDATA "[rhard   ]" --/rightharpoondown A: rt harpoon-down-->
+<!ENTITY rharu    CDATA "[rharu   ]" --/rightharpoonup A: rt harpoon-up-->
+<!ENTITY rharul   CDATA "[rharul  ]" --right harpoon-up over long dash-->
+<!ENTITY rlarr    CDATA "[rlarr   ]" --/rightleftarrows A: r arr over l arr-->
+<!ENTITY rlhar    CDATA "[rlhar   ]" --/rightleftharpoons A: r harp over l-->
+<!ENTITY roarr    CDATA "[roarr   ]" --right open arrow-->
+<!ENTITY rrarr    CDATA "[rrarr   ]" --/rightrightarrows A: two rt arrows-->
+<!ENTITY rsh      CDATA "[rsh     ]" --/Rsh A:-->
+<!ENTITY ruluhar  CDATA "[ruluhar ]" --right harpoon-up over left harpoon-up-->
+<!ENTITY searhk   CDATA "[searhk  ]" --/hksearow A: SE arrow-hooken-->
+<!ENTITY searr    CDATA "[searr   ]" --/searrow A: SE pointing arrow-->
+<!ENTITY seArr    CDATA "[seArr   ]" --SE pointing dbl arrow-->
+<!ENTITY seswar   CDATA "[seswar  ]" --/tosa A: SE & SW arrows-->
+<!ENTITY simrarr  CDATA "[simrarr ]" --similar, right arrow below-->
+<!ENTITY slarr    CDATA "[slarr   ]" --short left arrow-->
+<!ENTITY srarr    CDATA "[srarr   ]" --short right arrow-->
+<!ENTITY swarhk   CDATA "[swarhk  ]" --/hkswarow A: SW arrow-hooked-->
+<!ENTITY swarr    CDATA "[swarr   ]" --/swarrow A: SW pointing arrow-->
+<!ENTITY swArr    CDATA "[swArr   ]" --SW pointing dbl arrow-->
+<!ENTITY swnwar   CDATA "[swnwar  ]" --SW & NW arrows-->
+<!ENTITY Uarr     CDATA "[Uarr    ]" --up two-headed arrow-->
+<!ENTITY Uarrocir CDATA "[Uarrocir]" --up two-headed arrow above circle-->
+<!ENTITY udarr    CDATA "[udarr   ]" --up arrow, down arrow-->
+<!ENTITY udhar    CDATA "[udhar   ]" --up harp, down harp-->
+<!ENTITY ufisht   CDATA "[ufisht  ]" --up fish tail-->
+<!ENTITY uHar     CDATA "[uHar    ]" --up harpoon-left, up harpoon-right-->
+<!ENTITY uharl    CDATA "[uharl   ]" --/upharpoonleft A: up harpoon-left-->
+<!ENTITY uharr    CDATA "[uharr   ]" --/upharpoonright /restriction A: up harp-r-->
+<!ENTITY uuarr    CDATA "[uuarr   ]" --/upuparrows A: two up arrows-->
+<!ENTITY varr     CDATA "[varr    ]" --/updownarrow A: up&down arrow-->
+<!ENTITY vArr     CDATA "[vArr    ]" --/Updownarrow A: up&down dbl arrow-->
+<!ENTITY xharr    CDATA "[xharr   ]" --/longleftrightarrow A: long l&r arr-->
+<!ENTITY xhArr    CDATA "[xhArr   ]" --/Longleftrightarrow A: long l&r dbl arr-->
+<!ENTITY xlarr    CDATA "[xlarr   ]" --/longleftarrow A: long left arrow-->
+<!ENTITY xlArr    CDATA "[xlArr   ]" --/Longleftarrow A: long l dbl arrow-->
+<!ENTITY xmap     CDATA "[xmap    ]" --/longmapsto A:-->
+<!ENTITY xrarr    CDATA "[xrarr   ]" --/longrightarrow A: long right arrow-->
+<!ENTITY xrArr    CDATA "[xrArr   ]" --/Longrightarrow A: long rt dbl arr-->
+<!ENTITY zigrarr  CDATA "[zigrarr ]" --right zig-zag arrow-->
+]]>

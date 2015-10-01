@@ -1,0 +1,88 @@
+<!-- 
+
+				Copyright Royal Society of Chemistry 2002
+					(XML)DTD for CHI and LHB
+						Version 1.3 NHu 14-Mar-2002
+
+Mods:
+14-Mar-2002: NHU  Reordered elements in record
+
+-->
+
+<!ELEMENT CSNB ( RSCHEAD , abstracts,  subj-index? )* >
+<!ATTLIST CSNB prod       (CHI | LHB) 'CHI' >
+
+<!ELEMENT abstracts (sec)* >
+<!ELEMENT sec (Section, Heading?, record+,PublicationAbstractXRef)>
+<!ELEMENT Section ( #PCDATA ) >
+<!ELEMENT Heading ( #PCDATA | ul | inf | sup | it | sanserif | roman)* >
+<!ELEMENT RSCHEAD ( title, cpyrt, date ) >
+<!ELEMENT cpyrt 			( #PCDATA ) >
+<!ELEMENT date 				( #PCDATA ) >
+<!ELEMENT title 			( #PCDATA ) >
+<!-- ELEMENT JournalIssue 		( #PCDATA ) -->
+<!-- ELEMENT JournalVolume 		( #PCDATA ) -->
+<!ENTITY % emph   "ul | inf | it | scp | sup | sanserif | roman" >
+<!ENTITY % m.para "(#PCDATA|%emph;)*" >
+<!ELEMENT bo   				%m.para;>
+<!ELEMENT bi   				%m.para;>
+<!ELEMENT it   				%m.para;>
+<!ELEMENT inf   			%m.para;>
+<!ELEMENT sup   			%m.para;>
+<!ELEMENT scp   			%m.para;>
+<!ELEMENT ul   				%m.para;>
+<!ELEMENT sanserif  		%m.para;>
+<!ELEMENT roman   			%m.para;>
+<!ELEMENT AbstractTitle  	%m.para;>
+<!ELEMENT OriginalTitle		%m.para;>
+<!ELEMENT JournalName 			%m.para;>
+<!ELEMENT AppTitleNumber 		%m.para;> 
+<!ELEMENT Division 			%m.para;>
+<!ELEMENT Organisation 		%m.para;>
+<!ELEMENT Authors 			%m.para; >
+<!ELEMENT AuthorCountry 	( #PCDATA ) >
+<!ELEMENT AuthorAddress 	%m.para; >
+<!ELEMENT AuthorPostCode	( #PCDATA ) >
+<!ELEMENT AuthorWebAddress 	( #PCDATA ) >
+<!ELEMENT AuthorEmail 		( #PCDATA ) >
+<!ELEMENT PublisherName 	( #PCDATA ) >
+<!ELEMENT PublisherDivision %m.para; >
+<!ELEMENT PublisherAddress 	%m.para; >
+<!ELEMENT PublisherCountry 	( #PCDATA ) >
+<!ELEMENT PublisherPostCode 	( #PCDATA ) >
+<!ELEMENT PublisherWebAddress 	( #PCDATA ) >
+<!ELEMENT PublisherEmail 	( #PCDATA ) >
+<!ELEMENT AbbreviatedJournalName %m.para;> 
+<!ELEMENT PublicationDate ( #PCDATA ) >
+<!ELEMENT Volume		  ( #PCDATA ) >
+<!ELEMENT Issue		 	  ( #PCDATA ) >
+<!ELEMENT Pages		  	  ( #PCDATA ) >
+<!ELEMENT Availability	    %m.para; >
+<!ELEMENT EditionalDetails	%m.para; >
+<!ELEMENT ISBN			  ( #PCDATA ) >
+<!ELEMENT LanguageCode	  ( #PCDATA ) >
+<!ELEMENT LanguageName	  ( #PCDATA ) >
+<!ELEMENT AbstractText  	%m.para;>
+<!ELEMENT ChemName	  	  ( #PCDATA ) >
+<!ATTLIST ChemName idrefs IDREFS #REQUIRED  >
+
+<!ELEMENT record  (	AppTitleNumber, AbstractTitle, OriginalTitle,
+					Authors?, AuthorEmail?, AuthorWebAddress?,
+ 					Division, Organisation, AuthorAddress?,
+					AuthorPostCode?, AuthorCountry?, 
+					PublisherName, PublisherEmail,
+					PublisherWebAddress, PublisherDivision,
+					PublisherAddress, PublisherPostCode, 
+					PublisherCountry, JournalName,  
+					AbbreviatedJournalName, PublicationDate, 
+					Availability, Volume, Issue, EditionalDetails, 
+					ISBN,  Pages, LanguageCode, LanguageName, AbstractText) >
+
+<!ELEMENT PublicationAbstractXRef ( XRF* )> 
+<!ELEMENT XRF ( #PCDATA ) >
+
+<!ENTITY % aa SYSTEM "entities/aa.ent">
+%aa;
+
+<!ATTLIST record id ID #REQUIRED >
+<!ELEMENT subj-index ( ChemName+ ) >

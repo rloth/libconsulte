@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--DTD ECCO auteur: Stephanie GREGORIO - 08/01/2013-->
+<!ATTLIST locSubjectHead type CDATA #IMPLIED>
+<!ATTLIST locSubject subField CDATA #IMPLIED>
+<!ATTLIST totalPages type CDATA #IMPLIED>
+<!ATTLIST authorGroup type CDATA #IMPLIED
+                      role CDATA #IMPLIED>
+<!ATTLIST author role CDATA #IMPLIED>         
+<!ATTLIST page type CDATA #IMPLIED
+               firstPage CDATA #IMPLIED>
+<!ATTLIST wd pos CDATA #IMPLIED>
+<!ATTLIST sectionHeader type CDATA #IMPLIED>
+<!ATTLIST filmedVolume volumeID CDATA #IMPLIED>
+<!ATTLIST graphicCaption type CDATA #IMPLIED>
+<!ELEMENT book (#PCDATA|bookInfo|citation|text)*>
+<!ELEMENT bookInfo (#PCDATA|documentID|ESTCID|unit|reel|mcode|pubDate|releaseDate|sourceBibCitation|sourceLibrary|holdings|language|module|documentType|notes|comments|subject3|locSubjectHead)*>
+<!ELEMENT documentID (#PCDATA)>
+<!ELEMENT ESTCID (#PCDATA)>
+<!ELEMENT unit (#PCDATA)>
+<!ELEMENT reel (#PCDATA)>
+<!ELEMENT mcode (#PCDATA)>
+<!ELEMENT pubDate (#PCDATA)>
+<!ELEMENT releaseDate (#PCDATA)>
+<!ELEMENT sourceBibCitation (#PCDATA)>
+<!ELEMENT sourceLibrary (#PCDATA)>
+<!ELEMENT holdings (#PCDATA|libraryName|libraryLocation|libraryShelfmark)*>
+<!ELEMENT libraryName (#PCDATA)>
+<!ELEMENT libraryLocation (#PCDATA)>
+<!ELEMENT libraryShelfmark (#PCDATA)>
+<!ELEMENT language (#PCDATA)>
+<!ELEMENT module (#PCDATA)>
+<!ELEMENT documentType (#PCDATA)>
+<!ELEMENT notes (#PCDATA)>
+<!ELEMENT comments (#PCDATA)>
+<!ELEMENT subject3 (#PCDATA)>
+<!ELEMENT locSubjectHead (#PCDATA|locSubject)*>
+<!ELEMENT locSubject (#PCDATA)>
+<!ELEMENT citation (authorGroup|titleGroup|edition|volumeGroup|imprint|collation|publicationPlace|totalPages)*>
+<!ELEMENT authorGroup (#PCDATA|author|byline)*>
+<!ELEMENT author (#PCDATA|marcName|birthDate|deathDate|marcDate)*>
+<!ELEMENT marcName (#PCDATA)>
+<!ELEMENT birthDate (#PCDATA)>
+<!ELEMENT deathDate (#PCDATA)>
+<!ELEMENT marcDate (#PCDATA)>
+<!ELEMENT byline (#PCDATA)>
+<!ELEMENT titleGroup (#PCDATA|fullTitle|displayTitle|collectiveTitle|uniformTitle|variantTitle)*>
+<!ELEMENT fullTitle (#PCDATA)>
+<!ELEMENT displayTitle (#PCDATA)>
+<!ELEMENT collectiveTitle (#PCDATA)>
+<!ELEMENT uniformTitle (#PCDATA)>
+<!ELEMENT variantTitle (#PCDATA)>
+<!ELEMENT edition (#PCDATA)>
+<!ELEMENT volumeGroup (#PCDATA|currentVolume|totalVolumes| volumeSet)*>
+<!ELEMENT currentVolume (#PCDATA)>
+<!ELEMENT totalVolumes (#PCDATA)>
+<!ELEMENT volumeSet (#PCDATA|filmedVolume)*>
+<!ELEMENT filmedVolume (#PCDATA)>
+<!ELEMENT imprint (#PCDATA|imprintFull|imprintCity|imprintPublisher|imprintYear)*>
+<!ELEMENT imprintFull (#PCDATA)>
+<!ELEMENT imprintCity (#PCDATA)>
+<!ELEMENT imprintPublisher (#PCDATA)>
+<!ELEMENT imprintYear (#PCDATA)>
+<!ELEMENT collation (#PCDATA)>
+<!ELEMENT publicationPlace (#PCDATA)>
+<!ELEMENT totalPages (#PCDATA)>
+<!ELEMENT text (#PCDATA|page)*>
+<!ELEMENT page (#PCDATA|pageInfo|pageContent)*>
+<!ELEMENT pageInfo (#PCDATA|pageID|recordID|sourcePage|ocr|imageLink)*>
+<!ELEMENT pageID (#PCDATA)>
+<!ELEMENT recordID (#PCDATA)>
+<!ELEMENT sourcePage (#PCDATA)>
+<!ELEMENT ocr (#PCDATA)>
+<!ELEMENT imageLink (#PCDATA)>
+<!ELEMENT pageContent (#PCDATA|p|graphicCaption|textOmitted|sectionHeader)*>
+<!ELEMENT p (#PCDATA|wd)*>
+<!ELEMENT wd (#PCDATA)>
+<!ELEMENT sectionHeader (#PCDATA)>
+<!ELEMENT graphicCaption (#PCDATA)>
+<!ELEMENT textOmitted (#PCDATA)>

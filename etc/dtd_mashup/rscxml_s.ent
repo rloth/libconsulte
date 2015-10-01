@@ -1,0 +1,285 @@
+<!-- RSC special characters, XML version.  Initially these just map
+     to 'SDATA' strings, but they will ultimately map either to
+     Private Use Unicode values or to <IMG SRC="xxx"/> to bring in
+     an inline image of the required character. -->
+
+<!-- last modified 24-11-1999 -->
+
+<!-- Mods:
+
+     Added z.phgrda    18-05-2000
+     Added z.phvgrda   18-05-2000
+     Added z.rgrda     18-05-2000
+     Added z.thgrda    18-05-2000
+     Added z.Rdot      18-05-2000
+     Added z.rdot      18-05-2000
+     Added z.qdot      18-05-2000
+     Added z.gDa       26-05-2000
+     Added z.gDda      26-05-2000
+     added z.cirdot    27-07-2000
+     added z.egrda     09-08-2000
+     Added z.Lgrm      11-08-2000
+     Added z.phvgrm    14-08-2000
+     Added z.dgcir     14-08-2000
+     Added z.eegvec    23-08-2000
+     Added z.ggcir     29-08-2000
+     Added z.PHgrm     01-09-2000
+     Added z.pdbdbd    05-09-2000
+     Added z.ldang     08-09-2000
+     Added z.psgrt     04-10-2000
+     Added z.egrt      04-10-2000
+     Added z.utlhb     13-10-2000
+     Added z.rgrt      31-10-2000
+     Added z.ggrda     31-10-2000
+     Added z.qbd       06-11-2000
+     Added z.wvstarr   20-11-2000
+     Added z.hbdda     15-12-2000
+     Added z.OHgrm     21-12-2000
+     Added z.ohgcir    06-02-2001
+     Added z.phgcir    12-02-2001
+     Added z.xgcir     12-02-2001
+     Added z.dshfnc    22-02-2001
+     Added z.agcir     09-04-2001
+     Added z.zgcir     09-04-2001
+     Added z.spstarf   18-04-2001
+
+	Removed z.Alhb              04-09-2000
+	Removed z.Rdot              04-09-2000
+	Removed z.cirdot            04-09-2000
+	Removed z.clhb              04-09-2000
+	Removed z.dfnc              04-09-2000
+	Removed z.ogrm              04-09-2000
+	Removed z.qdot              04-09-2000
+	Removed z.rdot              04-09-2000
+	Removed z.rharue            04-09-2000
+	Removed z.sbd               04-09-2000
+	Removed z.sqush             04-09-2000
+	Removed z.Alhb              04-09-2000
+
+-->
+
+<!-- chemistry: -->
+
+<!ENTITY z.dbd     "[z.dbd    ]"><!--=double bond; length as m-dash -->
+<!ENTITY z.tbd     "[z.tbd    ]"><!--=triple bond; length as m-dash -->
+<!ENTITY z.qbd     "[z.qbd    ]"><!--=quadruple bond; length as m-dash -->
+<!ENTITY z.dbd6    "[z.dbd6   ]"><!--=double bond; length half m-dash -->
+<!ENTITY z.tbd6    "[z.tbd6   ]"><!--=triple bond; length half m-dash -->
+<!ENTITY z.dbdsl   "[z.dbdsl  ]"><!--=double bond splayed left -->
+<!ENTITY z.dbdsr   "[z.dbdsr  ]"><!--=double bond splayed right -->
+<!ENTITY z.tbdsr   "[z.tbdsr  ]"><!--=triple bond splayed right -->
+<!ENTITY z.tbdsl   "[z.tbdsl  ]"><!--=triple bond splayed left -->
+
+<!ENTITY z.pdbdbd  "[z.pdbdbd ]"><!--=partial double bond, bottom dashed -->
+
+
+<!-- chemistry, bonds: -->
+
+<!ENTITY z.ub1s    "[z.ub1s   ]"><!--=upper bond 1 start-->
+<!ENTITY z.ub1e    "[z.ub1e   ]"><!--=upper bond 1 end  -->
+<!ENTITY z.lb1s    "[z.lb1s   ]"><!--=lower bond 1 start-->
+<!ENTITY z.lb1e    "[z.lb1e   ]"><!--=lower bond 1 end  -->
+
+<!ENTITY z.ub2s    "[z.ub2s   ]"><!--=upper bond 2 start-->
+<!ENTITY z.ub2e    "[z.ub2e   ]"><!--=upper bond 2 end  -->
+<!ENTITY z.lb2s    "[z.lb2s   ]"><!--=lower bond 2 start-->
+<!ENTITY z.lb2e    "[z.lb2e   ]"><!--=lower bond 2 end  -->
+
+<!ENTITY z.ub3s    "[z.ub3s   ]"><!--=upper bond 3 start-->
+<!ENTITY z.ub3e    "[z.ub3e   ]"><!--=upper bond 3 end  -->
+<!ENTITY z.lb3s    "[z.lb3s   ]"><!--=lower bond 3 start-->
+<!ENTITY z.lb3e    "[z.lb3e   ]"><!--=lower bond 3 end  -->
+
+<!ENTITY z.ub4s    "[z.ub4s   ]"><!--=upper bond 4 start-->
+<!ENTITY z.ub4e    "[z.ub4e   ]"><!--=upper bond 4 end  -->
+<!ENTITY z.lb4s    "[z.lb4s   ]"><!--=lower bond 4 start-->
+<!ENTITY z.lb4e    "[z.lb4e   ]"><!--=lower bond 4 end  -->
+
+<!ENTITY z.ub5s    "[z.ub5s   ]"><!--=upper bond 5 start-->
+<!ENTITY z.ub5e    "[z.ub5e   ]"><!--=upper bond 5 end  -->
+<!ENTITY z.lb5s    "[z.lb5s   ]"><!--=lower bond 5 start-->
+<!ENTITY z.lb5e    "[z.lb5e   ]"><!--=lower bond 5 end  -->
+
+<!-- Geometrical shapes: -->
+
+<!ENTITY z.hex     "[z.hex    ]"><!--=hexagon open -->
+<!ENTITY z.hexf    "[z.hexf   ]"><!--=hexagon filled-->
+<!ENTITY z.squt    "[z.squt   ]"><!--=square tilted open -->
+<!ENTITY z.squtf   "[z.squtf  ]"><!--=square tilted filled -->
+<!ENTITY z.squshr  "[z.squshr ]"><!--=square shaded right slant -->
+<!ENTITY z.squshl  "[z.squshl ]"><!--=square shaded left slant -->
+<!ENTITY z.squshv  "[z.squshv ]"><!--=square shaded vert -->
+<!ENTITY z.squshh  "[z.squshh ]"><!--=square shaded horiz -->
+<!ENTITY z.squshlr "[z.squshlr]"><!--=square shaded diagonal crosshatch -->
+<!ENTITY z.squshhv "[z.squshhv]"><!--=square shaded horizontal/vertical crosshatch -->
+<!ENTITY z.squtinl "[z.squtinl]"><!--=square tinted (light) -->
+<!ENTITY z.squtinh "[z.squtinh]"><!--=square tinted (heavy) -->
+<!ENTITY z.cirft   "[z.cirft  ]"><!--=circle filled top -->
+<!ENTITY z.cirfb   "[z.cirfb  ]"><!--=circle filled bottom -->
+<!ENTITY z.cirfr   "[z.cirfr  ]"><!--=circle filled right -->
+<!ENTITY z.cirshr  "[z.cirshr ]"><!--=circle shaded right slant -->
+<!ENTITY z.cirshl  "[z.cirshl ]"><!--=circle shaded left slant -->
+<!ENTITY z.cirshv  "[z.cirshv ]"><!--=circle shaded vert -->
+<!ENTITY z.cirshh  "[z.cirshh ]"><!--=circle shaded horiz -->
+<!ENTITY z.cirshlr "[z.cirshlr]"><!--=circle shaded diagonal crosshatch -->
+<!ENTITY z.cirshhv "[z.cirshhv]"><!--=circle shaded horizontal/vertical crosshatch -->
+<!ENTITY z.cirtinl "[z.cirtinl]"><!--=circle tinted (light) -->
+<!ENTITY z.cirtinh "[z.cirtinh]"><!--=circle tinted (heavy) -->
+<!ENTITY z.olcir   "[z.olcir  ]"><!--=bullseye (circle within another circle) -->
+<!ENTITY z.squftr  "[z.squftr ]"><!--=square filled top right -->
+<!ENTITY z.squftl  "[z.squftl ]"><!--=square filled top left -->
+<!ENTITY z.squfbl  "[z.squfbl ]"><!--=square filled bottom left -->
+<!ENTITY z.squfbr  "[z.squfbr ]"><!--=square filled bottom right -->
+<!ENTITY z.squfl   "[z.squfl  ]"><!--=square filled left -->
+<!ENTITY z.squfr   "[z.squfr  ]"><!--=square filled right -->
+<!ENTITY z.squft   "[z.squft  ]"><!--=square filled top -->
+<!ENTITY z.squfb   "[z.squfb  ]"><!--=square filled bottom -->
+<!ENTITY z.utfl    "[z.utfl   ]"><!--=up triangle filled left -->
+<!ENTITY z.utfr    "[z.utfr   ]"><!--=up triangle filled right -->
+<!ENTITY z.utlhb   "[z.utlhb  ]"><!--=up triangle, long horiz bar -->
+<!ENTITY z.dtfl    "[z.dtfl   ]"><!--=down triangle filled left -->
+<!ENTITY z.dtfr    "[z.dtfr   ]"><!--=down triangle filled right -->
+<!ENTITY z.diamfl  "[z.diamfl ]"><!--=diamond filled left -->
+<!ENTITY z.diamfr  "[z.diamfr ]"><!--=diamond filled right -->
+<!ENTITY z.diamft  "[z.diamft ]"><!--=diamond filled top -->
+<!ENTITY z.diamfb  "[z.diamfb ]"><!--=diamond filled bottom -->
+<!ENTITY z.diadot  "[z.diadot ]"><!--=diamond dotted -->
+<!ENTITY z.xtlr    "[z.xtlr   ]"><!--=X triangles, left, right -->
+<!ENTITY z.vrecto  "[z.vrecto ]"><!--=rectangle open, vertical -->
+
+<!-- Graph captions                                                    -->
+
+<!ENTITY z.dshdot  "[z.dshdot ]"><!--=dash dot, graph caption -->
+<!ENTITY z.dshdsh  "[z.dshdsh ]"><!--=dash dash, graph caption -->
+
+<!-- Accented Latin Characters: -->
+
+<!ENTITY z.gDa     "[z.gDa    ]"><!--= small g, double dot above -->
+<!ENTITY z.gDda    "[z.gDda   ]"><!--= small g, triple dot above -->
+
+<!-- Accented Greek Characters: -->
+
+<!ENTITY z.egrda   "[z.egrda  ]"><!--= small epsi, Greek, dot above -->
+<!ENTITY z.ggrda   "[z.ggrda  ]"><!--= small gamma, Greek, dot above -->
+<!ENTITY z.phgrda  "[z.phgrda ]"><!--= small phi, Greek, dot above -->
+<!ENTITY z.phvgrda "[z.phvgrda]"><!--= small phi (variant), Greek, dot above -->
+<!ENTITY z.psgrda  "[z.psgrda ]"><!--= small psi, Greek, dot above -->
+<!ENTITY z.rgrda   "[z.rgrda  ]"><!--= small rho, Greek, dot above -->
+<!ENTITY z.thgrda  "[z.thgrda ]"><!--= small theta, Greek, dot above -->
+
+<!ENTITY z.Lgcir   "[z.Lgcir  ]"><!--= capital Lambda, Greek, circumflex -->
+<!ENTITY z.PHgcir  "[z.PHgcir ]"><!--= capital Phi, Greek, circumflex -->
+<!ENTITY z.PSgcir  "[z.PSgcir ]"><!--= capital Psi, Greek, circumflex -->
+
+<!ENTITY z.agcir   "[z.agcir  ]"><!--= small alpha, Greek, circumflex -->
+<!ENTITY z.dgcir   "[z.dgcir  ]"><!--= small delta, Greek, circumflex -->
+<!ENTITY z.ggcir   "[z.ggcir  ]"><!--= small gamma, Greek, circumflex -->
+<!ENTITY z.mgcir   "[z.mgcir  ]"><!--= small mu, Greek, circumflex -->
+<!ENTITY z.ohgcir  "[z.ohgcir ]"><!--= small omega, Greek, circumflex -->
+<!ENTITY z.phgcir  "[z.phgcir ]"><!--= small phi, Greek, circumflex -->
+<!ENTITY z.psgcir  "[z.psgcir ]"><!--= small psi, Greek, circumflex -->
+<!ENTITY z.rgcir   "[z.rgcir  ]"><!--= small rho, Greek, circumflex -->
+<!ENTITY z.tgcir   "[z.tgcir  ]"><!--= small tau, Greek, circumflex -->
+<!ENTITY z.xgcir   "[z.xgcir  ]"><!--= small xi, Greek, circumflex -->
+<!ENTITY z.zgcir   "[z.zgcir  ]"><!--= small zeta, Greek, circumflex -->
+
+<!ENTITY z.Ggrm    "[z.Ggrm   ]"><!--= capital Gamma, Greek, macron -->
+<!ENTITY z.Lgrm    "[z.Lgrm   ]"><!--= capital Lambda, Greek, macron -->
+<!ENTITY z.OHgrm    "[z.OHgrm  ]"><!--= capital Omega, Greek, macron -->
+<!ENTITY z.PHgrm    "[z.PHgrm  ]"><!--= capital Phi, Greek, macron -->
+
+<!ENTITY z.agrm    "[z.agrm   ]"><!--= small alpha, Greek, macron -->
+<!ENTITY z.bgrm    "[z.bgrm   ]"><!--= small beta, Greek, macron -->
+<!ENTITY z.ggrm    "[z.ggrm   ]"><!--= small gamma, Greek, macron -->
+<!ENTITY z.dgrm    "[z.dgrm   ]"><!--= small delta, Greek, macron -->
+<!ENTITY z.egrm    "[z.egrm   ]"><!--= small epsilon, Greek, macron -->
+<!ENTITY z.zgrm    "[z.zgrm   ]"><!--= small zeta, Greek, macron -->
+<!ENTITY z.eegrm   "[z.eegrm  ]"><!--= small eta, Greek, macron -->
+<!ENTITY z.thgrm   "[z.thgrm  ]"><!--= small theta, Greek, macron -->
+<!ENTITY z.igrm    "[z.igrm   ]"><!--= small iota, Greek, macron -->
+<!ENTITY z.kgrm    "[z.kgrm   ]"><!--= small kappa, Greek, macron -->
+<!ENTITY z.lgrm    "[z.lgrm   ]"><!--= small lambda, Greek, macron -->
+<!ENTITY z.mgrm    "[z.mgrm   ]"><!--= small mu, Greek, macron -->
+<!ENTITY z.ngrm    "[z.ngrm   ]"><!--= small nu, Greek, macron -->
+<!ENTITY z.xgrm    "[z.xgrm   ]"><!--= small xi, Greek, macron -->
+<!ENTITY z.pgrm    "[z.pgrm   ]"><!--= small pi, Greek, macron -->
+<!ENTITY z.rgrm    "[z.rgrm   ]"><!--= small rho, Greek, macron -->
+<!ENTITY z.sgrm    "[z.sgrm   ]"><!--= small sigma, Greek, macron -->
+<!ENTITY z.sfgrm   "[z.sfgrm  ]"><!--=final small sigma, Greek, macron -->
+<!ENTITY z.tgrm    "[z.tgrm   ]"><!--= small tau, Greek, macron -->
+<!ENTITY z.ugrm    "[z.ugrm   ]"><!--= small upsilon, Greek, macron -->
+<!ENTITY z.phgrm   "[z.phgrm  ]"><!--= small phi, Greek, macron -->
+<!ENTITY z.phvgrm  "[z.phvgrm ]"><!--= small phi variant, Greek, macron -->
+<!ENTITY z.khgrm   "[z.khgrm  ]"><!--= small chi, Greek, macron -->
+<!ENTITY z.psgrm   "[z.psgrm  ]"><!--= small psi, Greek, macron -->
+<!ENTITY z.ohgrm   "[z.ohgrm  ]"><!--= small omega, Greek, macron -->
+
+<!ENTITY z.PHgrt   "[z.PHgrt  ]"><!--= capital Phi, Greek, tilde -->
+
+<!ENTITY z.agrt    "[z.agrt   ]"><!--= small alpha, Greek, tilde -->
+<!ENTITY z.ggrt    "[z.ggrt   ]"><!--= small gamma, Greek, tilde -->
+<!ENTITY z.egrt    "[z.egrt   ]"><!--= small epsilon, Greek, tilde -->
+<!ENTITY z.lgrt    "[z.lgrt   ]"><!--= small lambda, Greek, tilde -->
+<!ENTITY z.mgrt    "[z.mgrt   ]"><!--= small mu, Greek, tilde -->
+<!ENTITY z.ngrt    "[z.ngrt   ]"><!--= small nu, Greek, tilde -->
+<!ENTITY z.phgrt   "[z.phgrt  ]"><!--= small phi, Greek, tilde -->
+<!ENTITY z.psgrt   "[z.psgrt  ]"><!--= small psi, Greek, tilde -->
+<!ENTITY z.rgrt    "[z.rgrt   ]"><!--= small rho, Greek, tilde -->
+<!ENTITY z.tgrt    "[z.tgrt   ]"><!--= small tau, Greek, tilde -->
+<!ENTITY z.thgrt   "[z.thgrt  ]"><!--= small theta, Greek, tilde -->
+
+<!ENTITY z.PSgvec  "[z.PSgvec ]"><!--= capital Psi, Greek, vector -->
+
+<!ENTITY z.egvec   "[z.egvec  ]"><!--= small epsilon, Greek, vector -->
+<!ENTITY z.eegvec  "[z.eegvec ]"><!--= small eta, Greek, vector -->
+<!ENTITY z.mgvec   "[z.mgvec  ]"><!--= small mu, Greek, vector -->
+<!ENTITY z.ngvec   "[z.ngvec  ]"><!--= small nu, Greek, vector -->
+
+
+<!-- z.supast: superior asterisk to be done by applying the <sup> tag
+     to an ordinary asterisk -->
+
+<!-- other: -->
+
+<!ENTITY z.ccsh    "[z.ccsh   ]"><!--=circle, cut, short horiz bar -->
+<!ENTITY z.dfncl   "[z.dfncl  ]"><!--=double-rule fence; left big -->
+<!ENTITY z.dfncr   "[z.dfncr  ]"><!--=double-rule fence; right big -->
+<!ENTITY z.dshfnc  "[z.dshfnc ]"><!--=dashed fence -->
+<!ENTITY z.frac32  "[z.frac32 ]"><!--=fraction three-over-two -->
+<!ENTITY z.Gtc     "[z.Gtc    ]"><!--=double greater-than, compressed -->
+<!ENTITY z.Ltc     "[z.Ltc    ]"><!--=double less-than, compressed -->
+<!ENTITY z.hbtda   "[z.hbtda  ]"><!--=horiz bar, triple dot above -->
+<!ENTITY z.hbdda   "[z.hbdda  ]"><!--=horiz bar, double dot above -->
+<!ENTITY z.ldang   "[z.ldang  ]"><!--=left double angle bracket -->
+<!ENTITY z.rdang   "[z.rdang  ]"><!--=right double angle bracket -->
+<!ENTITY z.italv   "[z.italv  ]"><!--=italic v (to differentiate from Times ital nu)-->
+<!ENTITY z.wvstarr "[z.wvstarr]"><!--=long arrow, wavy then straight -->
+<!ENTITY z.spstarf "[z.spstarf]"><!--=superior filled star -->
+
+<!-- Journal logos: Intended for use within the RSC -->
+
+<!ENTITY z.aclogo    "[z.aclogo   ]"><!--=RSC ac Journal Logo -->
+<!ENTITY z.anlogo    "[z.anlogo   ]"><!--=RSC an Journal Logo -->
+<!ENTITY z.cclogo    "[z.cclogo   ]"><!--=RSC cc Journal Logo -->
+<!ENTITY z.celogo    "[z.celogo   ]"><!--=RSC ce Journal Logo -->
+<!ENTITY z.cplogo    "[z.cplogo   ]"><!--=RSC cp Journal Logo -->
+<!ENTITY z.cslogo    "[z.cslogo   ]"><!--=RSC cs Journal Logo -->
+<!ENTITY z.dtlogo    "[z.dtlogo   ]"><!--=RSC dt Journal Logo -->
+<!ENTITY z.emlogo    "[z.emlogo   ]"><!--=RSC em Journal Logo -->
+<!ENTITY z.fdlogo    "[z.fdlogo   ]"><!--=RSC fd Journal Logo -->
+<!ENTITY z.gclogo    "[z.gclogo   ]"><!--=RSC gc Journal Logo -->
+<!ENTITY z.gtlogo    "[z.gtlogo   ]"><!--=RSC gt Journal Logo -->
+<!ENTITY z.iclogo    "[z.iclogo   ]"><!--=RSC ic Journal Logo -->
+<!ENTITY z.jalogo    "[z.jalogo   ]"><!--=RSC ja Journal Logo -->
+<!ENTITY z.jclogo    "[z.jclogo   ]"><!--=RSC jc Journal Logo -->
+<!ENTITY z.jmlogo    "[z.jmlogo   ]"><!--=RSC jm Journal Logo -->
+<!ENTITY z.mclogo    "[z.mclogo   ]"><!--=RSC mc Journal Logo -->
+<!ENTITY z.njlogo    "[z.njlogo   ]"><!--=RSC nj Journal Logo -->
+<!ENTITY z.nplogo    "[z.nplogo   ]"><!--=RSC np Journal Logo -->
+<!ENTITY z.oclogo    "[z.oclogo   ]"><!--=RSC oc Journal Logo -->
+<!ENTITY z.p1logo    "[z.p1logo   ]"><!--=RSC p1 Journal Logo -->
+<!ENTITY z.p2logo    "[z.p2logo   ]"><!--=RSC p2 Journal Logo -->
+<!ENTITY z.pclogo    "[z.pclogo   ]"><!--=RSC pc Journal Logo -->
+<!ENTITY z.pologo    "[z.pologo   ]"><!--=RSC po Journal Logo -->
+<!ENTITY z.qulogo    "[z.qulogo   ]"><!--=RSC qu Journal Logo -->
+<!ENTITY z.rclogo    "[z.rclogo   ]"><!--=RSC rc Journal Logo -->

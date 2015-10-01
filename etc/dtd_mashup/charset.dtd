@@ -1,0 +1,25 @@
+<!--charset.dtd: a DTD for defining sets of characters which need to be mapped
+	in various circumstances.
+-->
+
+<!ELEMENT charset (description?, charclass*) >
+
+<!ELEMENT charclass (description?, char*) >
+<!ATTLIST charclass
+	type  CDATA  #REQUIRED >
+
+<!ELEMENT char (name?, value, unicode?, description?, mapping?, filename?, combines-with?) >
+
+<!ELEMENT name (#PCDATA) >
+
+<!ELEMENT value (#PCDATA) >
+
+<!ELEMENT unicode (#PCDATA) >
+
+<!ELEMENT description (#PCDATA) >
+
+<!ELEMENT mapping (#PCDATA) >
+
+<!ELEMENT filename (#PCDATA) >
+
+<!ELEMENT combines-with (#PCDATA) >

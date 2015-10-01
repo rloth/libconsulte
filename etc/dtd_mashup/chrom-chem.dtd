@@ -1,0 +1,80 @@
+<!-- 
+
+				Copyright Royal Society of Chemistry 2001
+			(XML)DTD for Chromatography and Chemometrics Abstracts
+						Version 0.2	NHu 15-Nov-2001
+
+
+-->
+
+<!ELEMENT chrom-chem ( RSCHEAD , abstracts,  subj-index?, auth-index? )* >
+<!ATTLIST chrom-chem
+		  prod       (chrom | chem) '' >
+<!ELEMENT abstracts (sec)* >
+
+<!ELEMENT sec (heading, record*)>
+
+<!ELEMENT heading ( #PCDATA | ul | inf | sup | it | sanserif | roman)* >
+
+<!ELEMENT RSCHEAD ( title, cpyrt, date ) >
+
+<!ELEMENT bo   		( #PCDATA | ul | inf | it | scp | sup | sanserif | roman)*>
+<!ELEMENT bi   		( #PCDATA | ul | inf | scp | sup | sanserif | roman)*>
+<!ELEMENT it   		( #PCDATA | ul | bo | inf | scp | sup | sanserif | roman)* >
+<!ELEMENT inf   	( #PCDATA | ul | bi | bo | it | scp | sanserif | roman )* >
+<!ELEMENT sup   	( #PCDATA | ul | bi | bo |  it | scp | sanserif | roman )* >
+<!ELEMENT scp   	( #PCDATA | ul | inf | bi | sup | bo | it | sanserif | roman)* >
+<!ELEMENT ul   		( #PCDATA | bi | sup | bo | it | scp | inf | sanserif | roman)* >
+<!ELEMENT sanserif	( #PCDATA | ul | bi | sup | inf | bo | it | sanserif | roman)* >
+<!ELEMENT roman   	( #PCDATA | ul | bi | sup | inf | bo | it | sanserif | roman)* >
+
+<!ELEMENT abs  	  ( #PCDATA | bo | bi | ul | inf | it | scp | sup | sanserif | roman)*>
+
+<!ELEMENT atl 		( #PCDATA | ul | inf | it | scp | sup | sanserif | roman)*>
+
+<!ELEMENT aut ( #PCDATA ) >
+
+<!ELEMENT auth-index ( author+ ) >
+
+<!ELEMENT author ( #PCDATA ) >
+
+<!ATTLIST author idrefs IDREFS #REQUIRED >
+
+<!ELEMENT chemname ( #PCDATA ) >
+
+<!ELEMENT cpyrt ( #PCDATA ) >
+
+<!ELEMENT date ( #PCDATA ) >
+
+<!ELEMENT iss ( #PCDATA ) >
+
+<!ELEMENT jnl ( #PCDATA | ul | inf | scp | sup | sanserif | roman)*> 
+
+<!ELEMENT mod-text ( #PCDATA ) >
+<!ATTLIST mod-text idref IDREF #REQUIRED >
+
+<!ELEMENT pag ( #PCDATA ) >
+
+<!ELEMENT pbd ( #PCDATA ) >
+
+<!ELEMENT lan ( #PCDATA ) >
+
+<!ELEMENT record ( atl, aut, jnl, pbd, vol, iss, pag, lan?, abs ) >
+<!ATTLIST record id ID #REQUIRED >
+
+
+<!ELEMENT subj-index ( subject+ ) >
+
+<!ELEMENT subject ( chemname, mod-text+ ) >
+
+<!ELEMENT title ( #PCDATA | ul | inf | it | scp | sup | sanserif | roman)*>
+
+<!ELEMENT vol ( #PCDATA ) >
+
+ <!ENTITY % aa SYSTEM "entities/aa.ent">
+ %aa;
+
+
+
+
+

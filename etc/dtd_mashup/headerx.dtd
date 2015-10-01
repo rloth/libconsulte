@@ -1,0 +1,287 @@
+<!-- ===================================================================== -->
+<!--    PUBLIC DOCUMENT TYPE DEFINITION SUBSET                             -->
+<!-- ===================================================================== -->
+<!-- ============================== -->
+<!-- 	DTD HISTORY -->
+<!-- ============================== -->
+<!--
+
+7/17/01   	- Changed model of element AU to be loose making its contents optional 
+			and repeatable and added PCDATA
+          	- Added elements SUPER and SUB to AU and AFF to accommodate the markup 
+          		of author to affiliation relationships
+          	- The parameter entity %REFCHARS has been omitted from the DTD.  
+          		Reference characters should be marked up within SUPER or SUB 
+          		elements and the ISO entity character should be the content.
+		
+4/8/02		- Added BOOKTTL to BOOKREV for the marking up of Book Title information.
+		- Added PCDATA within AUG
+
+July 30 2002 JM edits
+- Space added between EN" "XML within isotech.ent listing
+- parens removed from all parameter entity declarations
+- uid.type parameter entity full declared and ArticleId attlist edited, changed to IMPLIED
+- categ parameter entity full declared and categ attlist edited 
+- subcat parameter entity full declared and subcateg attlist edited 
+- * added to parameter entity instances in dtd body (auname changed from + to *)
+August 02 2002 JM edits
+- auname made optional due to some content not having an author
+September 10 2002 HR edit
+- removed uid.type due to redudancy
+September 12 2002 HR edit
+- Made AUG optional within FM, some articles do not have authors
+- Changed ARTICLEID from many to one
+April 28 2003 LP edit
+- Changed FM to allow multiple BOOKREV elements
+July 03 2003 LP edit
+- Added RET categid for retraction
+February 4 2004 HR edit
+- Inserted BIBL from NPG_XML_Article.dtd with some exceptions:
+	-> Removed F and FD from REFTXT
+	-> REFAU allows INITS
+	-> Removed NATLINK from BIB
+
+February 12 2004 HR edit
+- Added DOI to PUBFM
+
+May 21 2004 HR edit
+- Extracted %CATEG and %SUBCAT and placed in external file called  NPGCATEG.MOD.
+
+August 20 2004 HR edit to allow math illustrations within abstracts:
+- Added XML_ISOMATH.DTD reference
+- Added F to %data;
+
+August 26 2004 HR edit to allow illustrations within abstracts:
+- Added new ILLUSR element
+- Defined new parameter entity %refs; with content of %emptyref;
+- Added ILLUSR to %emptyref;
+- Added %refs; to %data;
+- Added new OBJECTS element to BM
+- Added new ILLUS, CAPTION and CREDIT elements to OBJECTS
+
+October 13 2004 HR edit
+- Added NOTATION ITEM declaration 
+
+January 13 2005 HR edit
+- Renamed nataminc.ent to nataminc_x.ent
+
+January 13 2005 HR edit
+- Defined weblink element and allowed within %data;
+
+-->
+<!-- Typical invocation:-->
+<!--
+
+<!DOCTYPE headerx PUBLIC "-//NPG//DTD headerx//EN">
+
+-->
+<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<!--        ISO Character Entity Set Declarations and References           -->
+<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<!ENTITY % ISOnum PUBLIC "ISO 8879:1986//ENTITIES
+   Numeric and Special Graphic//EN" "XML_entities/Isonum.ent">
+<!ENTITY % ISOpub PUBLIC "ISO 8879:1986//ENTITIES
+        Publishing//EN" "XML_entities/Isopub.ent">
+<!ENTITY % ISOtech PUBLIC "ISO 8879:1986//ENTITIES
+        General Technical//EN" "XML_entities/Isotech.ent">
+<!ENTITY % ISOdia PUBLIC "ISO 8879:1986//ENTITIES
+        Diacritical Marks//EN" "XML_entities/Isodia.ent">
+<!ENTITY % ISOlat1 PUBLIC "ISO 8879:1986//ENTITIES
+        Added Latin 1//EN" "XML_entities/Isolat1.ent">
+<!ENTITY % ISOlat2 PUBLIC "ISO 8879:1986//ENTITIES
+        Added Latin 2//EN" "XML_entities/Isolat2.ent">
+<!ENTITY % ISOamso PUBLIC "ISO 8879:1986//ENTITIES
+        Added Math Symbols: Ordinary//EN" "XML_entities/Isoamso.ent">
+<!ENTITY % ISOamsa PUBLIC "ISO 8879:1986//ENTITIES
+        Added Math Symbols: Arrow Relations//EN" "XML_entities/Isoamsa.ent">
+<!ENTITY % ISOamsb PUBLIC "ISO 8879:1986//ENTITIES
+        Added Math Symbols: Binary Operators//EN" "XML_entities/Isoamsb.ent">
+<!ENTITY % ISOamsc PUBLIC "ISO 8879:1986//ENTITIES
+        Added Math Symbols: Delimiters//EN" "XML_entities/Isoamsc.ent">
+<!ENTITY % ISOamsn PUBLIC "ISO 8879:1986//ENTITIES
+        Added Math Symbols: Negated Relations//EN" "XML_entities/Isoamsn.ent">
+<!ENTITY % ISOamsr PUBLIC "ISO 8879:1986//ENTITIES
+        Added Math Symbols: Relations//EN" "XML_entities/Isoamsr.ent">
+<!ENTITY % ISOgrk1 PUBLIC "ISO 8879:1986//ENTITIES
+        Greek Letters//EN" "XML_entities/Isogrk1.ent">
+<!ENTITY % ISOgrk2 PUBLIC "ISO 8879:1986//ENTITIES
+        Monotoniko Greek//EN" "XML_entities/Isogrk2.ent">
+<!ENTITY % ISOgrk3 PUBLIC "ISO 8879:1986//ENTITIES
+        Greek Symbols//EN" "XML_entities/Isogrk3.ent">
+<!ENTITY % ISOgrk4 PUBLIC "ISO 8879:1986//ENTITIES
+        Alternative Greek Symbols//EN" "XML_entities/Isogrk4.ent">
+<!ENTITY % ISOcyr1 PUBLIC "ISO 8879:1986//ENTITIES
+        Russian Cyrillic//EN" "XML_entities/Isocyr1.ent">
+<!ENTITY % ISOcyr2 PUBLIC "ISO 8879:1986//ENTITIES
+        Non-Russian Cyrillic//EN" "XML_entities/Isocyr2.ent">
+<!ENTITY % ISObox PUBLIC "ISO 8879:1986//ENTITIES
+        Box and Line Drawing//EN" "XML_entities/Isobox.ent">
+%ISOnum;%ISOpub;%ISOtech;%ISOdia;%ISOlat1;%ISOlat2;%ISOamso;%ISOamsa;%ISOamsb;%ISOamsc;%ISOamsn;%ISOamsr;%ISOgrk1;%ISOgrk2;%ISOgrk3;%ISOgrk4;%ISOcyr1;%ISOcyr2;%ISObox;
+
+<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<!-- Special Nature America NOTATIONS 					   -->
+<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+<!NOTATION ITEM SYSTEM "">
+
+
+<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<!-- Special Nature America Character Entity Set Declaration and Reference -->
+<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<!ENTITY % nataminc SYSTEM "XML_entities/nataminc_x.ent">
+%nataminc;
+
+<!ENTITY % npgcateg PUBLIC "-//NPG//ENTITIES NPG Article Categories//EN" "npgcateg.mod">
+%npgcateg;
+
+<!ENTITY % maths SYSTEM "XML_Isomath.dtd">
+%maths;
+
+
+<!ENTITY % fontchng "i | b | un | sc | super | sub">
+<!ENTITY % emptyref "illusr">
+<!ENTITY % refs "weblink | %emptyref;">
+<!ENTITY % data "#PCDATA | f | %fontchng; | ent | %refs;">
+<!ENTITY % text "%data;">
+<!ENTITY % author "%data; | fnm | snm | suff | ttl | inits">
+<!ENTITY % address "%data; | department | org | street | cty | co | st | zip | cny | email">
+
+<!ELEMENT headerx (ArticleIdList, pubfm, fm, bdy, bm?)>
+<!ELEMENT ArticleIdList (ArticleId)>
+<!ELEMENT ArticleId (#PCDATA)>
+<!ELEMENT pubfm (jtl, vol?, iss?, idt, categ, categtxt?, subcateg?, subcatxt?, pp, issn, cpg, doi?)>
+<!ELEMENT jtl (#PCDATA)>
+<!ELEMENT vol (#PCDATA)>
+<!ELEMENT iss (#PCDATA)>
+<!ATTLIST iss
+	name CDATA #IMPLIED
+>
+<!-- For DynaSite processing, the 'name' attribute will hold the directory name for the supplement. -->
+<!-- Example: <iss name="6763supp">Suppl</iss> -->
+<!ELEMENT idt (#PCDATA)>
+<!-- Convention to be used: YYYYMMDD or 20010129 for January 29 2001 -->
+<!ELEMENT categ EMPTY>
+<!ATTLIST categ
+id %categ; #REQUIRED
+>
+<!--If no available 'id' value applies, *and* it is inappropriate to add a
+ new value to %categ;, specify "categtxt" as the 'id' value and enter the
+ full text of the "special" CATEG as the content of CATEGTXT.-->
+<!ELEMENT categtxt (#PCDATA)>
+<!ELEMENT subcateg EMPTY>
+<!ATTLIST subcateg
+id %subcat; #REQUIRED
+>
+<!--If no available 'id' value applies, *and* it is inappropriate to add a
+	 new value to %subcat;, specify "subcatxt" as the 'id' value and enter the
+	 full text of the "special" SUBCATEG as the content of SUBCATXT.-->
+<!ELEMENT subcatxt (#PCDATA)>
+<!ELEMENT pp (spn, epn)>
+<!ELEMENT spn (#PCDATA)>
+<!ELEMENT epn (#PCDATA)>
+<!ELEMENT issn (#PCDATA)>
+<!ELEMENT cpg (cpy, cpn)>
+<!ELEMENT cpy (#PCDATA)>
+<!ELEMENT cpn (#PCDATA)>
+<!ELEMENT doi (#PCDATA)>
+<!ELEMENT fm (atl, aug?, hst?, bookrev*, (abs? | stndfrst? | fp?))>
+<!ELEMENT atl (%data;)*>
+<!ELEMENT fnm (%data;)*>
+<!ELEMENT snm (%data;)*>
+<!ELEMENT suff (%data;)*>
+<!ELEMENT ttl (%data;)*>
+<!ELEMENT inits (%data;)*>
+<!ELEMENT aug (auname+ | (au+, aff+))*>
+<!ELEMENT auname (%author;)*>
+<!--AUNAME to be used when an author has no affiliation.-->
+<!ELEMENT au (#PCDATA | fnm | inits | snm | suff | ttl | super | sub)*>
+<!ELEMENT aff (%data;)*>
+<!ELEMENT hst (re?, rv?, acc?)>
+<!ELEMENT re EMPTY>
+<!ATTLIST re
+	year CDATA #REQUIRED
+	month CDATA #REQUIRED
+	day CDATA #IMPLIED
+>
+<!ELEMENT rv EMPTY>
+<!ATTLIST rv
+	year CDATA #REQUIRED
+	month CDATA #REQUIRED
+	day CDATA #IMPLIED
+>
+<!ELEMENT acc EMPTY>
+<!ATTLIST acc
+	year CDATA #REQUIRED
+	month CDATA #REQUIRED
+	day CDATA #IMPLIED
+>
+<!ELEMENT abs (p+)>
+<!ELEMENT fp (p+)>
+<!ELEMENT stndfrst (%data;)*>
+<!-- A "standfirst" is an article summary, *not* a true abstract, that appears
+ 	both in print and online.-->
+<!ELEMENT p (%data;)*>
+<!ELEMENT bdy (%data;)*>
+<!-- As discussed, the contents of BDY should be raw OCR.  Special characters, math, etc. are not important -->
+<!ELEMENT bookrev (%data; | pubau | bookttl)*>
+<!ELEMENT pubau (%author;)*>
+<!ELEMENT bookttl (%data;)*>
+<!ELEMENT bm (bibl | objects)*>
+<!ELEMENT bibl (bib+ | bibgrp+)>
+<!ELEMENT bibgrp (heading, bib+)>
+<!ELEMENT heading (#PCDATA)>
+<!ELEMENT bib (reftxt)*>
+<!ATTLIST bib
+id ID #REQUIRED
+number CDATA #IMPLIED
+>
+<!ELEMENT reftxt (%data; | refau | jtl | atl | btl | iid | vid | ppf | ppl | cd | medline)*>
+<!ELEMENT refau (%author;)*>
+<!ELEMENT btl (%data;)*>
+<!ELEMENT iid (%data;)*>
+<!ELEMENT vid (%data;)*>
+<!ELEMENT ppf (%data;)*>
+<!ELEMENT ppl (%data;)*>
+<!ELEMENT cd (#PCDATA)>
+<!ATTLIST cd
+year CDATA #REQUIRED
+month CDATA #IMPLIED
+day CDATA #IMPLIED
+>
+<!ELEMENT medline (#PCDATA)>
+<!-- Font changes -->
+<!ELEMENT i (%data;)*>
+<!ELEMENT b (%data;)*>
+<!ELEMENT ent (%data;)*>
+<!ELEMENT un (%data;)*>
+<!ELEMENT sc (%data;)*>
+<!ELEMENT super (%data;)*>
+<!ELEMENT sub (%data;)*>
+
+<!ELEMENT objects (illus)+>
+
+<!ELEMENT illus (caption?, credit*)>
+<!ATTLIST illus
+id ID #REQUIRED
+type (bmp | gif | tiff | eps | wmf | pict | doc | pdf | jpeg | ole | item | timeline) "bmp"
+entname ENTITY #REQUIRED
+embed (yes | no) "yes"
+file CDATA #IMPLIED
+display (print-only | online-only | print-online) "print-online"
+>
+
+<!ELEMENT caption (p+)>
+<!ATTLIST caption number CDATA #IMPLIED>
+
+<!ELEMENT credit (%data;)*>
+
+<!ELEMENT illusr EMPTY>
+<!ATTLIST illusr
+rid IDREF #REQUIRED
+align (left | right | center) "right"
+>
+
+<!ELEMENT weblink (#PCDATA)>
+<!ATTLIST weblink
+url CDATA #REQUIRED
+>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+=====================================================
+Semantico SIPP pdf book wrapper DTD
+
+http://www.semantico.com
+
+Documents MUST use the PUBLIC identifier "-//Semantico//XML DTD SIPP PDF//EN"
+
+Revisions:
+
+2009-17-07: allow multiple keywordGroup in entryGroup
+
+2007-02-19: inclusion of pdfref for the internal SIPP processing
+
+2007-02-09: Further extension of lang attributes
+
+2007-02-02: Added n attribute to series, type on book, and lang attributes generally. Also added support for internal article ToCs
+
+2006-04-12: Reinstated code attribute on subject
+
+2006-07-07: Added type on entry, entryGroup and keywordGroup, and new identifier element
+
+2006-06-21:
+- removed pdfbinary, since no longer used
+- added xref and ref
+
+2005-11-22: First major release
+
+
+=====================================================
+-->
+<!-- ENTITIES -->
+<!ENTITY % inline-content "#PCDATA | b | i | sc | sup | sub | xref | ref">
+<!-- ELEMENTS -->
+<!ELEMENT book (metadata, entryGroup)>
+<!ATTLIST book
+  id ID #REQUIRED
+  type CDATA #IMPLIED
+  lang CDATA #IMPLIED
+>
+<!ELEMENT metadata (title, subtitle?, (author | editor)?, publisher, pubPlace?, pubDate?, date?, copyright?, isbn*, identifier*, subjectGroup?, series*)>
+<!-- title of the book -->
+<!ELEMENT title (%inline-content;)*>
+<!ATTLIST title
+  lang CDATA #IMPLIED
+>
+<!ELEMENT subtitle (%inline-content;)*>
+<!ATTLIST subtitle
+  lang CDATA #IMPLIED
+>
+<!-- Preferable to use full name markup. Character data is available for eg "Edited by" -->
+<!ELEMENT author (#PCDATA | persName)*>
+<!ELEMENT editor (#PCDATA | persName)*>
+<!-- name components use the TEI model -->
+<!ELEMENT persName (foreName | surname | nameLink | genName)*>
+<!ELEMENT foreName (#PCDATA)>
+<!ELEMENT surname (#PCDATA)>
+<!ELEMENT nameLink (#PCDATA)>
+<!ELEMENT genName (#PCDATA)>
+<!ELEMENT publisher (#PCDATA)>
+<!ATTLIST publisher
+  lang CDATA #IMPLIED
+>
+<!ELEMENT pubPlace (#PCDATA)>
+<!ATTLIST pubPlace
+  lang CDATA #IMPLIED
+>
+<!ELEMENT pubDate (#PCDATA)>
+<!ELEMENT date (#PCDATA)>
+<!ATTLIST date
+  type CDATA #IMPLIED
+>
+<!ELEMENT copyright (#PCDATA)>
+<!ATTLIST copyright
+  lang CDATA #IMPLIED
+>
+<!ELEMENT isbn (#PCDATA)>
+<!ATTLIST isbn
+  edition CDATA #IMPLIED
+  type CDATA #IMPLIED
+>
+<!ELEMENT subjectGroup (subject+)>
+<!ELEMENT subject (#PCDATA)>
+<!ATTLIST subject
+  code CDATA #IMPLIED
+  id ID #IMPLIED
+  lang CDATA #IMPLIED
+>
+<!ELEMENT series (#PCDATA)>
+<!-- The n attribute can be used for numbered series -->
+<!ATTLIST series
+  n CDATA #IMPLIED
+  lang CDATA #IMPLIED
+>
+<!-- entryGroup is the means of creating structure, to have chapters nested within parts etc -->
+<!ELEMENT entryGroup (headGroup?, subhead?, contributor?, subjectGroup?, keywordGroup*, abstract?, (entry | entryGroup)+, text?, pdfref?)>
+<!ATTLIST entryGroup
+  id ID #REQUIRED
+  file CDATA #IMPLIED
+  startpage CDATA #IMPLIED
+  endpage CDATA #IMPLIED
+  type CDATA #IMPLIED
+  lang CDATA #IMPLIED
+>
+<!-- An entry is the basic display unit, and there is a one to one correspondence with the pdfs for the work -->
+<!ELEMENT entry (identifier*, headGroup, subhead?, contributor?, subjectGroup?, keywordGroup*, toc?, abstract?, text?, pdfref?)>
+<!ATTLIST entry
+  id ID #REQUIRED
+  file CDATA #REQUIRED
+  startpage CDATA #IMPLIED
+  endpage CDATA #IMPLIED
+  type CDATA #IMPLIED
+  lang CDATA #IMPLIED
+>
+<!ELEMENT identifier (#PCDATA)>
+<!ATTLIST identifier
+  type CDATA #IMPLIED
+>
+<!-- headings can contain an optional label (eg "Chapter 3", "Part II" etc) -->
+<!ELEMENT headGroup (label?, head)>
+<!ELEMENT label (#PCDATA)>
+<!ELEMENT head (%inline-content;)*>
+<!ELEMENT subhead (%inline-content;)*>
+<!ELEMENT contributor (#PCDATA | persName)*>
+<!ELEMENT keywordGroup (keyword)+>
+<!ATTLIST keywordGroup
+  type CDATA #IMPLIED
+>
+<!ELEMENT keyword (%inline-content;)*>
+<!ELEMENT abstract (p+)>
+<!ATTLIST abstract
+   lang CDATA #IMPLIED
+>
+<!ELEMENT toc (item)+>
+<!ELEMENT item (p, toc?)>
+<!ATTLIST item
+  id ID #REQUIRED
+  startpage CDATA #IMPLIED
+  type CDATA #IMPLIED
+  lang CDATA #IMPLIED
+>
+<!ELEMENT p (%inline-content;)*>
+<!ATTLIST p
+  startpage CDATA #IMPLIED
+>
+<!ELEMENT b (#PCDATA)>
+<!ELEMENT i (#PCDATA)>
+<!ELEMENT sc (#PCDATA)>
+<!ELEMENT sup (#PCDATA)>
+<!ELEMENT sub (#PCDATA)>
+<!ELEMENT xref (%inline-content;)*>
+<!-- pointer to an external resource -->
+<!ATTLIST xref
+  uri CDATA #REQUIRED
+>
+<!-- pointer to a specific page in the pdf corresponding to the current entry -->
+<!ELEMENT ref (%inline-content;)*>
+<!ATTLIST ref
+  target CDATA #REQUIRED
+>
+<!-- text and pdfref are added to the input data by the SIPP transformation  -->
+<!ELEMENT text (#PCDATA)>
+<!ELEMENT pdfref (#PCDATA)>
+<!ATTLIST pdfref
+  size CDATA #IMPLIED
+  target CDATA #REQUIRED
+>
