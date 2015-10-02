@@ -16,6 +16,7 @@ from urllib.error    import URLError
 from getpass   import getpass
 from os import path
 from sys import stderr
+from re import sub
 
 # globals
 DEFAULT_API_CONF = {
@@ -135,15 +136,19 @@ def search(q, api_conf=DEFAULT_API_CONF, limit=None, outfields=('title','host.is
 				  'title': 'Holographic insights and puzzles'}],
 	  'total': 2}
 	"""
+	# décompte
+	n_docs = count(q)
+	# print('%s documents trouvés' % n_docs)
 	
 	# préparation requête
-	url_encoded_lucene_query = quote(q)
+	url_encoded_lucene_query = my_url_quoting(q)
 	
 	# construction de l'URL
 	base_url = 'https:' + '//' + api_conf['host']  + '/' + api_conf['route'] + '/' + '?' + 'q=' + url_encoded_lucene_query + '&output=' + ",".join(outfields)
 	
-	n_docs = count(q)
-	# print('%s documents trouvés' % n_docs)
+	# debug
+	# print("api.search().base_url:", base_url)
+	
 	
 	# limitation éventuelle fournie par le switch --maxi
 	if limit is not None:
@@ -181,7 +186,7 @@ def count(q, api_conf=DEFAULT_API_CONF):
 	Get total hits for a lucene query on ISTEX api.
 	"""
 	# préparation requête
-	url_encoded_lucene_query = quote(q)
+	url_encoded_lucene_query = my_url_quoting(q)
 	
 	# construction de l'URL
 	count_url = 'https:' + '//' + api_conf['host']  + '/' + api_conf['route'] + '/' + '?' + 'q=' + url_encoded_lucene_query + '&size=1'
@@ -314,7 +319,7 @@ def terms_facet(facet_name, q="*", api_conf=DEFAULT_API_CONF):
 	output format {"facet_value_1": count_1, ...}
 	"""
 	# préparation requête
-	url_encoded_lucene_query = quote(q)
+	url_encoded_lucene_query = my_url_quoting(q)
 	
 	# construction de l'URL
 	facet_url = 'https:' + '//' + api_conf['host']  + '/' + api_conf['route'] + '/' + '?' + 'q=' + url_encoded_lucene_query + '&facet=' + facet_name
@@ -341,13 +346,37 @@ def terms_facet(facet_name, q="*", api_conf=DEFAULT_API_CONF):
 	return simple_dict
 
 
+def my_url_quoting(a_query):
+	"""
+	URL-escaping support with extended support to avoid
+	lucene operators and API unsupported chars
+	"""
+	# print("AVANT", a_query)
+	
+	# caractères non transformés par quote() ==> wildcard
+	a_query = sub(r'/','?', a_query)
+	
+	# on utilise d'abord urllib.parse.quote()
+	url_encoded_lucene_query = quote(a_query)
+	
+	# caractères non supportés par l'API ==> wildcard
+	#  '('=> %28  ~~~> '?'=> %3F
+	#  ')'=> %29  ~~~> '?'=> %3F
+	#  '~'=> %7   ~~~> '?'=> %3F
+	url_encoded_lucene_query = sub('%7', "%3F", url_encoded_lucene_query)
+	url_encoded_lucene_query = sub('%2[89]', "%3F", url_encoded_lucene_query)
+	
+	# print("APRÈS", url_encoded_lucene_query)
+	
+	return url_encoded_lucene_query
+
+
 ########################################################################
 if __name__ == '__main__':
 	
 	# test de requête simple
 	q = input("test d'interrogation API ISTEX (entrez une requête Lucene):")
 	
-	print(search(q, limit=10))
+	print(search(q, limit=2))
 	
-	# test de récupération PDF (avec Auth si nécessaire) puis écriture
-	write_fulltexts('5286C468C888B8857D1F8971080594B788D54013')
+	
