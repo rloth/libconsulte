@@ -383,7 +383,7 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 		# do the counting for each combo
 		for i, combi in enumerate(sorted(combinations)):
 			if i % 100 == 0:
-				print("pool %i/%i" % (i,n_combos))
+				print("pool %i/%i" % (i,n_combos), file=stderr)
 			
 			query = " AND ".join(combi)
 			
@@ -740,7 +740,7 @@ def full_run(arglist=None):
 						 'author_1', 'title', 'src_query']))
 		# contents
 		for did, info in sorted(got_ids_idx.items(), key=lambda x: x[1]['_q']):
-			#~ print("INFO----------",info)
+			#~ print("INFO----------",info, file=stderr)
 			#~ exit()
 			output_array.append("\t".join([ did,
 			                                info['co'],

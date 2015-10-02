@@ -462,7 +462,7 @@ ERROR -- Corpus(__init__ from dir):
 		Prints a short list of possible shelves with ON/off status
 		       and basic info: corpus_name and size
 		"""
-		print("======= CORPUSDIRS  [%s]  =======" % corpus_name)
+		print("======= CORPUSDIRS  [%s]  =======" % self.name)
 		triggers_dirs = []
 		for shelf, bol in self.shelfs.items():
 			on_off = ' ON' if bol else 'off'
@@ -726,7 +726,7 @@ Actions:
 	)
 	
 	#
-	parser.add_argument('--from',
+	parser.add_argument('--from_table',
 		metavar='mes_docs.tsv',
 		help="""tableau en entrée (tout tsv avec en COL1 istex_id et en COL2 le nom du lot... (par ex: la sortie détaillée de l'échantilloneur sampler.py)""",
 		type=str,
@@ -744,8 +744,8 @@ Actions:
 	args = parser.parse_args(argv[1:])
 	
 	from_table = args.from_table
-	debug = args.debuglvl
-	future_dir = corpus_name
+	debug = args.debug
+	corpus_name = args.un_nom_de_corpus
 	# =============================================
 	
 	if path.exists(corpus_name):
