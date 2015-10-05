@@ -35,11 +35,11 @@ __status__    = "Dev"
 
 ## target language list ---------------------------- 1
 LANG = (
-	"en",
-	"de",
-	"fr",
+	"eng",
+	"deu",
+	"fre",
 	# "autres"
-	"(NOT en) AND (NOT de) AND (NOT fr)"
+	"(NOT eng) AND (NOT deu) AND (NOT fre)"
 	)
 
 

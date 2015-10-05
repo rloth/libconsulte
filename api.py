@@ -5,7 +5,7 @@ Query the ISTEX API (ES: lucene q => json doc)
 __author__    = "Romain Loth"
 __copyright__ = "Copyright 2014-5 INIST-CNRS (ISTEX project)"
 __license__   = "LGPL"
-__version__   = "0.1"
+__version__   = "0.2"
 __email__     = "romain.loth@inist.fr"
 __status__    = "Dev"
 
@@ -17,6 +17,7 @@ from getpass   import getpass
 from os import path
 from sys import stderr
 from re import sub
+from json import dumps  # pretty printing si debug ou main
 
 # globals
 DEFAULT_API_CONF = {
@@ -136,19 +137,18 @@ def search(q, api_conf=DEFAULT_API_CONF, limit=None, outfields=('title','host.is
 				  'title': 'Holographic insights and puzzles'}],
 	  'total': 2}
 	"""
-	# décompte
-	n_docs = count(q)
-	# print('%s documents trouvés' % n_docs)
 	
 	# préparation requête
-	url_encoded_lucene_query = my_url_quoting(q)
+	url_encoded_lucene_query = quote(q)
+	
+	# décompte à part
+	n_docs = count(url_encoded_lucene_query, already_escaped=True)
+	# print('%s documents trouvés' % n_docs)
 	
 	# construction de l'URL
 	base_url = 'https:' + '//' + api_conf['host']  + '/' + api_conf['route'] + '/' + '?' + 'q=' + url_encoded_lucene_query + '&output=' + ",".join(outfields)
-	
 	# debug
 	# print("api.search().base_url:", base_url)
-	
 	
 	# limitation éventuelle fournie par le switch --maxi
 	if limit is not None:
@@ -181,12 +181,15 @@ def search(q, api_conf=DEFAULT_API_CONF, limit=None, outfields=('title','host.is
 	return(all_hits)
 
 
-def count(q, api_conf=DEFAULT_API_CONF):
+def count(q, api_conf=DEFAULT_API_CONF, already_escaped=False):
 	"""
 	Get total hits for a lucene query on ISTEX api.
 	"""
 	# préparation requête
-	url_encoded_lucene_query = my_url_quoting(q)
+	if already_escaped:
+		url_encoded_lucene_query = q
+	else:
+		url_encoded_lucene_query = my_url_quoting(q)
 	
 	# construction de l'URL
 	count_url = 'https:' + '//' + api_conf['host']  + '/' + api_conf['route'] + '/' + '?' + 'q=' + url_encoded_lucene_query + '&size=1'
@@ -194,10 +197,9 @@ def count(q, api_conf=DEFAULT_API_CONF):
 	# requête
 	json_values = _get(count_url)
 	
-	
 	return int(json_values['total'])
-	
-	
+
+
 def write_fulltexts(DID, base_name=None, api_conf=DEFAULT_API_CONF, tgt_dir='.', login=None, passw=None, api_types=['fulltext/pdf', 'metadata/xml']):
 	"""
 	Get XML metas, TEI, PDF, ZIP fulltexts etc. for a given ISTEX-API document.
@@ -331,11 +333,11 @@ def terms_facet(facet_name, q="*", api_conf=DEFAULT_API_CONF):
 	
 	# simplification de la structure
 	# [
-	#  {'docCount': 8059500, 'key': 'en'},
-	#  {'docCount': 1138473, 'key': 'de'}
+	#  {'docCount': 8059500, 'key': 'eng'},
+	#  {'docCount': 1138473, 'key': 'deu'}
 	# ]
 	# => sortie + compacte:
-	#    {'en': 8059500, 'de': 1138473 }
+	#    {'eng': 8059500, 'deu': 1138473 }
 	simple_dict = {}
 	for record in key_counts:
 		k = record['key']
@@ -349,26 +351,50 @@ def terms_facet(facet_name, q="*", api_conf=DEFAULT_API_CONF):
 def my_url_quoting(a_query):
 	"""
 	URL-escaping support with extended support to avoid
-	lucene operators and API unsupported chars
-	"""
-	# print("AVANT", a_query)
+	lucene operators or API unsupported chars (afaik: none)
 	
-	# caractères non transformés par quote() ==> wildcard
+	/!\ PRÉREQUIS /!\ : 
+	  les parenthèses ont 2 statuts différents selon si elles sont pour
+	  la syntaxe lucene ou si c'est un contenu du fragment à matcher (token)
+	   - si pour la syntaxe lucene : seront gérées ici (actuellement via quote.safe)
+	   - si partie du texte à matcher => à transformer EN AMONT dans le code 'métier'
+	     par exemple en wildcard '?' (car ici ce serait très dur de les reconnaître !!!)
+	   
+	   DONC:
+	   toute '(' sera ici gardée telle quelle via quote(..safe='(') #
+	   toute ')' sera ici gardée telle quelle via quote(..safe=')') #
+	
+	/!\ NE PAS ESCAPER UNE REQUÊTE DEUX FOIS /!\
+	"""
+	#print("AVANT ESCAPE:", a_query)
+	
+	# (1) préalables "astuces de recherches"
+	# --------------------------------------
+	# 1a - un '~' provenant de l'OCR voulait dire 'caractère incertain'
+	#    ==> du coup on le remplace par le wildcard '?' qui veut dire 
+	#        la même chose dans l'univers lucene
+	a_query = sub('~', "?", a_query)
+	
+	# 1b - si on a un slash *dans* la requête il est un token à 
+	#      matcher (contenu) mais pour garantir de ne pas interférer
+	#      avec l'URL ==> aussi wildcard '?'
 	a_query = sub(r'/','?', a_query)
 	
-	# on utilise d'abord urllib.parse.quote()
-	url_encoded_lucene_query = quote(a_query)
+	# (2) fonction centrale: urllib.parse.quote()
+	# -------------------------------------------
+	esc_query = quote(a_query, safe=":")
 	
-	# caractères non supportés par l'API ==> wildcard
-	#  '('=> %28  ~~~> '?'=> %3F
-	#  ')'=> %29  ~~~> '?'=> %3F
-	#  '~'=> %7   ~~~> '?'=> %3F
-	url_encoded_lucene_query = sub('%7', "%3F", url_encoded_lucene_query)
-	url_encoded_lucene_query = sub('%2[89]', "%3F", url_encoded_lucene_query)
+	# (3) post-traitements de validation
+	# -----------------------------------
+	# lucene: les jokers "?" aka '%3F' interdits en début et fin de mot
+	esc_query = sub('^%3F', "", esc_query)
+	esc_query = sub('%20%3F', "%20", esc_query)
+	esc_query = sub('%3F%20', "%20", esc_query)
+	esc_query = sub('%3F$', "", esc_query)
 	
-	# print("APRÈS", url_encoded_lucene_query)
+	#print("APRÈS ESCAPE:", esc_query)
 	
-	return url_encoded_lucene_query
+	return esc_query
 
 
 ########################################################################
@@ -377,6 +403,23 @@ if __name__ == '__main__':
 	# test de requête simple
 	q = input("test d'interrogation API ISTEX (entrez une requête Lucene):")
 	
-	print(search(q, limit=2))
-	
-	
+	print("Vos 3 premiers matchs:")
+	print(
+		dumps(
+			search(
+				q, 
+				limit=3, 
+				outfields=[
+					'genre',
+					'host.pages.first',
+					'host.title',
+					'host.volume',
+					'id',
+					'publicationDate'
+					'title',
+					]
+			), 
+		indent=2,
+		sort_keys=True,
+		)
+	)
