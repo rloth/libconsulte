@@ -103,7 +103,7 @@ RANGEFACET_FIELDS = [
 # (key: API Name, val: local name <= the value is actually not used
 # 
 # the keys are used in the API queries
-# the vals are used in the 'tab' output mode as column names
+# the vals are unused but could be used in the 'tab' output mode as standard column names (£TODO)
 STD_MAP = {
 	'id'              : 'istex_id',  # 40 caractères [0-9A-F]
 	'doi'             : 'doi',
@@ -119,6 +119,7 @@ STD_MAP = {
 	#'volume'          : 'in_vol',   # todo
 	#'firstPage'       : 'in_fpg'    # todo
 	'qualityIndicators.pdfVersion' : 'pdfver',
+	'qualityIndicators.pdfWordCount' : 'pdfwc',
 }
 
 # [+ colonnes calculées]
@@ -296,6 +297,56 @@ def facet_vals(field_name):
 	else:
 		print ("ERROR: ?? the API doesn't allow a facet query on field '%s' (and I don't have a field_value_lists for this field either :-/ )" % field_name, file=stderr)
 		exit(1)
+
+
+def year_to_range(year):
+	"""
+	ex 1968 => "[1950-1969]"
+	"""
+	min_year = 0
+	max_year = 2100
+	
+	flag_convertible = True
+	int_year = None
+	
+	if isinstance(year,int):
+		int_year = year
+	else:
+		# on va travailler sur les 4 
+		# premiers chars de la chaîne
+		year = str(year)
+		if len(year) > 4:
+			year = year[0:4]
+		try:
+			int_year = int(year)
+		except ValueError:
+			flag_convertible = False
+	
+	# décisions
+	if not flag_convertible:
+		return "UNKOWN_PERIOD"
+	elif int_year > max_year or int_year < min_year:
+		return "YEAR_OUT_OF_RANGE"
+	else:
+		my_interval = None
+		for interval in field_value_lists.DATE:
+			my_interval = interval
+			# on monte en ordre chrono
+			# => on ne teste que la fin
+			fin = interval[1]
+			# cas limite
+			if interval[1] == "*":
+				fin = max_year
+			# comparaison dans tous les cas
+			fin_int = int(fin)
+			if int_year < fin_int:
+				# on a le bon !
+				break
+		# conversion intervalle => string
+		return '[' + str(my_interval[0]) + ' TO ' + str(my_interval[1]) + ']'
+
+
+
 
 
 # sample() takes the same arguments as the module 
@@ -509,6 +560,8 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 			idi = hit['id']
 			
 			if idi not in index and idi not in FORBIDDEN_IDS:
+				# print(hit)
+				# exit()
 				my_n_got += 1
 				# main index
 				index[idi] = {
@@ -517,6 +570,7 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 					}
 				# store info
 				# £TODO: check conventions for null values
+				# £TODO: ajouter tout ça dans STD_MAP
 				if 'publicationDate' in hit and len(hit['publicationDate']):
 					index[idi]['yr'] = hit['publicationDate'][0:4]
 				else:
@@ -533,6 +587,31 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 					index[idi]['au'] = his_lastname
 				else:
 					index[idi]['au'] = "UNKNOWN"
+				
+				if 'language' in hit and len(hit['language']):
+					index[idi]['lg'] = hit['language'][0]
+				else:
+					index[idi]['lg'] = "UNKOWN_LANG"
+				
+				if 'genre' in hit and len(hit['genre']):
+					index[idi]['typ'] = hit['genre'][0]
+				else:
+					index[idi]['typ'] = "UNKOWN_GENRE"
+				
+				if 'categories' in hit and len(hit['categories']) and 'wos' in hit['categories'] and len(hit['categories']['wos']):
+					index[idi]['cat'] = "/".join(hit['categories']['wos'])
+				else:
+					index[idi]['cat'] = "UNKOWN_SCI_CAT"
+				
+				if 'qualityIndicators' in hit and 'pdfVersion' in hit['qualityIndicators']:
+					index[idi]['ver'] = hit['qualityIndicators']['pdfVersion']
+				else:
+					index[idi]['ver'] = "UNKNOWN_PDFVER"
+				
+				if 'qualityIndicators' in hit and 'pdfWordCount' in hit['qualityIndicators']:
+					index[idi]['wcp'] = hit['qualityIndicators']['pdfWordCount']
+				else:
+					index[idi]['wcp'] = "UNKNOWN_PDFWORDCOUNT"
 				
 			# recheck limit: needed as long as n_needed != my_quota 
 			# (should disappear as consequence of removing option B)
@@ -736,18 +815,30 @@ def full_run(arglist=None):
 	elif args.out_type == 'tab':
 		# header line
 		# £TODO STD_MAP
-		output_array.append("\t".join(['istex_id', 'corpus', 'pub_year',
-						 'author_1', 'title', 'src_query']))
+		output_array.append("\t".join(['istex_id', 'corpus', 'pub_year', 'pub_period', 'pdfver', 'pdfwc',
+						 'author_1','lang','doctype_1','cat_sci', 'title']))
 		# contents
 		for did, info in sorted(got_ids_idx.items(), key=lambda x: x[1]['_q']):
-			#~ print("INFO----------",info, file=stderr)
-			#~ exit()
+			# provenance: sample() => boucle par hits (l.500 ++)
+			# print("INFO----------",info, file=stderr)
+			# exit()
+			
+			period = year_to_range(info['yr'])
+			
+			
 			output_array.append("\t".join([ did,
 			                                info['co'],
 			                                info['yr'],
+			                                period,
+			                                info['ver'],
+			                                str(info['wcp']),
 			                                info['au'],
+			                                info['lg'],
+			                                info['typ'],
+			                                info['cat'],
 			                                info['ti'],
-			                                info['_q']]
+			                                #~ info['_q']
+			                                ]
 			                              )
 			             )
 	

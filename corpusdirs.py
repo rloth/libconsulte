@@ -516,6 +516,7 @@ ERROR -- Corpus(__init__ from dir):
 				except FileNotFoundError as fnfe:
 					nb_missing += 1
 					print("DTD_REPAIR (skip) missing source file %s" % fi)
+					continue
 				try:
 					long_str = fh.read()
 				except UnicodeDecodeError as ue:
@@ -579,10 +580,12 @@ ERROR -- Corpus(__init__ from dir):
 			
 			# report
 			print("----------")
-			print("DTD_REPAIR:errors: %i missing source files" % nb_missing)
-			print("DTD_REPAIR:errors: %i unicode error files" % nb_uerrors)
-			print("DTD_REPAIR:warn: %i wiley files with no dtd (normal)" % nb_no_dtd_wiley)
-			print("DTD_REPAIR:warn: %i other files with no dtd (unknown)" % nb_no_dtd_other)
+			if nb_missing + nb_uerrors > 0:
+				print("DTD_REPAIR:errors: %i missing source files" % nb_missing)
+				print("DTD_REPAIR:errors: %i unicode error files" % nb_uerrors)
+			if nb_no_dtd_wiley + nb_no_dtd_other > 0:
+				print("DTD_REPAIR:warn: %i wiley files with no dtd (normal)" % nb_no_dtd_wiley)
+				print("DTD_REPAIR:warn: %i other files with no dtd (unknown)" % nb_no_dtd_other)
 			print("----------")
 	
 	
