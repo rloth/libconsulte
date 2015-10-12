@@ -121,6 +121,7 @@ STD_MAP = {
 	#'firstPage'       : 'in_fpg'    # todo
 	'qualityIndicators.pdfVersion' : 'pdfver',
 	'qualityIndicators.pdfWordCount' : 'pdfwc',
+	'qualityIndicators.refBibsNative' : 'bibnat',
 }
 
 # [+ colonnes calculées]
@@ -614,15 +615,24 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 				else:
 					index[idi]['cat'] = "UNKOWN_SCI_CAT"
 				
-				if 'qualityIndicators' in hit and 'pdfVersion' in hit['qualityIndicators']:
-					index[idi]['ver'] = hit['qualityIndicators']['pdfVersion']
+				if 'qualityIndicators' in hit:
+					if 'pdfVersion' in hit['qualityIndicators']:
+						index[idi]['ver'] = hit['qualityIndicators']['pdfVersion']
+					else:
+						index[idi]['ver'] = "UNKNOWN_PDFVER"
+					if 'pdfWordCount' in hit['qualityIndicators']:
+						index[idi]['wcp'] = hit['qualityIndicators']['pdfWordCount']
+					else:
+						index[idi]['wcp'] = "UNKNOWN_PDFWORDCOUNT"
+					print(hit['qualityIndicators'])
+					if 'refBibsNative' in hit['qualityIndicators']:
+						index[idi]['bibnat'] = hit['qualityIndicators']['refBibsNative']
+					else:
+						index[idi]['bibnat'] = "UNKNOWN_REFBIBSNATIVE1"
 				else:
 					index[idi]['ver'] = "UNKNOWN_PDFVER"
-				
-				if 'qualityIndicators' in hit and 'pdfWordCount' in hit['qualityIndicators']:
-					index[idi]['wcp'] = hit['qualityIndicators']['pdfWordCount']
-				else:
 					index[idi]['wcp'] = "UNKNOWN_PDFWORDCOUNT"
+					index[idi]['bibnat'] = "UNKNOWN_REFBIBSNATIVE2"
 				
 			# recheck limit: needed as long as n_needed != my_quota 
 			# (should disappear as consequence of removing option B)
@@ -826,7 +836,7 @@ def full_run(arglist=None):
 	elif args.out_type == 'tab':
 		# header line
 		# £TODO STD_MAP
-		output_array.append("\t".join(['istex_id', 'corpus', 'pub_year', 'pub_period', 'pdfver', 'pdfwc',
+		output_array.append("\t".join(['istex_id', 'corpus', 'pub_year', 'pub_period', 'pdfver', 'pdfwc','bibnat',
 						 'author_1','lang','doctype_1','cat_sci', 'title']))
 		# contents
 		for did, info in sorted(got_ids_idx.items(), key=lambda x: x[1]['_q']):
@@ -843,6 +853,7 @@ def full_run(arglist=None):
 			                                period,
 			                                info['ver'],
 			                                str(info['wcp']),
+			                                str(info['bibnat']),
 			                                info['au'],
 			                                info['lg'],
 			                                info['typ'],
