@@ -95,7 +95,8 @@ TERMFACET_FIELDS_local = [
 # binned listing via date ranges (also in field_value_lists.py)
 RANGEFACET_FIELDS = [
 	'publicationDate',
-	'copyrightDate'
+	'copyrightDate',
+	'qualityIndicators.pdfCharCount'
 	]
 
 # ----------------------------------------------------------------------
@@ -287,8 +288,18 @@ def facet_vals(field_name):
 			raise UnimplementedError()
 	
 	elif field_name in RANGEFACET_FIELDS:
+		applicable_bins = {}
+		
+		# recup des listes d'intervalles pertinentes
+		# TODO faire une table de correspondance
+		if field_name == 'publicationDate' or field_name == 'copyrightDate':
+			applicable_bins = field_value_lists.DATE
+		elif field_name == 'qualityIndicators.pdfCharCount':
+			applicable_bins = field_value_lists.NBC
 		luc_ranges = []
-		for interval in field_value_lists.DATE:
+		
+		# conversion couple(min max) en syntaxe lucene "[min TO max]"
+		for interval in applicable_bins:
 			a = str(interval[0])
 			b = str(interval[1])
 			luc_ranges.append('[' + a + ' TO ' + b + ']')

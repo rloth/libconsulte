@@ -39,30 +39,60 @@ LANG = (
 	"deu",
 	"fre",
 	# "autres"
-	"(NOT eng) AND (NOT deu) AND (NOT fre)"
+	"((NOT eng) AND (NOT deu) AND (NOT fre))"
 	)
 
 
 
 ## target genre list -------------------------------- 2
-GENRE = (
-	"article-commentary",        # ARTICLE
-	"brief-report",              # ARTICLE
-	"case-report",               # ARTICLE
-	"meeting-report",            # ARTICLE
-	"rapid-communication",       # ARTICLE
-	"research-article",          # ARTICLE
-	"review-article",            # ARTICLE
-	
-	# "abstract",          # AUTRES
-	# "book-review",       # AUTRES
-	# "letter",            # AUTRES
-	
-	# "e-book",            # EBOOK
-	)
+#GENRE = (
+#	"article-commentary",        # ARTICLE
+#	"brief-report",              # ARTICLE
+#	"case-report",               # ARTICLE
+#	"meeting-report",            # ARTICLE
+#	"rapid-communication",       # ARTICLE
+#	"research-article",          # ARTICLE
+#	"review-article",            # ARTICLE
+#	
+#	# "abstract",          # AUTRES
+#	# "book-review",       # AUTRES
+#	# "letter",            # AUTRES
+#	
+#	# "e-book",            # EBOOK
+#	)
 
 ### or simply major doctype groups
 # GENRE = ("ARTICLE","EBOOK","AUTRES")
+
+
+### or heuristic for {article ; others}
+### (only problem: cannot take nature letters :/ )
+GENRE = (
+	"(article OR paper)",
+	"((NOT article) AND (NOT paper))"
+)
+### no need for wildcards because field is tokenized and possible values as in following list (of 2015-09-23)
+# 230919	bmj	research-article
+# 149297	bmj	letter
+# 65591	bmj	other
+# 42449	bmj	book-review
+# 33521	bmj	abstract
+# 19716	bmj	editorial
+# 207613	ecco	Primary Document
+# 102688	nature	letter         <=> article-like but missing
+# 87637	nature	nw
+# 35151	nature	nv
+# 27468	nature	book review
+# 315704	oup	other
+# 277998	oup	book-review
+# 243736	oup	research-article
+# 187142	oup	reply
+# 28312	oup	letter
+# 827724	springer	Original Paper
+# 129795	springer	Brief Communication
+# 50527	springer	Review Paper
+# 2712569	wiley	Serial article
+
 
 
 
@@ -76,8 +106,6 @@ DATE = (
 	(1990, 1999),
 	(2000, "*")
 	)
-
-
 
 # SCICAT (aka academic discipline) ----------------- 4
 SCAT = (
@@ -320,3 +348,12 @@ SCAT = (
 	"WOMEN'S STUDIES",
 	"ZOOLOGY"
 )
+
+
+# NBC ---------------------------------------------- 5
+# bins again for number of chars <=> NBC <=> qualityIndicators.pdfCharCount
+NBC = (
+	("*", 1999),
+	(2000, "*")
+	)
+

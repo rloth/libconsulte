@@ -194,6 +194,9 @@ def count(q, api_conf=DEFAULT_API_CONF, already_escaped=False):
 	# construction de l'URL
 	count_url = 'https:' + '//' + api_conf['host']  + '/' + api_conf['route'] + '/' + '?' + 'q=' + url_encoded_lucene_query + '&size=1'
 	
+	# DBG
+	print(count_url)
+	
 	# requête
 	json_values = _get(count_url)
 	
