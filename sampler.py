@@ -26,7 +26,7 @@ Assumes LC_ALL (aka sys.stdout.encoding) is 'UTF-8'
 __author__    = "Romain Loth"
 __copyright__ = "Copyright 2014-5 INIST-CNRS (ISTEX project)"
 __license__   = "LGPL"
-__version__   = "0.3"
+__version__   = "0.4beta"
 __email__     = "romain.loth@inist.fr"
 __status__    = "Dev"
 
@@ -144,10 +144,6 @@ def my_parse_args(arglist=None):
 	------------------------------------------------------------""",
 		usage="\n------\n  sampler.py -n 10000 [--with 'lucene query'] [--crit luceneField1 luceneField2 ...]",
 		epilog="""--------------
-/!\\ known bug: until API provides random ranking function, we are going
-               to create *identical* samples for 2 runs with same params
-               (instead of creating 2 different random ones...)
-
 © 2014-2015 :: romain.loth at inist.fr :: Inist-CNRS (ISTEX)
 """
 		)
@@ -453,6 +449,8 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 			# counting requests ++++
 			freq = api.count(query)
 			
+			print(freq)
+			
 			if verbose:
 				print("pool:'% -30s': % 8i" %(query,freq),file=stderr)
 			
@@ -512,6 +510,12 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 	
 	for combi_query in sorted(rel_freqs.keys()):
 		
+		# liste intermédiaire qui émule le fonctionnement
+		# précédent avec la search(... limit=n_needed)
+		# £TODO 2: depuis qu'on fait la recherche 1 par 1 cet intermédiaire 
+		#          pourrait être supprimé => remplir directement index de la val retournée
+		json_hits = []
+		
 		# how many hits do we need?
 		my_quota = rel_freqs[combi_query]
 		if not flag_previous_index and not FORBIDDEN_IDS:
@@ -542,13 +546,36 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 		else:
 			my_query = combi_query
 		
-		# ----------------- api.search(...) ----------------------------
-		json_hits = api.search(my_query, 
-		                       limit=n_needed,
-		                       outfields=STD_MAP.keys())
-	        # outfields=('id','author.name','title','publicationDate','corpusName')
-
-		# --------------------------------------------------------------
+		
+		# NOUVEAU: on tire d'abord les indices puis on lance search 1 par 1 avec les indices tirés en FROM
+		
+		all_indices = [i for i in range(abs_freqs[combi_query])]
+		
+		# ici => ordre aléatoire
+		shuffle(all_indices)
+		
+		local_tirage = all_indices[0:n_needed]
+		
+		# pour infos
+		# print("TIRAGE LOCAL parmi %i : %s" % (len(all_indices), local_tirage))
+		
+		for indice in local_tirage:
+			# ----------------- api.search(...) ----------------------------
+			new_hit = api.search(my_query, 
+								   limit=1,
+								   i_from=indice,
+								   n_docs=abs_freqs[combi_query],
+								   outfields=STD_MAP.keys())
+				# outfields=('id','author.name','title','publicationDate','corpusName')
+			
+			if len(new_hit) != 1:
+				# skip vides
+				# à cause d'une contrainte
+				continue
+			else:
+				# enregistrement
+				json_hits.append(new_hit.pop())
+			# --------------------------------------------------------------
 		
 		# NB: 'id' field would be enough for sampling itself, but we get
 		#     more metadatas to be able to provide an info table or to
@@ -624,15 +651,14 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 						index[idi]['wcp'] = hit['qualityIndicators']['pdfWordCount']
 					else:
 						index[idi]['wcp'] = "UNKNOWN_PDFWORDCOUNT"
-					print(hit['qualityIndicators'])
 					if 'refBibsNative' in hit['qualityIndicators']:
 						index[idi]['bibnat'] = hit['qualityIndicators']['refBibsNative']
 					else:
-						index[idi]['bibnat'] = "UNKNOWN_REFBIBSNATIVE1"
+						index[idi]['bibnat'] = "UNKNOWN_REFBIBSNATIVE"
 				else:
 					index[idi]['ver'] = "UNKNOWN_PDFVER"
 					index[idi]['wcp'] = "UNKNOWN_PDFWORDCOUNT"
-					index[idi]['bibnat'] = "UNKNOWN_REFBIBSNATIVE2"
+					index[idi]['bibnat'] = "UNKNOWN_REFBIBSNATIVE"
 				
 			# recheck limit: needed as long as n_needed != my_quota 
 			# (should disappear as consequence of removing option B)

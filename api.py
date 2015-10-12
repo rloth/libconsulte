@@ -5,7 +5,7 @@ Query the ISTEX API (ES: lucene q => json doc)
 __author__    = "Romain Loth"
 __copyright__ = "Copyright 2014-5 INIST-CNRS (ISTEX project)"
 __license__   = "LGPL"
-__version__   = "0.2"
+__version__   = "0.3"
 __email__     = "romain.loth@inist.fr"
 __status__    = "Dev"
 
@@ -112,7 +112,7 @@ def _bget(my_url, user=None, passw=None):
 # public functions
 # ----------------
 # £TODO: stockage disque sur fichier tempo si liste grande et champx nbx
-def search(q, api_conf=DEFAULT_API_CONF, limit=None, outfields=('title','host.issn','fulltext')):
+def search(q, api_conf=DEFAULT_API_CONF, limit=None, n_docs=None, outfields=('title','host.issn','fulltext'), i_from=0):
 	"""
 	Query the API and get a (perhaps long) "hits" array of json metadata.
 
@@ -128,6 +128,14 @@ def search(q, api_conf=DEFAULT_API_CONF, limit=None, outfields=('title','host.is
 	   api_conf    -- an inherited http config dict with these 2 keys:
 	                    * api_conf['host']   <- default: "api.istex.fr"
 	                    * api_conf['route']  <- default: "document"
+	   n_docs      -- si on l'a déjà, la taille du pool dans l'api 
+	                  (résultat de count pour la même requête)
+	                  sinon, il sera recalculé pour savoir paginer
+	
+	   i_from      -- mode permettant de fixer &from à un entier [0;n_docs]
+	               TODO actuellement entraîne forcément limit = 1 afin de
+	                    ne pas interférer avec la logique de pagination
+	                    des requêtes plus normales à partir de 0
 
 	Output format is a parsed json with a total value and a hit list:
 	{ 'hits': [ { 'id': '21B88F4EFBA46DC85E863709CA9824DEED7B7BFC',
@@ -142,13 +150,22 @@ def search(q, api_conf=DEFAULT_API_CONF, limit=None, outfields=('title','host.is
 	url_encoded_lucene_query = quote(q)
 	
 	# décompte à part
-	n_docs = count(url_encoded_lucene_query, already_escaped=True)
+	if n_docs is None:
+		n_docs = count(url_encoded_lucene_query, already_escaped=True)
 	# print('%s documents trouvés' % n_docs)
 	
 	# construction de l'URL
 	base_url = 'https:' + '//' + api_conf['host']  + '/' + api_conf['route'] + '/' + '?' + 'q=' + url_encoded_lucene_query + '&output=' + ",".join(outfields)
 	# debug
 	# print("api.search().base_url:", base_url)
+	
+	
+	# éventuel point de départ choisi (à utiliser notamment avec limit = 1 pour aléa)
+	if i_from != 0:
+		if limit != 1:
+			raise NotImplementedError("l'utilisation de from dans les requêtes API n'est ici implémentée que pour des tailles de 1 (use case: choix d'un doc aléatoire)")
+		else:
+			base_url += '&from=' + str(i_from)
 	
 	# limitation éventuelle fournie par le switch --maxi
 	if limit is not None:
@@ -161,6 +178,10 @@ def search(q, api_conf=DEFAULT_API_CONF, limit=None, outfields=('title','host.is
 	if n_docs <= 5000:
 		# requête simple
 		my_url = base_url + '&size=%i' % n_docs
+		
+		# debug
+		# print("api.search()._get_url:", my_url0ll)
+		
 		json_values = _get(my_url)
 		all_hits = json_values['hits']
 	
@@ -193,9 +214,6 @@ def count(q, api_conf=DEFAULT_API_CONF, already_escaped=False):
 	
 	# construction de l'URL
 	count_url = 'https:' + '//' + api_conf['host']  + '/' + api_conf['route'] + '/' + '?' + 'q=' + url_encoded_lucene_query + '&size=1'
-	
-	# DBG
-	print(count_url)
 	
 	# requête
 	json_values = _get(count_url)
