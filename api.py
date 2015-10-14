@@ -147,7 +147,7 @@ def search(q, api_conf=DEFAULT_API_CONF, limit=None, n_docs=None, outfields=('ti
 	"""
 	
 	# préparation requête
-	url_encoded_lucene_query = quote(q)
+	url_encoded_lucene_query = my_url_quoting(q)
 	
 	# décompte à part
 	if n_docs is None:
