@@ -50,7 +50,7 @@ def _get(my_url):
 			(url_e.reason, my_url), file=stderr)
 		# Plus d'infos: serveur, Content-Type, WWW-Authenticate..
 		# print ("ERR.info(): \n %s" % url_e.info(), file=stderr)
-		exit(1)
+		raise
 	try:
 		response = remote_file.read()
 	except httplib.IncompleteRead as ir_e:
@@ -111,7 +111,9 @@ def _bget(my_url, user=None, passw=None):
 
 # public functions
 # ----------------
-# £TODO: stockage disque sur fichier tempo si liste grande et champx nbx
+# £TODO1: séparer le mode i_from dans une fonction à part random_search_one
+# £TODO2: limit par défaut à 1 pour éviter de tout télécharger si test rapide ??
+# £TODO3: stockage disque sur fichier tempo si liste grande et champx nbx
 def search(q, api_conf=DEFAULT_API_CONF, limit=None, n_docs=None, outfields=('title','host.issn','fulltext'), i_from=0):
 	"""
 	Query the API and get a (perhaps long) "hits" array of json metadata.
@@ -182,7 +184,10 @@ def search(q, api_conf=DEFAULT_API_CONF, limit=None, n_docs=None, outfields=('ti
 		# debug
 		# print("api.search()._get_url:", my_url0ll)
 		
-		json_values = _get(my_url)
+		try:
+			json_values = _get(my_url)
+		except:
+			raise
 		all_hits = json_values['hits']
 	
 	else:
@@ -216,7 +221,10 @@ def count(q, api_conf=DEFAULT_API_CONF, already_escaped=False):
 	count_url = 'https:' + '//' + api_conf['host']  + '/' + api_conf['route'] + '/' + '?' + 'q=' + url_encoded_lucene_query + '&size=1'
 	
 	# requête
-	json_values = _get(count_url)
+	try:
+		json_values = _get(count_url)
+	except:
+		raise
 	
 	return int(json_values['total'])
 
@@ -401,6 +409,9 @@ def my_url_quoting(a_query):
 	#      avec l'URL ==> aussi wildcard '?'
 	a_query = sub(r'/','?', a_query)
 	
+	# 2 - les "%" aka '%25' posent problème (devant un chiffre?)
+	# a_query = sub(r'%', '?', a_query)
+	
 	# (2) fonction centrale: urllib.parse.quote()
 	# -------------------------------------------
 	esc_query = quote(a_query, safe=":")
@@ -412,6 +423,8 @@ def my_url_quoting(a_query):
 	esc_query = sub('%20%3F', "%20", esc_query)
 	esc_query = sub('%3F%20', "%20", esc_query)
 	esc_query = sub('%3F$', "", esc_query)
+	
+	
 	
 	#print("APRÈS ESCAPE:", esc_query)
 	
