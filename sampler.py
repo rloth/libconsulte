@@ -16,7 +16,7 @@ We need a distribution with volumes proportional to the pool on several criteria
 
 Perimeter via -w
 =================
-Another independant "attribute:value" group will define a CONSTRAINT on the sample.
+Another independant "attribute:value" group will define an a priori CONSTRAINT on the sample.
 	Exemple *constraints*:
 		"qualityIndicators.refBibsNative:true"
 		"qualityIndicators.pdfCharCount:[500 TO *]"
@@ -26,7 +26,7 @@ Assumes LC_ALL (aka sys.stdout.encoding) is 'UTF-8'
 __author__    = "Romain Loth"
 __copyright__ = "Copyright 2014-5 INIST-CNRS (ISTEX project)"
 __license__   = "LGPL"
-__version__   = "0.4beta"
+__version__   = "0.4"
 __email__     = "romain.loth@inist.fr"
 __status__    = "Dev"
 
@@ -271,7 +271,7 @@ def facet_vals(field_name):
 	if field_name in TERMFACET_FIELDS_auto:
 		# deuxième partie si un "sous.type"
 		facet_name = sub('^[^.]+\.', '', field_name)
-		return(api.terms_facet(facet_name))
+		return(api.terms_facet(facet_name).keys())
 	
 	elif field_name in TERMFACET_FIELDS_local:
 		# on a en stock 3 listes ad hoc
@@ -401,20 +401,34 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 	else:
 		print('...no cache found',file=stderr)
 		
+		# ---------------------------------------------------------------
 		# (1) PARTITIONING THE SEARCH SPACE IN POSSIBLE OUTCOMES --------
 		print("Sending count queries for criteria pools...",file=stderr)
 		## build all "field:values" pairs per criterion field
 		## (list of list of strings: future lucene query chunks)
 		all_possibilities = []
+		
+		# petit hommage à notre collègue Nourdine Combo !
 		n_combos = 1
+		
 		for my_criterion in crit_fields:
+			# print("CRIT",my_criterion)
 			field_outcomes = facet_vals(my_criterion)
+			# print("field_outcomes",field_outcomes)
 			n_combos = n_combos * len(field_outcomes)
 			# lucene query chunks
 			all_possibilities.append(
 				[my_criterion + ':' + val for val in field_outcomes]
 			)
 		
+		# par ex: 2 critères vont donner 2 listes dans all_possibilities
+		# [
+		#  ['qualityIndicators.refBibsNative:T', 'qualityIndicators.refBibsNative:F'], 
+		#
+		#  ['corpusName:brill', 'corpusName:bmj', 'corpusName:wiley', 'corpusName:elsevier',
+		#   'corpusName:ecco', 'corpusName:eebo', 'corpusName:springer', 'corpusName:nature', 
+		#   'corpusName:oup', 'corpusName:journals']
+		# ]
 		
 		## list combos (cartesian product of field_outcomes)
 		# we're directly unpacking *args into itertool.product()
@@ -433,6 +447,7 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 		#	(...)
 		#	]
 		
+		# ---------------------------------------------------------------
 		# (2) getting total counts for each criteria --------------------
 		
 		# number of counted answers
@@ -449,7 +464,7 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 			# counting requests ++++
 			freq = api.count(query)
 			
-			print(freq)
+			# print(freq)
 			
 			if verbose:
 				print("pool:'% -30s': % 8i" %(query,freq),file=stderr)
@@ -476,7 +491,7 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 		pool_info = {'f':abs_freqs, 'nr':N_reponses, 
 		            'nd':N_workdocs, 'totd':doc_grand_total}
 		# json.dump
-		dump(pool_info, cache, indent=1)
+		dump(pool_info, cache, indent=1, sort_keys=True)
 		cache.close()
 	
 	
@@ -510,51 +525,31 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 	
 	for combi_query in sorted(rel_freqs.keys()):
 		
-		# liste intermédiaire qui émule le fonctionnement
-		# précédent avec la search(... limit=n_needed)
-		# £TODO 2: depuis qu'on fait la recherche 1 par 1 cet intermédiaire 
-		#          pourrait être supprimé => remplir directement index de la val retournée
 		json_hits = []
 		
 		# how many hits do we need?
 		my_quota = rel_freqs[combi_query]
-		if not flag_previous_index and not FORBIDDEN_IDS:
-			# option A: direct quota allocation to search limit
-			n_needed = my_quota
-		else:
-			# option B: limit larger than quota by retrieved amount
-			#           (provides deduplication margin if 2nd run)
-			#
-			# /!\ wouldn't be necessary at all if we had none or rare
-			#     duplicates, like with random result ranking)
-			
-			# supplément 1: items to skip
-			n_already_retrieved = len(
-				# lookup retrieved
-				[idi for idi,metad in index.items()
-					if search(escape(combi_query), metad['_q'])]
-				)
-			
-			# supplément 2: prorata de FORBIDDEN_IDS
-			suppl = round(len(FORBIDDEN_IDS) * my_quota / size)
-			n_already_retrieved += suppl
-			n_needed = my_quota + n_already_retrieved
 		
 		# adding constraints
 		if constraint_query:
 			my_query = '('+combi_query+') AND ('+constraint_query+')'
+			# pour les indices dispo, on doit recompter avec la contrainte
+			all_indices = [i for i in range(api.count(my_query))]
+		
+		# si pas de contrainte les indices dispos 
+		# pour le tirage aléatoire sont simplement [0:freq]
 		else:
 			my_query = combi_query
+			all_indices = [i for i in range(abs_freqs[combi_query])]
 		
 		
-		# NOUVEAU: on tire d'abord les indices puis on lance search 1 par 1 avec les indices tirés en FROM
-		
-		all_indices = [i for i in range(abs_freqs[combi_query])]
+		# on lance search 1 par 1 avec les indices tirés en FROM ---------
 		
 		# ici => ordre aléatoire
 		shuffle(all_indices)
 		
-		local_tirage = all_indices[0:n_needed]
+		# on ne prend que les n premiers (tirage)
+		local_tirage = all_indices[0:my_quota]
 		
 		# pour infos
 		# print("TIRAGE LOCAL parmi %i : %s" % (len(all_indices), local_tirage))
@@ -578,14 +573,7 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 			# --------------------------------------------------------------
 		
 		# NB: 'id' field would be enough for sampling itself, but we get
-		#     more metadatas to be able to provide an info table or to
-		#     create a human-readable filename
-		
-		# £TODO 1
-		# remplacer api.search() par une future fonction random_search
-		# cf. elasticsearch guide: "random scoring" (=> puis supprimer
-		# l'option B avec n_needed)
-		
+		#     more metadatas to be able to provide an info table
 		my_n_answers = len(json_hits)
 		
 		my_n_got = 0
@@ -659,11 +647,6 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 					index[idi]['ver'] = "UNKNOWN_PDFVER"
 					index[idi]['wcp'] = "UNKNOWN_PDFWORDCOUNT"
 					index[idi]['bibnat'] = "UNKNOWN_REFBIBSNATIVE"
-				
-			# recheck limit: needed as long as n_needed != my_quota 
-			# (should disappear as consequence of removing option B)
-			if my_n_got == my_quota:
-				break
 		
 		print ("%-70s: %i(%i)/%i" % (
 					my_query[0:67]+"...", 
@@ -672,7 +655,7 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 					my_quota
 				), file=stderr)
 		
-		# if within whole sample_size scope, we may observe unmeatable
+		# if within whole sample_size scope, we may observe unmeetable
 		# representativity criteria (marked 'LESS' and checked for RLAX)
 		if run_count == 0 and my_n_got < (.85 * (my_quota - LISSAGE)):
 			my_s = "" if my_n_got == 1 else "s"
@@ -687,7 +670,14 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 def pool_cache_path(criteria_list):
 	"""pool_cache filename: sorted-criteria-of-the-set.pool.json"""
 	global HOME
-	cset_pool_path = path.join(HOME, 'pool_cache',
+	
+	cache_dir = path.join(HOME, 'pool_cache')
+	
+	if not path.isdir(cache_dir):
+		print("Creating cache dir: %s" % cache_dir, file=stderr)
+		mkdir(cache_dir)
+	
+	cset_pool_path = path.join(cache_dir,
 			'-'.join(sorted(criteria_list, reverse=True))+'.pool.json')
 	
 	# relative path ./pool_cache/.
