@@ -26,7 +26,7 @@ Assumes LC_ALL (aka sys.stdout.encoding) is 'UTF-8'
 __author__    = "Romain Loth"
 __copyright__ = "Copyright 2014-5 INIST-CNRS (ISTEX project)"
 __license__   = "LGPL"
-__version__   = "0.4"
+__version__   = "0.5"
 __email__     = "romain.loth@inist.fr"
 __status__    = "Dev"
 
@@ -196,6 +196,12 @@ def my_parse_args(arglist=None):
 		required=False,
 		action='store')
 	
+	
+	parser.add_argument('-l', '--log',
+		help="save log in a file echantillon_DATE_HEURE.log",
+		default=False,
+		required=False,
+		action='store_true')
 	
 	parser.add_argument('-v', '--verbose',
 		help="verbose switch",
@@ -739,8 +745,14 @@ def full_run(arglist=None):
 		
 		LOG.append("SAVE: saved docs in %s/" % my_dir)
 	
+	if args.log:
+		# separate logging lines
+		logfile = open(my_name+'.log', 'w')
+		for lline in LOG:
+			print(lline, file=logfile)
+		logfile.close()
 	
-	return (output_array, LOG)
+	return output_array
 
 ########################################################################
 
@@ -750,14 +762,9 @@ if __name__ == "__main__":
 	my_name = "echantillon_%s" % timestamp
 	
 	# run
-	(stdoutput, LOG) = full_run(arglist = argv[1:])
+	stdoutput = full_run(arglist = argv[1:])
 	
 	# output lines
 	for line in stdoutput:
 		print(line)
 	
-	# separate logging lines
-	logfile = open(my_name+'.log', 'w')
-	for lline in LOG:
-		print(lline, file=logfile)
-	logfile.close()
