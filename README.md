@@ -152,6 +152,13 @@ Les modules sampler.py et corpusdirs.py l'importent et utilisent ces fonctions.
   - ajouter une étagère par défaut pour les MODS2TEI dans corpusdirs
 
 
+### Dépôts upstream
+
+Cette librairie importe:
+
+  - une version modifiée des feuilles XSLT [Pub2TEI du projet PEER](https://hal.inria.fr/hal-00659856/document), développées par L. Romary et P. Lopez.
+  - une version modifiée des DTDs éditeurs de [istex/corpus-ressources](https://git.istex.fr/istex/corpus-resources)
+
 
 ```
 # pour plus d'infos:
