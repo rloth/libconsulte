@@ -47,6 +47,7 @@ try:
 	#          au sein d'un package plus grand (exemple: bib-adapt-corpus)
 	from libconsulte import api
 	from libconsulte import field_value_lists
+	from libconsulte import field_combo_count
 	# =<< target_language_values, target_scat_values,
 	#     target_genre_values, target_date_ranges
 except ImportError:
@@ -55,6 +56,7 @@ except ImportError:
 		#           exemple: on veut juste lancer le sampler tout seul
 		import api
 		import field_value_lists
+		import field_combo_count
 		
 	# cas de figure où il n'y a vraiment rien
 	except ImportError:
@@ -73,31 +75,6 @@ MAX_RUNS = 5
 LISSAGE = 0.2
 # list of IDs to exclude from the sample result
 FORBIDDEN_IDS = []
-
-
-# fields allowed as criteria
-# (grouped according to the method we use for value listing)
-
-# auto value-listing via facet query
-TERMFACET_FIELDS_auto = [
-	'corpusName', 
-	'qualityIndicators.pdfVersion', 
-	'qualityIndicators.refBibsNative'
-	]
-
-# value-listing provided locally (stored into field_value_lists.py)
-TERMFACET_FIELDS_local = [
-	'language',
-	'genre',
-	'categories.wos'
-	]
-
-# binned listing via date ranges (also in field_value_lists.py)
-RANGEFACET_FIELDS = [
-	'publicationDate',
-	'copyrightDate',
-	'qualityIndicators.pdfCharCount'
-	]
 
 # ----------------------------------------------------------------------
 # CONSTANT mapping standard fields
@@ -230,10 +207,9 @@ def my_parse_args(arglist=None):
 	
 	# --- checks and pre-propagation --------
 	#  if known criteria ?
-	known_fields_list = TERMFACET_FIELDS_auto + TERMFACET_FIELDS_local + RANGEFACET_FIELDS
 	flag_ok = True
 	for field_name in args.criteria_list:
-		if field_name not in known_fields_list:
+		if field_name not in field_value_lists.KNOWN_FIELDS:
 			flag_ok = False
 			print("Unknown field in -c args: '%s'" % field_name, 
 			      file=stderr)
@@ -259,52 +235,6 @@ def my_parse_args(arglist=None):
 	
 	return(args)
 
-
-def facet_vals(field_name):
-	"""
-	For each field, returns the list of possible outcomes
-	
-	ex: > facet_vals('corpusName')
-	    > ['elsevier','wiley', 'nature', 'sage', ...]
-	"""
-	
-	if field_name in TERMFACET_FIELDS_auto:
-		# deuxième partie si un "sous.type"
-		facet_name = sub('^[^.]+\.', '', field_name)
-		return(api.terms_facet(facet_name).keys())
-	
-	elif field_name in TERMFACET_FIELDS_local:
-		# on a en stock 3 listes ad hoc
-		if field_name == 'language':
-			return(field_value_lists.LANG)
-		elif field_name == 'genre':
-			return(field_value_lists.GENRE)
-		elif field_name == 'categories.wos':
-			return(field_value_lists.SCAT)
-		else:
-			raise UnimplementedError()
-	
-	elif field_name in RANGEFACET_FIELDS:
-		applicable_bins = {}
-		
-		# recup des listes d'intervalles pertinentes
-		# TODO faire une table de correspondance
-		if field_name == 'publicationDate' or field_name == 'copyrightDate':
-			applicable_bins = field_value_lists.DATE
-		elif field_name == 'qualityIndicators.pdfCharCount':
-			applicable_bins = field_value_lists.NBC
-		luc_ranges = []
-		
-		# conversion couple(min max) en syntaxe lucene "[min TO max]"
-		for interval in applicable_bins:
-			a = str(interval[0])
-			b = str(interval[1])
-			luc_ranges.append('[' + a + ' TO ' + b + ']')
-		return(luc_ranges)
-	
-	else:
-		print ("ERROR: ?? the API doesn't allow a facet query on field '%s' (and I don't have a field_value_lists for this field either :-/ )" % field_name, file=stderr)
-		exit(1)
 
 
 def year_to_range(year):
@@ -377,15 +307,8 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 	
 	
 	####### POOLING ########
-	#
-	N_reponses = 0
-	N_workdocs = 0
-	doc_grand_total = 0
-	# dict of counts for each combo ((crit1:val_1a),(crit2:val_2a)...)
-	abs_freqs = {}
 	
-	
-	# instead do steps (1) (2) maybe we have cached the pools ?
+	# instead of calling pooling() maybe we have cached the pools ?
 	# (always same counts for given criteria) => cache to json
 	cache_filename = pool_cache_path(crit_fields)
 	print('...checking cache for %s' % cache_filename,file=stderr)
@@ -393,112 +316,28 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 	if path.exists(cache_filename):
 		cache = open(cache_filename, 'r')
 		pool_info = load(cache)
-		abs_freqs       = pool_info['f']
-		N_reponses      = pool_info['nr']
-		N_workdocs      = pool_info['nd']
-		doc_grand_total = pool_info['totd']
-		print('...ok cache (%i workdocs)' % N_workdocs,file=stderr)
+		print('...ok cache (%i workdocs)' % pool_info['nd'],file=stderr)
 	else:
 		print('...no cache found',file=stderr)
-		
-		# ---------------------------------------------------------------
-		# (1) PARTITIONING THE SEARCH SPACE IN POSSIBLE OUTCOMES --------
-		print("Sending count queries for criteria pools...",file=stderr)
-		## build all "field:values" pairs per criterion field
-		## (list of list of strings: future lucene query chunks)
-		all_possibilities = []
-		
-		# petit hommage à notre collègue Nourdine Combo !
-		n_combos = 1
-		
-		for my_criterion in crit_fields:
-			# print("CRIT",my_criterion)
-			field_outcomes = facet_vals(my_criterion)
-			# print("field_outcomes",field_outcomes)
-			n_combos = n_combos * len(field_outcomes)
-			# lucene query chunks
-			all_possibilities.append(
-				[my_criterion + ':' + val for val in field_outcomes]
-			)
-		
-		# par ex: 2 critères vont donner 2 listes dans all_possibilities
-		# [
-		#  ['qualityIndicators.refBibsNative:T', 'qualityIndicators.refBibsNative:F'], 
-		#
-		#  ['corpusName:brill', 'corpusName:bmj', 'corpusName:wiley', 'corpusName:elsevier',
-		#   'corpusName:ecco', 'corpusName:eebo', 'corpusName:springer', 'corpusName:nature', 
-		#   'corpusName:oup', 'corpusName:journals']
-		# ]
-		
-		## list combos (cartesian product of field_outcomes)
-		# we're directly unpacking *args into itertool.product()
-		# (=> we get an iterator over tuples of combinable query chunks)
-		combinations = product(*all_possibilities)
-		
-		
-		# example for -c corpusName, publicationDate
-		#	[
-		#	('corpusName:ecco', 'publicationDate:[* TO 1959]'),
-		#	('corpusName:ecco', 'publicationDate:[1960 TO 1999]'),
-		#	('corpusName:ecco', 'publicationDate:[2000 TO *]'),
-		#	('corpusName:elsevier', 'publicationDate:[* TO 1959]'),
-		#	('corpusName:elsevier', 'publicationDate:[1960 TO 1999]'),
-		#	('corpusName:elsevier', 'publicationDate:[2000 TO *]'),
-		#	(...)
-		#	]
-		
-		# ---------------------------------------------------------------
-		# (2) getting total counts for each criteria --------------------
-		
-		# number of counted answers
-		#  (1 doc can give several hits if a criterion was multivalued)
-		N_reponses = 0
-		
-		# do the counting for each combo
-		for i, combi in enumerate(sorted(combinations)):
-			if i % 100 == 0:
-				print("pool %i/%i" % (i,n_combos), file=stderr)
-			
-			query = " AND ".join(combi)
-			
-			# counting requests ++++
-			freq = api.count(query)
-			
-			# print(freq)
-			
-			if verbose:
-				print("pool:'% -30s': % 8i" %(query,freq),file=stderr)
-			
-			# storing and agregation
-			N_reponses += freq
-			abs_freqs[query] = freq
-		
-		# number of documents sending answers (hence normalizing constant N)
-		N_workdocs = api.count(" AND ".join([k+":*" for k in crit_fields]))
-		
-		if verbose:
-			print("--------- pool totals -----------", file=stderr)
-			print("#answered hits :   % 12s" % N_reponses, file=stderr)
-			print("#workdocs (N) :    % 12s" % N_workdocs, file=stderr)
-			# for comparison: all_docs = N + api.count(q="NOT(criterion:*)")
-			doc_grand_total = api.count(q='*')
-			print("#all API docs fyi: % 12s" % doc_grand_total,file=stderr)
-			print("---------------------------------", file=stderr)
-		
-		
-		# cache write
-		cache = open(cache_filename, 'w')
-		pool_info = {'f':abs_freqs, 'nr':N_reponses, 
-		            'nd':N_workdocs, 'totd':doc_grand_total}
-		# json.dump
-		dump(pool_info, cache, indent=1, sort_keys=True)
-		cache.close()
+		# -> run doc count foreach(combination of crit fields facets) <-
+		#        ---------               
+		pool_info = field_combo_count.pooling(crit_fields, verbose)
+		#           -----------------
 	
+	# dans les deux cas, même type de json
+	abs_freqs       = pool_info['f']
+	N_reponses      = pool_info['nr']
+	N_workdocs      = pool_info['nd']
+	doc_grand_total = pool_info['totd']
+	
+	# cache write
+	cache = open(cache_filename, 'w')
+	dump(pool_info, cache, indent=1, sort_keys=True)
+	cache.close()
 	
 	######### QUOTA ########
 	#
-	# (3) quota computation and availability checking ------------------
-	# quota computation
+	# quota computation = target_corpus_size * pool / N
 	rel_freqs = {}
 	for combi_query in abs_freqs:
 		
@@ -521,7 +360,7 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 	# got_ids_idx clés = ensemble d'ids , 
 	#             valeurs = critères ayant mené au choix
 	
-	print("Retrieving new sample chunks per pool quota...", file=stderr)
+	print("Retrieving random samples in each quota...", file=stderr)
 	
 	for combi_query in sorted(rel_freqs.keys()):
 		
@@ -552,7 +391,8 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 		local_tirage = all_indices[0:my_quota]
 		
 		# pour infos
-		# print("TIRAGE LOCAL parmi %i : %s" % (len(all_indices), local_tirage))
+		if verbose:
+			print(" ... drawing among %i docs :\n ... picked => %s" % (len(all_indices), local_tirage))
 		
 		for indice in local_tirage:
 			# ----------------- api.search(...) ----------------------------
@@ -648,10 +488,9 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 					index[idi]['wcp'] = "UNKNOWN_PDFWORDCOUNT"
 					index[idi]['bibnat'] = "UNKNOWN_REFBIBSNATIVE"
 		
-		print ("%-70s: %i(%i)/%i" % (
-					my_query[0:67]+"...", 
+		print ("done %-70s: %i/%i" % (
+					my_query[0:64]+"...", 
 					my_n_got, 
-					my_n_answers, 
 					my_quota
 				), file=stderr)
 		

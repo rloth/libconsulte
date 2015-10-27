@@ -21,9 +21,38 @@ a simplified copy here.        (Last copy from API + pruning 15/07/2015)
 __author__    = "Romain Loth"
 __copyright__ = "Copyright 2014-5 INIST-CNRS (ISTEX project)"
 __license__   = "LGPL"
-__version__   = "0.1"
+__version__   = "0.2"
 __email__     = "romain.loth@inist.fr"
 __status__    = "Dev"
+
+# ----------------------------------------------------------------------
+# fields allowed as criteria
+# (grouped according to the method we use for value listing)
+# ----------------------------------------------------------------------
+# auto value-listing via facet query
+TERMFACET_FIELDS_auto = [
+	'corpusName', 
+	'qualityIndicators.pdfVersion', 
+	'qualityIndicators.refBibsNative'
+	]
+
+# value-listing provided locally (stored into field_value_lists.py)
+TERMFACET_FIELDS_local = [
+	'language',
+	'genre',
+	'categories.wos'
+	]
+
+# binned listing via date ranges (also in field_value_lists.py)
+RANGEFACET_FIELDS = [
+	'publicationDate',
+	'copyrightDate',
+	'qualityIndicators.pdfCharCount',
+	'qualityIndicators.pdfWordCount'
+	]
+
+KNOWN_FIELDS = TERMFACET_FIELDS_auto + TERMFACET_FIELDS_local + RANGEFACET_FIELDS
+
 
 # ----------------------------------------------------------------------
 # 4 document classification criteria => 4 schemes
@@ -99,11 +128,16 @@ GENRE = (
 # DATE --------------------------------------------- 3
 # for dates there's no categories but bins
 # use case: range => bins => quotas
+#~ DATE = (
+	#~ ("*", 1959),
+	#~ (1960, 1979),
+	#~ (1980, 1989),
+	#~ (1990, 1999),
+	#~ (2000, "*")
+	#~ )
 DATE = (
-	("*", 1959),
-	(1960, 1979),
-	(1980, 1989),
-	(1990, 1999),
+	("*", 1979),
+	(1980, 1999),
 	(2000, "*")
 	)
 
@@ -355,5 +389,12 @@ SCAT = (
 NBC = (
 	("*", 1999),
 	(2000, "*")
+	)
+
+# NBC ---------------------------------------------- 5
+# bins again for number of chars <=> NBC <=> qualityIndicators.pdfCharCount
+NBW = (
+	("*", 499),
+	(500, "*")
 	)
 
