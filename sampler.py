@@ -547,7 +547,10 @@ def std_filename(istex_id, info_dict):
 	'''
 	ok = {}
 	for k in info_dict:
-		ok[k] = safe_str(info_dict[k])
+		if type(info_dict[k]) == str:
+			ok[k] = safe_str(info_dict[k])
+		else:
+			ok[k] = str(info_dict[k])
 	
 	# shorten title
 	ok['ti'] = ok['ti'][0:30]
@@ -740,7 +743,8 @@ def full_run(arglist=None):
 			ids, basenames,
 			tgt_dir=my_dir,
 			api_types=['metadata/xml',
-					   'fulltext/pdf']
+					   'fulltext/pdf',
+					   'fulltext/tei']
 		)
 		
 		LOG.append("SAVE: saved docs in %s/" % my_dir)
