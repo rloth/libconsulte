@@ -20,8 +20,6 @@ Another independant "attribute:value" group will define an a priori CONSTRAINT o
 	Exemple *constraints*:
 		"qualityIndicators.refBibsNative:true"
 		"qualityIndicators.pdfCharCount:[500 TO *]"
-
-Assumes LC_ALL (aka sys.stdout.encoding) is 'UTF-8'
 """
 __author__    = "Romain Loth"
 __copyright__ = "Copyright 2014-5 INIST-CNRS (ISTEX project)"
@@ -31,7 +29,7 @@ __email__     = "romain.loth@inist.fr"
 __status__    = "Dev"
 
 # imports standard
-from sys       import argv, stderr
+from sys       import argv, stderr, stdout
 from re        import sub, search, escape
 from random    import shuffle
 from itertools import product
@@ -398,7 +396,7 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 		
 		# pour infos
 		if verbose:
-			print(" ... drawing among %i docs :\n ... picked => %s" % (len(all_indices), local_tirage))
+			print(" ... drawing among %i docs :\n ... picked => %s" % (len(all_indices), local_tirage), file=stderr)
 		
 		for indice in local_tirage:
 			# ----------------- api.search(...) ----------------------------
@@ -768,7 +766,10 @@ if __name__ == "__main__":
 	# run
 	stdoutput = full_run(arglist = argv[1:])
 	
+	enc = stdout.encoding
+	
 	# output lines
 	for line in stdoutput:
-		print(line)
+		# line contient de l'UTF-8
+		print(line.encode(enc, errors="xmlcharrefreplace").decode(enc))
 	

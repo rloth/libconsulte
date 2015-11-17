@@ -153,6 +153,38 @@ def facet_vals(field_name):
 
 
 def pooling(crit_fields, verbose=False):
+	"""
+	Sorte de tableau croisé: compte le nombre de docs pour chaque combinaison de critères
+	
+	Renvoie un dict avec ces décomptes et les totaux
+	
+	Exemple pour les critères corpusName et pdfCharCount
+	{
+	  "f": {
+		"corpusName:bmj AND pdfCharCount:[* TO 1999]": 24524,
+		"corpusName:bmj AND pdfCharCount:[2000 TO *]": 662848,
+		"corpusName:brill-journals AND pdfCharCount:[* TO 1999]": 10949,
+		"corpusName:brill-journals AND pdfCharCount:[2000 TO *]": 119318,
+		"corpusName:elsevier AND pdfCharCount:[* TO 1999]": 275461,
+		"corpusName:elsevier AND pdfCharCount:[2000 TO *]": 5740132,
+		"corpusName:nature AND pdfCharCount:[* TO 1999]": 332156,
+		"corpusName:nature AND pdfCharCount:[2000 TO *]": 45139,
+		"corpusName:oup AND pdfCharCount:[* TO 1999]": 58662,
+		"corpusName:oup AND pdfCharCount:[2000 TO *]": 1385591,
+		"corpusName:springer AND pdfCharCount:[* TO 1999]": 61973,
+		"corpusName:springer AND pdfCharCount:[2000 TO *]": 2242902,
+		"corpusName:wiley AND pdfCharCount:[* TO 1999]": 593998,
+		"corpusName:wiley AND pdfCharCount:[2000 TO *]": 4044204
+	  },
+	  "totd": 15982692         # nombre de docs au total dans la base
+	  "nd": 15597857,          # nombre de docs pour l'ensemble des critères
+	  "nr": 15597857,          # nombre de réponses pour l'ensemble des critère 
+	                           # (intéressant pour les champs "QCM")
+	}
+
+	NB: les choix de fourchettes et les valeurs de facettes sont
+	    configurables dans field_value_lists.py
+	"""
 	####### POOLING ########
 	#
 	N_reponses = 0
@@ -246,7 +278,7 @@ def pooling(crit_fields, verbose=False):
 		print("---------------------------------", file=stderr)
 	
 	# resulting pool info in f + various totals
-	return {'f':abs_freqs, 'nr':N_reponses, 'nd':N_workdocs, 'totd':doc_grand_total}
+	return {"f":abs_freqs, "nr":N_reponses, "nd":N_workdocs, "totd":doc_grand_total}
 
 if __name__ == "__main__":
 	# arguments cli
@@ -255,5 +287,5 @@ if __name__ == "__main__":
 	# run
 	json = pooling(args.criteria_list, verbose=args.verbose)
 	
-	# sortie
-	print(json)
+	# sortie: en json valide et "pretty"
+	print(dumps(json, indent=2, sort_keys=True))

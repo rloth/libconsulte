@@ -691,7 +691,7 @@ if __name__ == "__main__":
 	Données: 3 formats, rangés dans <corpus_name>/data/
 	  - .pdf, 
 	  - .xml (natif) 
-	  - et .tei.xml (pub2tei)
+	  - optionnel: .tei.xml (via pub2tei)
 	
 	Position dans le système de fichier:
 		sous ./corpus_name
@@ -729,13 +729,25 @@ Actions:
 	)
 	
 	#
-	parser.add_argument('--from_table',
+	parser.add_argument('-T', '--from_table',
 		metavar='mes_docs.tsv',
 		help="""tableau en entrée (tout tsv avec en COL1 istex_id et en COL2 le nom du lot... (par ex: la sortie détaillée de l'échantilloneur sampler.py)""",
 		type=str,
 		default=None ,
 		required=True,
 		action='store')
+	
+	parser.add_argument('-d', '--dtd_repair',
+		help="relie les références DTD internes aux XML natifs à une copie locale de cette DTD",
+		default=False,
+		required=False,
+		action='store_true')
+
+	parser.add_argument('-t', '--transform_to_tei',
+		help="provoque l'ajout d'un dossier sous mon_corpus/data avec les transfos Pub2TEI des XML natifs (requiert linux et saxonb-xslt)",
+		default=False,
+		required=False,
+		action='store_true')
 	
 	parser.add_argument('--debug',
 		metavar='1',
@@ -791,6 +803,7 @@ Actions:
 			tgt_dir   = tgt_dir,
 			api_types = [the_api_type]
 			)
+		
 		print("MAKE_SET: saved docs into CORPUS_HOME:%s" % cobj.name)
 		if debug > 0:
 			print("  (=> target dir:%s)" % tgt_dir)
@@ -803,25 +816,28 @@ Actions:
 	
 	# persistance du statut des 2 dossiers créés
 	cobj.save_shelves_status()
-
+	
+	
+	if args.dtd_repair:
+		# copie en changeant les pointeurs dtd
+		print("***DTD LINKING***")
+		cobj.dtd_repair(debug_lvl = debug)
+	
 	
 	# (4/4) conversion tei (type gold biblStruct) ------------------------
 	
-	# copie en changeant les pointeurs dtd
-	print("***DTD LINKING***")
-	cobj.dtd_repair(debug_lvl = debug)
-	
-	print("***XML => TEI.XML CONVERSION***")
-	
-	# créera le dossier C-goldxmltei
-	cobj.pub2goldtei(debug_lvl = debug)      # conversion
-	
-	cobj.assert_docs('GTEI')
-	
-	# persistence du statut du dossier créé
-	cobj.save_shelves_status()
-	
-	# voilà !
-	cobj.print_corpus_info()
-	print("Corpus dirs successfully created in %s" % cobj.cdir)
+	if args.transform_to_tei:
+		print("***XML => TEI.XML CONVERSION***")
+		
+		# créera le dossier C-goldxmltei
+		cobj.pub2goldtei(debug_lvl = debug)      # conversion
+		
+		cobj.assert_docs('GTEI')
+		
+		# persistence du statut du dossier créé
+		cobj.save_shelves_status()
+		
+		# voilà !
+		cobj.print_corpus_info()
+		print("Corpus dirs successfully created in %s" % cobj.cdir)
 
