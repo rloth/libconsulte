@@ -79,7 +79,7 @@ FORBIDDEN_IDS = []
 # (key: API Name, val: local name <= the value is actually not used
 # 
 # the keys are used in the API queries
-# the vals are unused but could be used in the 'tab' output mode as standard column names (£TODO)
+# the vals are unused but could be used in the 'tab' output mode as standard column names
 STD_MAP = {
 	'id'              : 'istex_id',  # 40 caractères [0-9A-F]
 	'doi'             : 'doi',
@@ -92,8 +92,8 @@ STD_MAP = {
 	'categories.wos'  : 'cats_',     # à étendre
 	'serie.issn'      : 'in_issn',   # en distri. compl. avec host.issn
 	'host.issn'       : 'in_issn',
-	#'volume'          : 'in_vol',   # todo
-	#'firstPage'       : 'in_fpg'    # todo
+	#'volume'          : 'in_vol',
+	#'firstPage'       : 'in_fpg',
 	'qualityIndicators.pdfVersion' : 'pdfver',
 	'qualityIndicators.pdfWordCount' : 'pdfwc',
 	'qualityIndicators.refBibsNative' : 'bibnat',
@@ -377,14 +377,19 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 		if constraint_query:
 			my_query = '('+combi_query+') AND ('+constraint_query+')'
 			# pour les indices dispo, on doit recompter avec la contrainte
-			all_indices = [i for i in range(api.count(my_query))]
+			n_matching = api.count(my_query)
 		
 		# si pas de contrainte les indices dispos 
 		# pour le tirage aléatoire sont simplement [0:freq]
 		else:
 			my_query = combi_query
-			all_indices = [i for i in range(abs_freqs[combi_query])]
+			n_matching = abs_freqs[combi_query]
 		
+		max_pagination = 9999
+		# car "La pagination n'autorise pas à dépasser le 10000ème résultat"
+
+		actual_pool_size = min(max_pagination,n_matching)
+		all_indices = [i for i in range(actual_pool_size)]
 		
 		# on lance search 1 par 1 avec les indices tirés en FROM ---------
 		
@@ -396,7 +401,12 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 		
 		# pour infos
 		if verbose:
-			print(" ... drawing among %i docs :\n ... picked => %s" % (len(all_indices), local_tirage), file=stderr)
+			print(" ... drawing among %i docs %s :\n ... picked => %s" % (
+					n_matching,
+					"" if actual_pool_size == n_matching else "(actual: %i)" % actual_pool_size,
+					local_tirage
+					), 
+				file=stderr)
 		
 		for indice in local_tirage:
 			# ----------------- api.search(...) ----------------------------
@@ -709,21 +719,22 @@ def full_run(arglist=None):
 			period = year_to_range(info['yr'])
 			
 			
-			output_array.append("\t".join([ did,
+			output_array.append("\t".join(map(str, 
+			                              [ did,
 			                                info['co'],
 			                                info['yr'],
 			                                period,
 			                                info['ver'],
-			                                str(info['wcp']),
-			                                str(info['bibnat']),
+			                                info['wcp'],
+			                                info['bibnat'],
 			                                info['au'],
 			                                info['lg'],
 			                                info['typ'],
 			                                info['cat'],
-			                                info['ti'],
+			                                info['ti']
 			                                #~ info['_q']
-			                                ]
-			                              )
+			                              ]
+			                            ))
 			             )
 	
 	# ***(docs)***
