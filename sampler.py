@@ -35,7 +35,7 @@ from random    import shuffle
 from itertools import product
 from datetime  import datetime
 from os        import path, mkdir, getcwd
-from json      import dump, load
+from json      import dump, dumps, load
 from argparse  import ArgumentParser, RawTextHelpFormatter
 
 
@@ -97,6 +97,7 @@ STD_MAP = {
 	'qualityIndicators.pdfVersion' : 'pdfver',
 	'qualityIndicators.pdfWordCount' : 'pdfwc',
 	'qualityIndicators.refBibsNative' : 'bibnat',
+	'abstract' : 'abstract'
 }
 
 # [+ colonnes calculées]
@@ -185,10 +186,13 @@ def my_parse_args(arglist=None):
 		        (info columns starting with API ids + source query)
 		        ex: sampler.py -o tab -n 20 > my_tab.tsv
 		
+		  json: similar to hits
+	        	ex: sampler.py -o json -n 20 > my_hits.json
+
 		  docs: downloads all docs (tei + pdf) in a new
 		        directory named 'echantillon_<timestamp>'
 		        ex: sampler.py -o docs -n 20""",
-		choices=['ids', 'tab', 'docs'],
+		choices=['ids', 'tab', 'json', 'docs'],
 		type=str,
 		default='ids',
 		required=False,
@@ -313,13 +317,14 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 	####### POOLING ########
 	
 	# instead of calling pooling() maybe we have cached the pools ?
-	# (always same counts for given criteria) => cache to json
+	# (always same counts for given criteria) => cache to fs in json
 	cache_filename = pool_cache_path(crit_fields)
 	print('...checking cache for %s' % cache_filename,file=stderr)
 	
 	if path.exists(cache_filename):
 		cache = open(cache_filename, 'r')
 		pool_info = load(cache)
+		print('...ok cache :', pool_info,file=stderr)
 		print('...ok cache (%i workdocs)' % pool_info['nd'],file=stderr)
 	else:
 		print('...no cache found',file=stderr)
@@ -397,7 +402,7 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 		shuffle(all_indices)
 		
 		# on ne prend que les n premiers (tirage)
-		local_tirage = all_indices[0:my_quota]
+		local_tirage = sorted(all_indices[0:my_quota])
 		
 		# pour infos
 		if verbose:
@@ -479,6 +484,11 @@ def sample(size, crit_fields, constraint_query=None, index=None,
 				else:
 					index[idi]['typ'] = "UNKOWN_GENRE"
 				
+				if 'abstract' in hit and len(hit['abstract']):
+					index[idi]['abs'] = hit['abstract']
+				else:
+					index[idi]['abs'] = "NONE"
+
 				if 'categories' in hit and len(hit['categories']) and 'wos' in hit['categories'] and len(hit['categories']['wos']):
 					index[idi]['cat'] = "/".join(hit['categories']['wos'])
 				else:
@@ -737,6 +747,16 @@ def full_run(arglist=None):
 			                            ))
 			             )
 	
+
+	# ***(json)***
+	elif args.out_type == 'json':
+		sorted_infos = sorted(got_ids_idx.items(), key=lambda x: x[1]['_q'])
+		grouped = []
+		for did, info in sorted_infos:
+			info['id'] = did
+			grouped.append(info)
+		output_array.append(dumps(grouped, skipkeys=True, indent=2))
+
 	# ***(docs)***
 	# no output lines but writes a dir
 	elif args.out_type == 'docs':
